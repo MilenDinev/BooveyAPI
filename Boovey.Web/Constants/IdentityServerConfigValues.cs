@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Web.Constants
 {
-    public static class IdentityServerConfigConstants
+    public static class IdentityServerConfigValues
     {
         public const string ClientId = "boovey";
         public const string SecretValue = "secret";
