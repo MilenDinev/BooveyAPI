@@ -5,9 +5,9 @@
     using Data;
     using Data.Entities;
 
-    public static class IdentityConfig
+    public static class IdentityConfigurator
     {
-        public static void AddIdentity(this IServiceCollection services)
+        public static void ConfigureIdentityCoreOptions(this IServiceCollection services)
         {
             services.AddIdentityCore<User>(options =>
             {

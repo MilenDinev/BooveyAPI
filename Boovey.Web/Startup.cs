@@ -35,10 +35,10 @@ namespace Boovey.Web
         {
             services.AddControllers();
 
-            services.AddDatabase();
-            services.AddSwaggerConfig();
-            services.AddIdentity();
-            services.IdentityServerBuild();
+            services.ConfigureDatabase();
+            services.ConfigureSwagger();
+            services.ConfigureIdentityCoreOptions();
+            services.RunIdentityServer();
             services.AddServices();
         }
 

@@ -5,9 +5,9 @@
     using Microsoft.Extensions.DependencyInjection;
     using Constants;
 
-    public static class SwaggerConfig
+    public static class SwaggerConfigurator
     {
-        public static void AddSwaggerConfig(this IServiceCollection services)
+        public static void ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {
