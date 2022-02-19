@@ -12,17 +12,17 @@
            {
                 new Client
                 {
-                    ClientId = IdentityServerConfigConstants.ClientId,
-                    AllowOfflineAccess = IdentityServerConfigConstants.AllowOfflineAccess,
+                    ClientId = IdentityServerConfigValues.ClientId,
+                    AllowOfflineAccess = IdentityServerConfigValues.AllowOfflineAccess,
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
 
                     ClientSecrets =
                     {
-                        new Secret(IdentityServerConfigConstants.ClientId.Sha256())
+                        new Secret(IdentityServerConfigValues.ClientId.Sha256())
                     },
                     AllowedScopes = 
                     { 
-                        "users", "offline_access", IdentityServerConfigConstants.ClientId, "roles" 
+                        "users", "offline_access", IdentityServerConfigValues.ClientId, "roles" 
                     }
                 }
            };
@@ -39,7 +39,7 @@
             {
                     new ApiScope("users", "My API", new string[]{ ClaimTypes.Name, ClaimTypes.Role }),
                     new ApiScope("offline_access", "RefereshToken"),
-                    new ApiScope(IdentityServerConfigConstants.ClientId, "app")
+                    new ApiScope(IdentityServerConfigValues.ClientId, "app")
             };
     }
 }
