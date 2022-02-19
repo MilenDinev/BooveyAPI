@@ -2,6 +2,7 @@
 {
     using Microsoft.Extensions.DependencyInjection;
     using Middleware;
+
     public static class IdentityServerBuilder
     {
         public static IIdentityServerBuilder IdentityServerBuild(this IServiceCollection services)
