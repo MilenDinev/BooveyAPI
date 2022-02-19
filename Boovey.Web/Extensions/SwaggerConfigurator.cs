@@ -7,7 +7,7 @@
 
     public static class SwaggerConfigurator
     {
-        public static void ConfigureSwagger(this IServiceCollection services)
+        public static void AddSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {

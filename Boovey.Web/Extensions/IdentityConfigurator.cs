@@ -7,7 +7,7 @@
 
     public static class IdentityConfigurator
     {
-        public static void ConfigureIdentityCoreOptions(this IServiceCollection services)
+        public static void AddIdentityCore(this IServiceCollection services)
         {
             services.AddIdentityCore<User>(options =>
             {

@@ -7,7 +7,7 @@
 
     public static class DatabaseConfigurator
     {
-        public static void ConfigureDatabase(this IServiceCollection services)
+        public static void AddDatabase(this IServiceCollection services)
         {
             services.AddDbContext<BooveyDbContext>(options => options.UseSqlServer(DatabaseConfigValues.DefaultConnection));
         }
