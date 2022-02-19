@@ -1,0 +1,19 @@
+﻿namespace Boovey.Data.Entities
+{
+    using System.Collections.Generic;
+    using Books;
+
+    public class Quote : Entity
+    {
+        public Quote()
+        {
+            this.FavoriteByUsers = new HashSet<User>();
+        }
+
+        public string Content { get; set; }
+        public int Likes { get; set; }
+        public int BookId { get; set; }
+        public virtual Book Book { get; set; }
+        public virtual ICollection<User> FavoriteByUsers { get; set; }
+    }
+}
