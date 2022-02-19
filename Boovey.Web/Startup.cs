@@ -46,6 +46,8 @@ namespace Boovey.Web
         {
             DatabaseSeeder.SeedAsync(app.ApplicationServices).GetAwaiter().GetResult();
 
+            app.UseIdentityServer();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
