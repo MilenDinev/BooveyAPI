@@ -1,15 +1,15 @@
 ﻿namespace Boovey.Services.Managers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using Data.Entities;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
     using Interfaces;
+    using Data.Entities;
 
     public class BooveyUserManager : UserManager<User>, IUserManager
     {
@@ -69,7 +69,6 @@
                     return result;
                 }
             }
-
             return false;
         }
     }
