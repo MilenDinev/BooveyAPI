@@ -26,7 +26,7 @@ namespace Boovey.Web
             services.AddSwagger();
             services.AddServices();
             services.AddIdentityCore();
-            services.GetIdentityServer();
+            services.BuildIdentityServer();
             services.AddAuthenticationConfig();
             services.AddControllers();
         }

@@ -5,7 +5,7 @@
 
     public static class IdentityServerBuilder
     {
-        public static IIdentityServerBuilder GetIdentityServer(this IServiceCollection services)
+        public static IIdentityServerBuilder BuildIdentityServer(this IServiceCollection services)
         {
             var builder = services.AddIdentityServer((options) =>
             {
