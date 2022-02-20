@@ -1,24 +1,15 @@
 namespace Boovey.Web
 {
-    using Boovey.Data;
     using Boovey.Data.Seeders;
     using Boovey.Web.Extensions;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Boovey.Web.Extensions.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.HttpsPolicy;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.OpenApi.Models;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+
+
 
     public class Startup
     {
@@ -33,13 +24,13 @@ namespace Boovey.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
             services.AddDatabase();
             services.AddSwagger();
+            services.AddServices();
             services.AddIdentityCore();
             services.GetIdentityServer();
-            services.AddServices();
+            services.AddAuthenticationConfig();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
