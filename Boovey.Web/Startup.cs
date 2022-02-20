@@ -1,15 +1,13 @@
 namespace Boovey.Web
 {
-    using Boovey.Data.Seeders;
-    using Boovey.Web.Extensions;
-    using Boovey.Web.Extensions.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-
-
+    using Extensions;
+    using Extensions.Authentication;
+    using Data.Seeders;
 
     public class Startup
     {
