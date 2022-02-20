@@ -1,14 +1,13 @@
 ﻿namespace Boovey.Web.Extensions.Authentication
 {
-    using Boovey.Web.Constants;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.Extensions.DependencyInjection;
+    using Constants;
 
     public static class AuthenticationConfiguration
     {
-        public static void AddAuthentication(this IServiceCollection services)
+        public static void AddAuthenticationConfig(this IServiceCollection services)
         {
-
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -17,8 +16,8 @@
                 })
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = IdentityServerConfigValues.URLAddress;
-                    options.Audience = IdentityServerConfigValues.ResourcesURLAddress;
+                    options.Authority = IdentityServerConfigValues.UrlAddress;
+                    options.Audience = IdentityServerConfigValues.ResourcesUrlAddress;
                 });
         }
     }
