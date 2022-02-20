@@ -11,7 +11,7 @@
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc(SwaggerConfigValues.SwaggerDocVersion, new OpenApiInfo
                 {
                     Title = SwaggerConfigValues.OpenApiInfoTitle,
                     Version = SwaggerConfigValues.OpenApiInfoVersion,
@@ -19,10 +19,10 @@
                 });
 
                 // Adds the authorize button in swagger UI 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                c.AddSecurityDefinition(SwaggerConfigValues.SecurityDefinitionName, new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                    Name = "Authorization",
+                    Description = SwaggerConfigValues.OpenApiSecuritySchemeDescription,
+                    Name = SwaggerConfigValues.OpenApiSecuritySchemeName,
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey
                 });
@@ -36,10 +36,10 @@
                         Reference = new OpenApiReference
                             {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
+                            Id = SwaggerConfigValues.OpenApiId
                             },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
+                            Scheme = SwaggerConfigValues.OpenApiScheme,
+                            Name = SwaggerConfigValues.OpenApiName,
                             In = ParameterLocation.Header,
                         },
                         new List<string>()
