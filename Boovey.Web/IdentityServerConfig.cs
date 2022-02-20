@@ -18,7 +18,7 @@
 
                     ClientSecrets =
                     {
-                        new Secret(IdentityServerConfigValues.ClientId.Sha256())
+                        new Secret(IdentityServerConfigValues.SecretValue.Sha256())
                     },
                     AllowedScopes = 
                     { 

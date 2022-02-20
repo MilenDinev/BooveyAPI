@@ -1,11 +1,8 @@
 ﻿namespace Boovey.Data.Entities.Requests
 {
-    using System;
-
     public class Request : Entity
     {
         public string Description { get; set; }
-        public DateTime CreatedOn { get; set; }
         public int RequesterId { get; set; }
         public virtual User Requester { get; set; }
         public int ApproverId { get; set; }

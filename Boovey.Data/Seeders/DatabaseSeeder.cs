@@ -1,6 +1,7 @@
 ﻿namespace Boovey.Data.Seeders
 {
     using System;
+    using System.Linq;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Identity;
@@ -16,16 +17,17 @@
             using (IServiceScope serviceScope = applicationServices.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<BooveyDbContext>();
-                //var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-                //var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
                 await context.Database.MigrateAsync();
 
-                //if (!context.Users.Any())
-                //{
-                //    await RolesSeeder.SeedRoles(roleManager);
-                //    await UsersSeeder.SeedUsers(userManager);
+                if (!context.Users.Any())
+                {
+                      await RolesSeeder.SeedRolesAsync(roleManager);
+                      await UsersSeeder.SeedUsersAsync(userManager);
                 //    await SamplesSeeder.SeedSample(context, userManager);
-                //}
+                }
             }
         }
     }
