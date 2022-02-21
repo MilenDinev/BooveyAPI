@@ -43,6 +43,7 @@
 
             return this.mapper.Map<RegisteredUserResponseModel>(user);
         }
+
         public async Task<User> GetCurrentUserAsync(ClaimsPrincipal principal)
         {
             return await this.userManager.GetUserAsync(principal);
