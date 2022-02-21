@@ -26,7 +26,7 @@
             this.mapper = mapper;
         }
 
-        public async Task<RegisteredUserResponseModel> CreateAsync(RegistrationModel userInput)
+        public async Task<RegisteredUserModel> CreateAsync(RegistrationModel userInput)
         {
             if (await this.userManager.FindByNameAsync(userInput.UserName) != null)
                 throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(User), userInput.UserName));
@@ -39,7 +39,7 @@
             await this.userManager.CreateAsync(user, userInput.Password);
             await this.userManager.AddToRoleAsync(user, "regular");
 
-            return this.mapper.Map<RegisteredUserResponseModel>(user);
+            return this.mapper.Map<RegisteredUserModel>(user);
         }
 
         public async Task<User> GetCurrentUserAsync(ClaimsPrincipal principal)
@@ -47,10 +47,10 @@
             return await this.userManager.GetUserAsync(principal);
         }
 
-        public async Task<ICollection<UsersListingResponseModel>> GetAllUsersAsync()
+        public async Task<ICollection<UsersListingModel>> GetAllUsersAsync()
         {
             var users = await this.userManager.GetAllAsync();
-            var usersResponceDto = this.mapper.Map<ICollection<UsersListingResponseModel>>(users);
+            var usersResponceDto = this.mapper.Map<ICollection<UsersListingModel>>(users);
             return usersResponceDto.ToList();
         }
     }

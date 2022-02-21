@@ -17,7 +17,7 @@
         }
 
         [HttpPost]
-        public async Task<ActionResult<TokenResponseModel>> Login(GetTokenModel user)
+        public async Task<ActionResult<TokenModel>> Login(TokenUserInputModel user)
         {
             using var httpClientHandler = new HttpClientHandler();
             using var client = new HttpClient(httpClientHandler);

@@ -10,8 +10,8 @@
         public UserMappingProfile()
         {
             this.CreateMap<RegistrationModel, User>();
-            this.CreateMap<User, RegisteredUserResponseModel>();
-            this.CreateMap<User, UsersListingResponseModel>()
+            this.CreateMap<User, RegisteredUserModel>();
+            this.CreateMap<User, UsersListingModel>()
                 .ForMember(m => m.Email, e => e.MapFrom(u => u.Email ?? "none"));
         }
     }

@@ -18,7 +18,7 @@
         }
 
         [HttpGet("List/")]
-        public async Task<ActionResult<IEnumerable<UsersListingResponseModel>>> Get()
+        public async Task<ActionResult<IEnumerable<UsersListingModel>>> Get()
         {
             var allUsers = await this.userService.GetAllUsersAsync();
             return allUsers.ToList();
