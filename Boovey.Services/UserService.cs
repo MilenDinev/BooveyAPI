@@ -39,8 +39,6 @@
             await this.userManager.CreateAsync(user, userInput.Password);
             await this.userManager.AddToRoleAsync(user, "regular");
 
-            await this.dbContext.SaveChangesAsync();
-
             return this.mapper.Map<RegisteredUserResponseModel>(user);
         }
 
