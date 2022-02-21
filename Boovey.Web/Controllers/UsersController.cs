@@ -7,6 +7,7 @@
     using Microsoft.AspNetCore.Routing;
     using Services.Interfaces;
     using Models.Responses.UserModels;
+    using Boovey.Models.Requests;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -17,10 +18,18 @@
         }
 
         [HttpGet("List/")]
-        public async Task<ActionResult<IEnumerable<UserResponseModel>>> Get()
+        public async Task<ActionResult<IEnumerable<UsersListingResponseModel>>> Get()
         {
-            var allUsers = await _userService.GetAllUsersAsync();
+            var allUsers = await this.userService.GetAllUsersAsync();
             return allUsers.ToList();
+        }
+
+        [HttpPost("Register/")]
+        public async Task<ActionResult> Post(RegistrationRequestModel userInput)
+        {
+            await GetCurrentUserAsync();
+            var registeredUser = await this.userService.CreateAsync(userInput);
+            return CreatedAtAction(nameof(Get), "Users", new { username = registeredUser.Username }, registeredUser);
         }
     }
 }
