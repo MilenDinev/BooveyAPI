@@ -2,13 +2,16 @@
 {
     using AutoMapper;
     using Boovey.Data.Entities;
+    using Boovey.Models.Requests;
     using Boovey.Models.Responses.UserModels;
 
     public class UserMappingProfile : Profile
     {
         public UserMappingProfile()
         {
-            this.CreateMap<User, UserResponseModel>()
+            this.CreateMap<RegistrationRequestModel, User>();
+            this.CreateMap<User, RegisteredUserResponseModel>();
+            this.CreateMap<User, UsersListingResponseModel>()
                 .ForMember(m => m.Email, e => e.MapFrom(u => u.Email ?? "none"));
         }
     }

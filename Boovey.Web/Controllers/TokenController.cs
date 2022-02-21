@@ -17,11 +17,11 @@
         }
 
         [HttpPost]
-        public async Task<ActionResult<TokenResponseModel>> Login(LoginRequestModel user)
+        public async Task<ActionResult<TokenResponseModel>> Login(GetTokenRequestModel user)
         {
             using var httpClientHandler = new HttpClientHandler();
             using var client = new HttpClient(httpClientHandler);
-            var token = await _userService.GetEligibilityTokenAsync(client, user.UsernameOrEmail, user.Password);
+            var token = await this.userService.GetEligibilityTokenAsync(client, user.UsernameOrEmail, user.Password);
             return token;
         }
     }

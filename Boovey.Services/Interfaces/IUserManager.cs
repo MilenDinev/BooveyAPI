@@ -4,9 +4,14 @@
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Data.Entities;
+    using Microsoft.AspNetCore.Identity;
 
     public interface IUserManager
     {
+        Task<IdentityResult> CreateAsync(User user, string password);
+        Task<IdentityResult> UpdateAsync(User user);
+        Task<IdentityResult> DeleteAsync(User user);
+        Task<IdentityResult> AddToRoleAsync(User user, string role);
         Task<User> GetUserAsync(ClaimsPrincipal claimsPrincipal);
         Task<User> FindByNameAsync(string name);
         Task<User> FindByEmailAsync(string name);

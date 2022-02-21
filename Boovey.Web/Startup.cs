@@ -16,6 +16,7 @@ namespace Boovey.Web
             Configuration = configuration;
             StaticConfig = configuration;
         }
+
         public IConfiguration Configuration { get; }
         public static IConfiguration StaticConfig { get; private set; }
 
