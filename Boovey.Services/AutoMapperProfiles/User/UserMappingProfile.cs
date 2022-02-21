@@ -1,9 +1,9 @@
 ﻿namespace Boovey.Services.AutoMapperProfiles.User
 {
     using AutoMapper;
-    using Boovey.Data.Entities;
-    using Boovey.Models.Requests;
-    using Boovey.Models.Responses.UserModels;
+    using Data.Entities;
+    using Models.Requests;
+    using Models.Responses.UserModels;
 
     public class UserMappingProfile : Profile
     {

@@ -2,7 +2,6 @@
 {
     public class AddBookModel
     {
-
         public string CoverUrl { get; set; }
         public string Title { get; set; }
         public int Pages { get; set; }
