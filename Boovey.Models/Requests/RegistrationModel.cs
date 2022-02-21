@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class RegistrationRequestModel
+    public class RegistrationModel
     {
         public string UserName { get; set; }
         public string FirstName { get; set; }
