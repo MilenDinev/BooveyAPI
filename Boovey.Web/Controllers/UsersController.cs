@@ -25,7 +25,7 @@
         }
 
         [HttpPost("Register/")]
-        public async Task<ActionResult> Post(RegistrationRequestModel userInput)
+        public async Task<ActionResult> Post(RegistrationModel userInput)
         {
             var registeredUser = await this.userService.CreateAsync(userInput);
             return CreatedAtAction(nameof(Get), "Users", new { username = registeredUser.Username }, registeredUser);

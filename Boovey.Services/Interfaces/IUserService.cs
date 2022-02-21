@@ -11,6 +11,6 @@
     {
         Task<User> GetCurrentUserAsync(ClaimsPrincipal principal);
         Task<ICollection<UsersListingResponseModel>> GetAllUsersAsync();
-        Task<RegisteredUserResponseModel> CreateAsync(RegistrationRequestModel userRequestModel);
+        Task<RegisteredUserResponseModel> CreateAsync(RegistrationModel userRequestModel);
     }
 }

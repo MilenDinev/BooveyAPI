@@ -26,7 +26,7 @@
             this.mapper = mapper;
         }
 
-        public async Task<RegisteredUserResponseModel> CreateAsync(RegistrationRequestModel userInput)
+        public async Task<RegisteredUserResponseModel> CreateAsync(RegistrationModel userInput)
         {
             if (await this.userManager.FindByNameAsync(userInput.UserName) != null)
                 throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(User), userInput.UserName));
