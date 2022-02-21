@@ -9,11 +9,11 @@
 
     public class BooveyBaseController : ControllerBase
     {
-        protected readonly IUserService _userService;
+        protected readonly IUserService userService;
 
         public BooveyBaseController(IUserService userService)
         {
-            _userService = userService;
+            this.userService = userService;
         }
 
         public User CurrentUser { get; set; }
@@ -21,7 +21,9 @@
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult> GetCurrentUserAsync()
         {
-            CurrentUser = await _userService.GetCurrentUserAsync(User) ?? throw new UnauthorizedAccessException(ErrorMessages.InvalidCredentials);
+            CurrentUser = await this.userService.GetCurrentUserAsync(User) ?? 
+                throw new UnauthorizedAccessException(ErrorMessages.InvalidCredentials);
+
             return Ok();
         }
     }
