@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Boovey.Data.Seeders
 {
-    public class RolesSeeder
+    public static class RolesSeeder
     {
         public static async Task SeedRolesAsync(RoleManager<IdentityRole<int>> roleManager)
         {

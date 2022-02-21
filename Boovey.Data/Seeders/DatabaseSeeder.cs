@@ -10,7 +10,7 @@
     using Data.Entities;
 
     [ExcludeFromCodeCoverage]
-    public class DatabaseSeeder
+    public static class DatabaseSeeder
     {
         public async static Task SeedAsync(IServiceProvider applicationServices)
         {
@@ -24,9 +24,10 @@
 
                 if (!context.Users.Any())
                 {
-                      await RolesSeeder.SeedRolesAsync(roleManager);
-                      await UsersSeeder.SeedUsersAsync(userManager);
-                //    await SamplesSeeder.SeedSample(context, userManager);
+                    await CountriesSeeder.SeedCountriesAsync(context);
+                    await RolesSeeder.SeedRolesAsync(roleManager);
+                    await UsersSeeder.SeedUsersAsync(userManager);
+                  //await SamplesSeeder.SeedSample(context, userManager);
                 }
             }
         }
