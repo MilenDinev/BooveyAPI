@@ -4,14 +4,16 @@ using Boovey.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Boovey.Data.Migrations
 {
     [DbContext(typeof(BooveyDbContext))]
-    partial class BooveyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220221231014_PublisherCanBeNull")]
+    partial class PublisherCanBeNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,7 +193,7 @@ namespace Boovey.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Publishers");
+                    b.ToTable("Publisher");
                 });
 
             modelBuilder.Entity("Boovey.Data.Entities.Books.Shelve", b =>
