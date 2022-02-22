@@ -14,6 +14,7 @@
             services.AddAutoMapper(Assembly.Load(AutoMapperConfigValues.Assembly));
             services.AddTransient<IUserManager, BooveyUserManager>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IBookService, BookService>();
             services.AddHttpContextAccessor();
         }
     }
