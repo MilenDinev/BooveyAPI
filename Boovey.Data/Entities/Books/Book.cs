@@ -24,7 +24,7 @@
         public int CountryId { get; set; }
         public virtual Country Country { get; set; }
         public string Description { get; set; }
-        public int PublisherId { get; set; }
+        public int? PublisherId { get; set; }
         public virtual Publisher Publisher { get; set; }
         public virtual ICollection<Quote> Quotes { get; set; }
         public virtual ICollection<Shelve> Shelves { get; set; }

@@ -11,7 +11,7 @@
 
     public static class AuthenticationHandler
     {
-        public static async Task<TokenResponseModel> GetEligibilityTokenAsync(this IUserService userService, HttpClient client, string usernameInput, string passwordInput)
+        public static async Task<TokenModel> GetEligibilityTokenAsync(this IUserService userService, HttpClient client, string usernameInput, string passwordInput)
         {
             var tokenBaseAddress = IdentityServerConfigValues.TokenBaseAddress;
 
@@ -31,7 +31,7 @@
 
             var tokenResponse = await client.PostAsync(tokenBaseAddress, new FormUrlEncodedContent(form));
             var jsonContent = await tokenResponse.Content.ReadAsStringAsync();
-            var token = JsonSerializer.Deserialize<TokenResponseModel>(jsonContent);
+            var token = JsonSerializer.Deserialize<TokenModel>(jsonContent);
 
             if (token.AccessToken == null)
             {

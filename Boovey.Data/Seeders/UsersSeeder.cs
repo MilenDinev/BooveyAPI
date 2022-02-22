@@ -5,7 +5,7 @@
     using Microsoft.AspNetCore.Identity;
     using Data.Entities;
 
-    public class UsersSeeder
+    public static class UsersSeeder
     {
         public static async Task SeedUsersAsync(UserManager<User> userManager)
         {

@@ -15,6 +15,7 @@
         public virtual DbSet<Book> Books { get; set; }
         public virtual DbSet<Genre> Genres { get; set; }
         public virtual DbSet<Author> Authors { get; set; }
+        public virtual DbSet<Publisher> Publishers { get; set; }
         public virtual DbSet<Quote> Quotes { get; set; }
         public virtual DbSet<Shelve> Shelves { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }

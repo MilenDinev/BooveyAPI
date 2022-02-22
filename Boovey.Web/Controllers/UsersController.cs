@@ -18,14 +18,14 @@
         }
 
         [HttpGet("List/")]
-        public async Task<ActionResult<IEnumerable<UsersListingResponseModel>>> Get()
+        public async Task<ActionResult<IEnumerable<UsersListingModel>>> Get()
         {
             var allUsers = await this.userService.GetAllUsersAsync();
             return allUsers.ToList();
         }
 
         [HttpPost("Register/")]
-        public async Task<ActionResult> Post(RegistrationRequestModel userInput)
+        public async Task<ActionResult> Post(RegistrationModel userInput)
         {
             var registeredUser = await this.userService.CreateAsync(userInput);
             return CreatedAtAction(nameof(Get), "Users", new { username = registeredUser.Username }, registeredUser);

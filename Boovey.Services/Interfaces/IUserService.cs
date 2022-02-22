@@ -10,7 +10,7 @@
     public interface IUserService
     {
         Task<User> GetCurrentUserAsync(ClaimsPrincipal principal);
-        Task<ICollection<UsersListingResponseModel>> GetAllUsersAsync();
-        Task<RegisteredUserResponseModel> CreateAsync(RegistrationRequestModel userRequestModel);
+        Task<ICollection<UsersListingModel>> GetAllUsersAsync();
+        Task<RegisteredUserModel> CreateAsync(RegistrationModel userRequestModel);
     }
 }
