@@ -25,7 +25,7 @@
 
         public async Task<AddedBookModel> AddAsync(AddBookModel bookModel)
         {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.ISBN == bookModel.ISBN);
+            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.ISBN == bookModel.ISBN && b.Title == bookModel.Title);
             if (book != null)
                 throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Book), bookModel.Title));
 
