@@ -19,7 +19,6 @@
         public string Title { get; set; }
         public int Pages { get; set; }
         public DateTime PublicationDate { get; set; }
-        public string ASIN { get; set; }
         public string ISBN { get; set; }
         public int CountryId { get; set; }
         public virtual Country Country { get; set; }
@@ -32,7 +31,5 @@
         public virtual ICollection<Author> Authors { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<User> FavoriteByUsers { get; set; }
-
-        //ISBN/ ASIN Validation 
     }
 }
