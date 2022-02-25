@@ -11,7 +11,7 @@
    
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class BooksController : BooveyBaseController
     {
         private readonly IBookService bookService;
@@ -28,10 +28,18 @@
         }
 
         [HttpPost("Add/")]
-        public async Task<ActionResult> Post(AddBookModel bookInput)
+        public async Task<ActionResult> Add(AddBookModel bookInput)
         {
-            //await GetCurrentUserAsync();
+            await GetCurrentUserAsync();
             var addedBook = await this.bookService.AddAsync(bookInput, 1);
+            return CreatedAtAction(nameof(Get), "Books", new { title = addedBook.Title }, addedBook);
+        }
+
+        [HttpPut("Add-Favorite/{bookId}")]
+        public async Task<ActionResult> AddFavorite(int bookId)
+        {
+            await GetCurrentUserAsync();
+            var addedBook = await this.bookService.AddFavoriteBook(bookId, CurrentUser);
             return CreatedAtAction(nameof(Get), "Books", new { title = addedBook.Title }, addedBook);
         }
     }
