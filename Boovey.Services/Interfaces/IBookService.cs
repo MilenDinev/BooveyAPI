@@ -7,7 +7,7 @@
 
     public interface IBookService
     {
-        Task<AddedBookModel> AddAsync(AddBookModel bookModel);
+        Task<AddedBookModel> AddAsync(AddBookModel bookModel, int currentUserId);
         Task<ICollection<BooksListingModel>> GetAllBooksAsync();
     }
 }
