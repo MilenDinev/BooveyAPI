@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using Data.Entities;
     using Microsoft.AspNetCore.Identity;
+    using Data.Entities;
 
     public interface IUserManager
     {

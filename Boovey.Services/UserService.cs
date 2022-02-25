@@ -1,17 +1,17 @@
 ﻿namespace Boovey.Services
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Security.Claims;
     using System.Collections.Generic;
     using AutoMapper;
     using Interfaces;
+    using Constants;
     using Data;
     using Data.Entities;
     using Models.Responses.UserModels;
-    using Boovey.Models.Requests;
-    using System;
-    using Constants;
+    using Models.Requests;
 
     public class UserService : IUserService
     {

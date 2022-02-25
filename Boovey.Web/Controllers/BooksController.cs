@@ -1,15 +1,17 @@
 ﻿namespace Boovey.Web.Controllers
 {
-    using Boovey.Models.Requests;
-    using Boovey.Models.Responses.BookModels;
-    using Boovey.Services.Interfaces;
-    using Microsoft.AspNetCore.Mvc;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authorization;
+    using Services.Interfaces;
+    using Models.Requests;
+    using Models.Responses.BookModels;
+   
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BooksController : BooveyBaseController
     {
         private readonly IBookService bookService;
@@ -26,10 +28,19 @@
         }
 
         [HttpPost("Add/")]
-        public async Task<ActionResult> Post(AddBookModel bookInput)
+        public async Task<ActionResult> Add(AddBookModel bookInput)
         {
-            var addedBook = await this.bookService.AddAsync(bookInput);
-            return CreatedAtAction(nameof(Get), "Users", new { title = addedBook.Title }, addedBook);
+            await GetCurrentUserAsync();
+            var addedBook = await this.bookService.AddAsync(bookInput, 1);
+            return CreatedAtAction(nameof(Get), "Books", new { title = addedBook.Title }, addedBook);
+        }
+
+        [HttpPut("Add-Favorite/{bookId}")]
+        public async Task<ActionResult> AddFavorite(int bookId)
+        {
+            await GetCurrentUserAsync();
+            var addedBook = await this.bookService.AddFavoriteBook(bookId, CurrentUser);
+            return CreatedAtAction(nameof(Get), "Books", new { title = addedBook.Title }, addedBook);
         }
     }
 }

@@ -3,10 +3,10 @@
     using System.Net.Http;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Extensions.Authentication;
+    using Services.Interfaces;
     using Models.Requests;
     using Models.Responses;
-    using Services.Interfaces;
-    using Extensions.Authentication;
 
     [Route("api/[controller]")]
     [ApiController]

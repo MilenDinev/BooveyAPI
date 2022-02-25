@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using Boovey.Models.Requests;
-    using Boovey.Models.Responses.UserModels;
     using Data.Entities;
+    using Models.Requests;
+    using Models.Responses.UserModels;
 
     public interface IUserService
     {

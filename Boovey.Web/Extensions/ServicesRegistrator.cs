@@ -1,9 +1,9 @@
 ﻿namespace Boovey.Web.Extensions
 {
-    using Microsoft.Extensions.DependencyInjection;
     using System.Reflection;
+    using Microsoft.Extensions.DependencyInjection;
     using Constants;
-    using Boovey.Services;
+    using Services;
     using Services.Managers;
     using Services.Interfaces;
 
