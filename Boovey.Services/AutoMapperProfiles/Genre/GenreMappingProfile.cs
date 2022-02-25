@@ -1,9 +1,9 @@
 ﻿namespace Boovey.Services.AutoMapperProfiles.Genre
 {
+    using System;
     using AutoMapper;
     using Data.Entities;
     using Models.Requests;
-    using System;
 
     public class GenreMappingProfile : Profile
     {

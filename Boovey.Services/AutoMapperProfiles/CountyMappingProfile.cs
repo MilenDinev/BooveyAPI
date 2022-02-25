@@ -1,10 +1,7 @@
 ﻿namespace Boovey.Services.AutoMapperProfiles.Book
 {
     using AutoMapper;
-    using Boovey.Data.Entities;
-    using Data.Entities.Books;
-    using Models.Requests;
-    using Models.Responses.BookModels;
+    using Data.Entities;
 
     public class CountyMappingProfile : Profile
     {

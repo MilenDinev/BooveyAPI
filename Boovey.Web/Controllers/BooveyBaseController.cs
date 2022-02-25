@@ -3,9 +3,9 @@
     using System;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Constants;
     using Data.Entities;
     using Services.Interfaces;
-    using Boovey.Web.Constants;
 
     public class BooveyBaseController : ControllerBase
     {

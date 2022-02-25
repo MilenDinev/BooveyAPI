@@ -6,8 +6,8 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
     using Services.Interfaces;
+    using Models.Requests;
     using Models.Responses.UserModels;
-    using Boovey.Models.Requests;
 
     [Route("api/[controller]")]
     [ApiController]
