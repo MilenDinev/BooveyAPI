@@ -1,6 +1,7 @@
 ﻿namespace Boovey.Services
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
@@ -63,6 +64,32 @@
             await this.dbContext.SaveChangesAsync();
 
             return mapper.Map<AddedBookModel>(book);
+        }
+
+        public async Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser)
+        {
+            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
+                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Book)));
+
+            var isAlreadyFavoriteBook = currentUser.FavoriteBooks.FirstOrDefault(b => b.Id == bookId);
+
+            if (isAlreadyFavoriteBook != null)
+                throw new ArgumentException(string.Format(ErrorMessages.IsAlreadyFavorite, nameof(Book), book.Title));
+
+            currentUser.FavoriteBooks.Add(book);
+
+            foreach (var genre in book.Genres)
+            {
+                var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(g => g.Id == genre.Id);
+                if (isAlreadyFavoriteGenre == null)
+                {
+                    currentUser.FavoriteGenres.Add(genre);
+                }
+
+            }
+
+            await dbContext.SaveChangesAsync();
+            return mapper.Map<AddedFavoriteBookModel>(book);
         }
 
         public async Task<ICollection<BooksListingModel>> GetAllBooksAsync()
