@@ -1,17 +1,17 @@
 ﻿namespace Boovey.Services
 {
+    using System;
+    using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
+    using Constants;
     using Data;
-    using System.Threading.Tasks;
-    using Boovey.Models.Responses.BookModels;
-    using Boovey.Models.Requests;
-    using Microsoft.EntityFrameworkCore;
-    using Boovey.Services.Constants;
-    using System;
-    using Boovey.Data.Entities.Books;
-    using System.Collections.Generic;
-    using Boovey.Data.Entities;
+    using Data.Entities;
+    using Data.Entities.Books;
+    using Models.Requests;
+    using Models.Responses.BookModels;
 
     public class BookService : IBookService
     {
@@ -23,15 +23,16 @@
             this.mapper = mapper;
         }
 
-        public async Task<AddedBookModel> AddAsync(AddBookModel bookModel)
+        public async Task<AddedBookModel> AddAsync(AddBookModel bookModel, int currentUserId)
         {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.ISBN == bookModel.ISBN && b.Title == bookModel.Title);
+            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.ISBN == bookModel.ISBN || b.Title == bookModel.Title);
             if (book != null)
                 throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Book), bookModel.Title));
 
             book = mapper.Map<Book>(bookModel);
 
-            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Name == bookModel.Country);
+            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Name == bookModel.Country) 
+                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country))); 
             book.Country = country;
 
             var authors = new List<Author>();
@@ -55,6 +56,8 @@
 
             var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Name.ToLower() == bookModel.Publisher.Name.ToLower()) ?? mapper.Map<Publisher>(bookModel.Publisher);
             book.Publisher = publisher;
+            book.CreatorId = currentUserId;
+            book.LastModifierId = currentUserId;
 
             await this.dbContext.Books.AddAsync(book);
             await this.dbContext.SaveChangesAsync();
