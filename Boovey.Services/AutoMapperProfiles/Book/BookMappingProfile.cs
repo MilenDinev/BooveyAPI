@@ -1,12 +1,11 @@
 ﻿namespace Boovey.Services.AutoMapperProfiles.Book
 {
+    using System;
+    using System.Linq;
     using AutoMapper;
-    using Boovey.Data.Entities;
     using Data.Entities.Books;
     using Models.Requests;
     using Models.Responses.BookModels;
-    using System;
-    using System.Linq;
 
     public class BookMappingProfile : Profile
     {
@@ -31,6 +30,9 @@
             .ForMember(m => m.Authors, e => e.MapFrom(b => string.Join(", ", b.Authors.Select(a => a.FirstName + " " + a.LastName))))
             .ForMember(m => m.Genres, e => e.MapFrom(b => string.Join(", ", b.Genres.Select(g => g.Title))))
             .ForMember(m => m.Publisher, e => e.MapFrom(p => p.Publisher.Name));
+            this.CreateMap<Book, AddedFavoriteBookModel>()
+            .ForMember(m => m.Title, e => e.MapFrom(b => b.Title))
+            .ForMember(m => m.Username, e => e.MapFrom(b => b.FavoriteByUsers.Select(u => u.UserName).LastOrDefault()));
         }
     }
 }
