@@ -19,7 +19,6 @@
         public string Title { get; set; }
         public int Pages { get; set; }
         public DateTime PublicationDate { get; set; }
-        public string ISBN { get; set; }
         public int CountryId { get; set; }
         public virtual Country Country { get; set; }
         public string Description { get; set; }

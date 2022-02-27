@@ -26,7 +26,7 @@
 
         public async Task<AddedBookModel> AddAsync(AddBookModel bookModel, int currentUserId)
         {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.ISBN == bookModel.ISBN || b.Title == bookModel.Title);
+            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Title == bookModel.Title);
             if (book != null)
                 throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Book), bookModel.Title));
 
@@ -39,8 +39,7 @@
             var authors = new List<Author>();
             foreach (var authorModel in bookModel.Authors)
             {
-                var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.FirstName.ToLower() == authorModel.FirstName.ToLower()
-                && a.LastName.ToLower() == authorModel.LastName.ToLower()) ?? mapper.Map<Author>(authorModel);
+                var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Fullname.ToLower() == authorModel.Fullname.ToLower()) ?? mapper.Map<Author>(authorModel);
                 authors.Add(author);
             }
 

@@ -31,7 +31,7 @@
         public async Task<ActionResult> Add(AddBookModel bookInput)
         {
             await GetCurrentUserAsync();
-            var addedBook = await this.bookService.AddAsync(bookInput, 1);
+            var addedBook = await this.bookService.AddAsync(bookInput, CurrentUser.Id);
             return CreatedAtAction(nameof(Get), "Books", new { title = addedBook.Title }, addedBook);
         }
 

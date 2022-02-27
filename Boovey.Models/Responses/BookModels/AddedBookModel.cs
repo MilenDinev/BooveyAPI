@@ -8,7 +8,6 @@
         public int Pages { get; set; }
         public string Publisher { get; set; }
         public string PublicationDate { get; set; }
-        public string ISBN { get; set; }
         public string Country { get; set; }
         public string Description { get; set; }
     }
