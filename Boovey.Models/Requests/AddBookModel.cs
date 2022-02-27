@@ -16,11 +16,6 @@
         public string Title { get; set; }
         public int Pages { get; set; }
         public string PublicationDate { get; set; }
-
-
-        [Required(ErrorMessage = ErrorMessages.ISBNRequiredProperty)]
-        [RegularExpression(BookModelConstants.ISBNValidation,ErrorMessage = ErrorMessages.InvalidISBNProperty)]
-        public string ISBN { get; set; }
         public string Country { get; set; }
         public string Description { get; set; }
         public AddPublisherModel Publisher  { get; set; }
