@@ -8,6 +8,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Data.Entities;
+    using SampleSeeders;
 
     [ExcludeFromCodeCoverage]
     public static class DatabaseSeeder
@@ -27,7 +28,10 @@
                     await CountriesSeeder.SeedCountriesAsync(context);
                     await RolesSeeder.SeedRolesAsync(roleManager);
                     await UsersSeeder.SeedUsersAsync(userManager);
-                  //await SamplesSeeder.SeedSample(context, userManager);
+                    await AuthorsSampleSeeder.Seed(context);
+                    await GenresSampleSeeder.Seed(context);
+                    await PublishersSampleSeeder.Seed(context);
+                    await BooksSampleSeeder.Seed(context);
                 }
             }
         }
