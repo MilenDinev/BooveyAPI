@@ -2,7 +2,7 @@
 {
     public class AddAuthorModel
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string Fullname { get; set; }
+        public string Summary { get; set; }
     }
 }
