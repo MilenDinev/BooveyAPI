@@ -9,7 +9,9 @@
     public interface IBookService
     {
         Task<AddedBookModel> AddAsync(AddBookModel bookModel, int currentUserId);
+        Task<EditedBookModel> EditAsync(int bookId, EditBookModel bookModel, int currentUserId);
         Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser);
+        Task<RemovedFavoriteBookModel> RemoveFavoriteBook(int bookId, User currentUser);
         Task<ICollection<BooksListingModel>> GetAllBooksAsync();
     }
 }
