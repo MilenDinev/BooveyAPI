@@ -35,12 +35,28 @@
             return CreatedAtAction(nameof(Get), "Books", new { title = addedBook.Title }, addedBook);
         }
 
-        [HttpPut("Add-Favorite/{bookId}")]
-        public async Task<ActionResult> AddFavorite(int bookId)
+        [HttpPut("Edit/{bookId}")]
+        public async Task<ActionResult<EditedBookModel>> Edit(EditBookModel bookInput, int bookId)
         {
             await GetCurrentUserAsync();
-            var addedBook = await this.bookService.AddFavoriteBook(bookId, CurrentUser);
-            return CreatedAtAction(nameof(Get), "Books", new { title = addedBook.Title }, addedBook);
+            var editedBook = await this.bookService.EditAsync(bookId, bookInput, CurrentUser.Id);
+            return editedBook;
+        }
+
+        [HttpPut("Add-To-Favorites/{bookId}")]
+        public async Task<AddedFavoriteBookModel> AddFavorite(int bookId)
+        {
+            await GetCurrentUserAsync();
+            var addedFavoriteBook = await this.bookService.AddFavoriteBook(bookId, CurrentUser);
+            return addedFavoriteBook;
+        }
+
+        [HttpPut("Remove-From-Favorites/{bookId}")]
+        public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId)
+        {
+            await GetCurrentUserAsync();
+            var removedFavoriteBook = await this.bookService.RemoveFavoriteBook(bookId, CurrentUser);
+            return removedFavoriteBook;
         }
     }
 }

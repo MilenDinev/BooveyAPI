@@ -1,8 +1,6 @@
 ﻿namespace Boovey.Models.Requests
 {
-    using Boovey.Models.Constants;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
 
     public class AddBookModel
     {

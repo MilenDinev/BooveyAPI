@@ -1,6 +1,5 @@
 ﻿namespace Boovey.Data.Entities
 {
-    using System;
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Identity;
     using Books;

@@ -4,7 +4,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Constants;
 
-    public static class AuthenticationConfiguration
+    public static class AuthenticationConfigurator
     {
         public static void AddAuthenticationConfig(this IServiceCollection services)
         {
