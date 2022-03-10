@@ -19,11 +19,11 @@
             .ForMember(e => e.Genres, m => m.Ignore())
             .ForMember(e => e.Authors, m => m.Ignore());
             this.CreateMap<Book, AddedBookModel>()
-            .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name))
             .ForMember(m => m.Authors, e => e.MapFrom(b => string.Join(", ", b.Authors.Select(a => a.Fullname))))
             .ForMember(m => m.Genres, e => e.MapFrom(b => string.Join(", ", b.Genres.Select(g => g.Title))))
             .ForMember(m => m.Publisher, e => e.MapFrom(b => b.Publisher.Name))
-            .ForMember(m => m.PublicationDate, e => e.MapFrom(b => b.PublicationDate.ToString("dd-MM-yyyy")));
+            .ForMember(m => m.PublicationDate, e => e.MapFrom(b => b.PublicationDate.ToString("dd-MM-yyyy")))
+            .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name));
             this.CreateMap<Book, BooksListingModel>()
             .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name))
             .ForMember(m => m.PublicationDate, e => e.MapFrom(b => b.PublicationDate.ToString("dd-MM-yyyy")))
@@ -31,8 +31,14 @@
             .ForMember(m => m.Genres, e => e.MapFrom(b => string.Join(", ", b.Genres.Select(g => g.Title))))
             .ForMember(m => m.Publisher, e => e.MapFrom(p => p.Publisher.Name));
             this.CreateMap<Book, AddedFavoriteBookModel>()
-            .ForMember(m => m.Title, e => e.MapFrom(b => b.Title))
             .ForMember(m => m.Username, e => e.MapFrom(b => b.FavoriteByUsers.Select(u => u.UserName).LastOrDefault()));
+            this.CreateMap<Book, RemovedFavoriteBookModel>();
+            this.CreateMap<Book, EditedBookModel>()
+            .ForMember(m => m.Authors, e => e.MapFrom(b => string.Join(", ", b.Authors.Select(a => a.Fullname))))
+            .ForMember(m => m.Genres, e => e.MapFrom(b => string.Join(", ", b.Genres.Select(g => g.Title))))
+            .ForMember(m => m.PublicationDate, e => e.MapFrom(b => b.PublicationDate.ToString("dd-MM-yyyy")))
+            .ForMember(m => m.Publisher, e => e.MapFrom(b => b.Publisher.Name))
+            .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name));
         }
     }
 }
