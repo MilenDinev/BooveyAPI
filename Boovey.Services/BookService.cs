@@ -72,14 +72,14 @@
         public async Task<EditedBookModel> EditAsync(int bookId, EditBookModel bookModel, int currentUserId)
         {
             var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
-               ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Book), bookModel.Title));
+               ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
 
-            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Name == bookModel.Country)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), bookModel.Country));
+            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == bookModel.CountryId)
+                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), bookModel.CountryId));
             book.Country = country;
 
             var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Id == bookModel.PublisherId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Publisher), bookModel.PublisherId));
+                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), bookModel.PublisherId));
 
             var isValidDate = DateTime.TryParseExact(bookModel.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
 
@@ -104,7 +104,7 @@
         public async Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser)
         {
             var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Book)));
+                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
 
             var isAlreadyFavoriteBook = currentUser.FavoriteBooks.FirstOrDefault(b => b.Id == bookId);
 
@@ -130,7 +130,7 @@
         public async Task<RemovedFavoriteBookModel> RemoveFavoriteBook(int bookId, User currentUser)
         {
             var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Book)));
+                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
 
             var isAlreadyFavoriteBook = currentUser.FavoriteBooks.FirstOrDefault(b => b.Id == bookId);
 
