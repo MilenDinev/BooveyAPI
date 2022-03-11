@@ -1,8 +1,8 @@
 ﻿namespace Boovey.Data.Configurations.User
 {
+    using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
-    using System.Collections.Generic;
     using Entities;
     using Entities.Books;
 

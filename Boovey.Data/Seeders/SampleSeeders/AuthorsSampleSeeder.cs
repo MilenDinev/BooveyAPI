@@ -3,6 +3,7 @@
     using System;
     using Entities.Books;
     using System.Threading.Tasks;
+
     public static class AuthorsSampleSeeder
     {
         public static async Task Seed(BooveyDbContext context)

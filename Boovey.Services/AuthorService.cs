@@ -1,6 +1,7 @@
 ﻿namespace Boovey.Services
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,6 @@
     using Data.Entities.Books;
     using Models.Requests;
     using Models.Responses.AuthorModels;
-    using System.Linq;
 
     public class AuthorService : IAuthorService
     {

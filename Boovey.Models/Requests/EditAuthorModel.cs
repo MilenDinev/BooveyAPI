@@ -1,5 +1,4 @@
-﻿using System;
-namespace Boovey.Models.Requests
+﻿namespace Boovey.Models.Requests
 {
     public class EditAuthorModel
     {

@@ -1,14 +1,13 @@
-﻿using Boovey.Models.Requests;
-using Boovey.Models.Responses.AuthorModels;
-using Boovey.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Boovey.Web.Controllers
+﻿namespace Boovey.Web.Controllers
 {
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore.Mvc;
+    using Services.Interfaces;
+    using Models.Requests;
+    using Models.Responses.AuthorModels;
+
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorsController : BooveyBaseController
