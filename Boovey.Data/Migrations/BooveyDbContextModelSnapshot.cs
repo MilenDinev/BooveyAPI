@@ -86,9 +86,6 @@ namespace Boovey.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CountryId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -108,8 +105,6 @@ namespace Boovey.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
 
                     b.ToTable("Authors");
                 });
@@ -241,9 +236,6 @@ namespace Boovey.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AuthorId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -260,8 +252,6 @@ namespace Boovey.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
 
                     b.ToTable("Genres");
                 });
@@ -832,17 +822,6 @@ namespace Boovey.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Boovey.Data.Entities.Books.Author", b =>
-                {
-                    b.HasOne("Boovey.Data.Entities.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-                });
-
             modelBuilder.Entity("Boovey.Data.Entities.Books.Book", b =>
                 {
                     b.HasOne("Boovey.Data.Entities.Country", "Country")
@@ -869,13 +848,6 @@ namespace Boovey.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Boovey.Data.Entities.Genre", b =>
-                {
-                    b.HasOne("Boovey.Data.Entities.Books.Author", null)
-                        .WithMany("Genres")
-                        .HasForeignKey("AuthorId");
                 });
 
             modelBuilder.Entity("Boovey.Data.Entities.Quote", b =>
@@ -1063,11 +1035,6 @@ namespace Boovey.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Boovey.Data.Entities.Books.Author", b =>
-                {
-                    b.Navigation("Genres");
                 });
 
             modelBuilder.Entity("Boovey.Data.Entities.Books.Book", b =>
