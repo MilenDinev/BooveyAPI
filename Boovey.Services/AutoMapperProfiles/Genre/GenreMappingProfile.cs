@@ -10,8 +10,8 @@
         public GenreMappingProfile()
         {
             this.CreateMap<AddGenreModel, Genre>()
-            .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
-            .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
+                .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
+                .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
         }
     }
 }
