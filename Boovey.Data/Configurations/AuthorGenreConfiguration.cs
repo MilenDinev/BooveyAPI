@@ -12,7 +12,7 @@
         {
             builder.HasMany(a => a.Genres)
              .WithMany(g => g.Authors)
-                .UsingEntity<Dictionary<string, object>>("AuthorsGenres",
+                .UsingEntity<Dictionary<string, object>>("AuthorGenres",
                 x => x.HasOne<Genre>().WithMany().HasForeignKey("GenreId")
                       .OnDelete(DeleteBehavior.Restrict),
                 x => x.HasOne<Author>().WithMany().HasForeignKey("AuthorId")
