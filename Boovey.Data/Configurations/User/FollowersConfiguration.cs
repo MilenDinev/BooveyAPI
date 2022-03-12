@@ -5,16 +5,16 @@
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
     using Data.Entities;
 
-    public class UserFollowingConfiguration : IEntityTypeConfiguration<User>
+    public class FollowersConfiguration : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasMany(f => f.Following)
-             .WithMany(u => u.Followers)
-                .UsingEntity<Dictionary<string, object>>("UsersFollowing",
-                x => x.HasOne<User>().WithMany().HasForeignKey("UserId")
+            builder.HasMany(f => f.Followers)
+             .WithMany(u => u.Following)
+                .UsingEntity<Dictionary<string, object>>("Follows",
+                x => x.HasOne<User>().WithMany().HasForeignKey("FollowerId")
                       .OnDelete(DeleteBehavior.Restrict),
-                x => x.HasOne<User>().WithMany().HasForeignKey("FollowingId")
+                x => x.HasOne<User>().WithMany().HasForeignKey("FollowedId")
                       .OnDelete(DeleteBehavior.Restrict));
         }
     }
