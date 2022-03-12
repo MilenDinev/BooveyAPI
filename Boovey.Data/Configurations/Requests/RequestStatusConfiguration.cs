@@ -1,4 +1,4 @@
-﻿namespace Boovey.Data.Configurations.Request
+﻿namespace Boovey.Data.Configurations.Requests
 {
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;

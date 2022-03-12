@@ -1,4 +1,4 @@
-﻿namespace Boovey.Data.Configurations.User
+﻿namespace Boovey.Data.Configurations.Users
 {
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;

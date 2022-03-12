@@ -1,4 +1,4 @@
-﻿namespace Boovey.Data.Configurations.Book
+﻿namespace Boovey.Data.Configurations.Books
 {
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@
         {
             builder.HasMany(s => s.Books)
              .WithMany(b => b.Shelves)
-                .UsingEntity<Dictionary<string, object>>("BooksShelves",
+                .UsingEntity<Dictionary<string, object>>("BookShelves",
                 x => x.HasOne<Book>().WithMany().HasForeignKey("BookId")
                       .OnDelete(DeleteBehavior.Restrict),
                 x => x.HasOne<Shelve>().WithMany().HasForeignKey("ShelveId")
