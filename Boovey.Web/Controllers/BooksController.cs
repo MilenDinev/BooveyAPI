@@ -60,6 +60,14 @@
             return assignedGenreModel;
         }
 
+        [HttpPut("Assign/Book/{bookId}/Publisher/{publisherId}")]
+        public async Task<AssignedPublisherBookModel> AssignPublisher(int bookId, int publisherId)
+        {
+            await GetCurrentUserAsync();
+            var assignedPublisherModel = await this.bookService.AssignPublisherAsync(bookId, publisherId, CurrentUser.Id);
+            return assignedPublisherModel;
+        }
+
         [HttpPut("Add-To-Favorites/{bookId}")]
         public async Task<AddedFavoriteBookModel> AddFavorite(int bookId)
         {
