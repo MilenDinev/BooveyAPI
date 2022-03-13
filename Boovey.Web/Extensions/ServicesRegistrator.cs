@@ -15,6 +15,7 @@
             services.AddTransient<IUserManager, BooveyUserManager>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IBookService, BookService>();
+            services.AddTransient<IAuthorService, AuthorService>();
             services.AddHttpContextAccessor();
         }
     }

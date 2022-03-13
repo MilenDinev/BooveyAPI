@@ -4,14 +4,16 @@ using Boovey.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Boovey.Data.Migrations
 {
     [DbContext(typeof(BooveyDbContext))]
-    partial class BooveyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220311190815_DeletedPropertyAddedFixingFollowingRelations")]
+    partial class DeletedPropertyAddedFixingFollowingRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,22 +21,7 @@ namespace Boovey.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.12")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("AuthorBooks", b =>
-                {
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AuthorId", "BookId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("AuthorBooks");
-                });
-
-            modelBuilder.Entity("AuthorGenres", b =>
+            modelBuilder.Entity("AuthorsGenres", b =>
                 {
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
@@ -46,10 +33,25 @@ namespace Boovey.Data.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("AuthorGenres");
+                    b.ToTable("AuthorsGenres");
                 });
 
-            modelBuilder.Entity("BookGenres", b =>
+            modelBuilder.Entity("BooksAuthors", b =>
+                {
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("BooksAuthors");
+                });
+
+            modelBuilder.Entity("BooksGenres", b =>
                 {
                     b.Property<int>("BookId")
                         .HasColumnType("int");
@@ -61,10 +63,10 @@ namespace Boovey.Data.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("BookGenres");
+                    b.ToTable("BooksGenres");
                 });
 
-            modelBuilder.Entity("BookShelves", b =>
+            modelBuilder.Entity("BooksShelves", b =>
                 {
                     b.Property<int>("BookId")
                         .HasColumnType("int");
@@ -76,10 +78,10 @@ namespace Boovey.Data.Migrations
 
                     b.HasIndex("ShelveId");
 
-                    b.ToTable("BookShelves");
+                    b.ToTable("BooksShelves");
                 });
 
-            modelBuilder.Entity("BookUsers", b =>
+            modelBuilder.Entity("BooksUsers", b =>
                 {
                     b.Property<int>("BookId")
                         .HasColumnType("int");
@@ -91,7 +93,7 @@ namespace Boovey.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BookUsers");
+                    b.ToTable("BooksUsers");
                 });
 
             modelBuilder.Entity("Boovey.Data.Entities.Books.Author", b =>
@@ -805,22 +807,7 @@ namespace Boovey.Data.Migrations
                     b.ToTable("UsersQuotes");
                 });
 
-            modelBuilder.Entity("AuthorBooks", b =>
-                {
-                    b.HasOne("Boovey.Data.Entities.Books.Author", null)
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Boovey.Data.Entities.Books.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AuthorGenres", b =>
+            modelBuilder.Entity("AuthorsGenres", b =>
                 {
                     b.HasOne("Boovey.Data.Entities.Books.Author", null)
                         .WithMany()
@@ -835,7 +822,22 @@ namespace Boovey.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookGenres", b =>
+            modelBuilder.Entity("BooksAuthors", b =>
+                {
+                    b.HasOne("Boovey.Data.Entities.Books.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Boovey.Data.Entities.Books.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BooksGenres", b =>
                 {
                     b.HasOne("Boovey.Data.Entities.Books.Book", null)
                         .WithMany()
@@ -850,7 +852,7 @@ namespace Boovey.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookShelves", b =>
+            modelBuilder.Entity("BooksShelves", b =>
                 {
                     b.HasOne("Boovey.Data.Entities.Books.Book", null)
                         .WithMany()
@@ -865,7 +867,7 @@ namespace Boovey.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookUsers", b =>
+            modelBuilder.Entity("BooksUsers", b =>
                 {
                     b.HasOne("Boovey.Data.Entities.Books.Book", null)
                         .WithMany()

@@ -9,8 +9,10 @@
 
     public interface IUserService
     {
-        Task<User> GetCurrentUserAsync(ClaimsPrincipal principal);
-        Task<ICollection<UsersListingModel>> GetAllUsersAsync();
         Task<RegisteredUserModel> CreateAsync(RegistrationModel userRequestModel);
+        Task<FollowerModel> Follow(User follower, int followedId);
+        Task<User> GetCurrentUserAsync(ClaimsPrincipal principal);
+        Task<UsersListingModel> ListUserByIdAsync(int userId);
+        Task<ICollection<UsersListingModel>> GetAllUsersAsync();
     }
 }

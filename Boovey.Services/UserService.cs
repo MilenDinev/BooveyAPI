@@ -53,5 +53,33 @@
             var usersResponceDto = this.mapper.Map<ICollection<UsersListingModel>>(users);
             return usersResponceDto.ToList();
         }
+
+        public async Task<FollowerModel> Follow(User follower, int followedId)
+        {
+            if (follower.Id == followedId)
+                throw new ArgumentException(ErrorMessages.FollowingItSelf);
+
+            var followed = await GetUserByIdAsync(followedId);
+            if (follower.Following.Contains(followed))
+                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFollowing, nameof(User), followed.UserName));
+           
+            follower.Following.Add(followed);
+
+            await dbContext.SaveChangesAsync();
+            return this.mapper.Map<FollowerModel>(follower);
+        }
+
+        public async Task<UsersListingModel> ListUserByIdAsync(int userId)
+        {
+            return this.mapper.Map<UsersListingModel>(await GetUserByIdAsync(userId));
+        }
+
+        private async Task<User> GetUserByIdAsync(int userId)
+        {
+            var user = await this.userManager.FindByIdAsync(userId.ToString())
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), userId));
+
+            return user;
+        }
     }
 }

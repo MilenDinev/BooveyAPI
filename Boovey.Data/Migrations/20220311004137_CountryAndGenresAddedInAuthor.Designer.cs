@@ -4,14 +4,16 @@ using Boovey.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Boovey.Data.Migrations
 {
     [DbContext(typeof(BooveyDbContext))]
-    partial class BooveyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220311004137_CountryAndGenresAddedInAuthor")]
+    partial class CountryAndGenresAddedInAuthor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,22 +21,7 @@ namespace Boovey.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.12")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("AuthorBooks", b =>
-                {
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AuthorId", "BookId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("AuthorBooks");
-                });
-
-            modelBuilder.Entity("AuthorGenres", b =>
+            modelBuilder.Entity("AuthorsGenres", b =>
                 {
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
@@ -46,10 +33,25 @@ namespace Boovey.Data.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("AuthorGenres");
+                    b.ToTable("AuthorsGenres");
                 });
 
-            modelBuilder.Entity("BookGenres", b =>
+            modelBuilder.Entity("BooksAuthors", b =>
+                {
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("BooksAuthors");
+                });
+
+            modelBuilder.Entity("BooksGenres", b =>
                 {
                     b.Property<int>("BookId")
                         .HasColumnType("int");
@@ -61,10 +63,10 @@ namespace Boovey.Data.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("BookGenres");
+                    b.ToTable("BooksGenres");
                 });
 
-            modelBuilder.Entity("BookShelves", b =>
+            modelBuilder.Entity("BooksShelves", b =>
                 {
                     b.Property<int>("BookId")
                         .HasColumnType("int");
@@ -76,10 +78,10 @@ namespace Boovey.Data.Migrations
 
                     b.HasIndex("ShelveId");
 
-                    b.ToTable("BookShelves");
+                    b.ToTable("BooksShelves");
                 });
 
-            modelBuilder.Entity("BookUsers", b =>
+            modelBuilder.Entity("BooksUsers", b =>
                 {
                     b.Property<int>("BookId")
                         .HasColumnType("int");
@@ -91,7 +93,7 @@ namespace Boovey.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BookUsers");
+                    b.ToTable("BooksUsers");
                 });
 
             modelBuilder.Entity("Boovey.Data.Entities.Books.Author", b =>
@@ -109,9 +111,6 @@ namespace Boovey.Data.Migrations
 
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Fullname")
                         .HasColumnType("nvarchar(max)");
@@ -150,9 +149,6 @@ namespace Boovey.Data.Migrations
 
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -197,9 +193,6 @@ namespace Boovey.Data.Migrations
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("LastModifiedOn")
                         .HasColumnType("datetime2");
 
@@ -226,9 +219,6 @@ namespace Boovey.Data.Migrations
 
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -274,9 +264,6 @@ namespace Boovey.Data.Migrations
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("LastModifiedOn")
                         .HasColumnType("datetime2");
 
@@ -310,9 +297,6 @@ namespace Boovey.Data.Migrations
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("LastModifiedOn")
                         .HasColumnType("datetime2");
 
@@ -344,9 +328,6 @@ namespace Boovey.Data.Migrations
 
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -392,9 +373,6 @@ namespace Boovey.Data.Migrations
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("LastModifiedOn")
                         .HasColumnType("datetime2");
 
@@ -414,7 +392,6 @@ namespace Boovey.Data.Migrations
                             Id = 1,
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatorId = 0,
-                            Deleted = false,
                             LastModifiedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifierId = 0,
                             State = "Approved"
@@ -424,7 +401,6 @@ namespace Boovey.Data.Migrations
                             Id = 2,
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatorId = 0,
-                            Deleted = false,
                             LastModifiedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifierId = 0,
                             State = "Pending"
@@ -434,7 +410,6 @@ namespace Boovey.Data.Migrations
                             Id = 3,
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatorId = 0,
-                            Deleted = false,
                             LastModifiedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifierId = 0,
                             State = "Rejected"
@@ -453,9 +428,6 @@ namespace Boovey.Data.Migrations
 
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -476,7 +448,6 @@ namespace Boovey.Data.Migrations
                             Id = 1,
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatorId = 0,
-                            Deleted = false,
                             LastModifiedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifierId = 0,
                             Type = "Friend"
@@ -486,7 +457,6 @@ namespace Boovey.Data.Migrations
                             Id = 2,
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatorId = 0,
-                            Deleted = false,
                             LastModifiedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifierId = 0,
                             Type = "Follow"
@@ -511,9 +481,6 @@ namespace Boovey.Data.Migrations
 
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -552,9 +519,6 @@ namespace Boovey.Data.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -613,21 +577,6 @@ namespace Boovey.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("Follows", b =>
-                {
-                    b.Property<int>("FollowedId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FollowerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("FollowedId", "FollowerId");
-
-                    b.HasIndex("FollowerId");
-
-                    b.ToTable("Follows");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -775,6 +724,36 @@ namespace Boovey.Data.Migrations
                     b.ToTable("UsersAuthors");
                 });
 
+            modelBuilder.Entity("UsersFollowers", b =>
+                {
+                    b.Property<int>("FollowerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FollowerId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UsersFollowers");
+                });
+
+            modelBuilder.Entity("UsersFollowing", b =>
+                {
+                    b.Property<int>("FollowingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FollowingId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UsersFollowing");
+                });
+
             modelBuilder.Entity("UsersGenres", b =>
                 {
                     b.Property<int>("GenreId")
@@ -805,22 +784,7 @@ namespace Boovey.Data.Migrations
                     b.ToTable("UsersQuotes");
                 });
 
-            modelBuilder.Entity("AuthorBooks", b =>
-                {
-                    b.HasOne("Boovey.Data.Entities.Books.Author", null)
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Boovey.Data.Entities.Books.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AuthorGenres", b =>
+            modelBuilder.Entity("AuthorsGenres", b =>
                 {
                     b.HasOne("Boovey.Data.Entities.Books.Author", null)
                         .WithMany()
@@ -835,7 +799,22 @@ namespace Boovey.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookGenres", b =>
+            modelBuilder.Entity("BooksAuthors", b =>
+                {
+                    b.HasOne("Boovey.Data.Entities.Books.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Boovey.Data.Entities.Books.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BooksGenres", b =>
                 {
                     b.HasOne("Boovey.Data.Entities.Books.Book", null)
                         .WithMany()
@@ -850,7 +829,7 @@ namespace Boovey.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookShelves", b =>
+            modelBuilder.Entity("BooksShelves", b =>
                 {
                     b.HasOne("Boovey.Data.Entities.Books.Book", null)
                         .WithMany()
@@ -865,7 +844,7 @@ namespace Boovey.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookUsers", b =>
+            modelBuilder.Entity("BooksUsers", b =>
                 {
                     b.HasOne("Boovey.Data.Entities.Books.Book", null)
                         .WithMany()
@@ -980,21 +959,6 @@ namespace Boovey.Data.Migrations
                     b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("Follows", b =>
-                {
-                    b.HasOne("Boovey.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("FollowedId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Boovey.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("FollowerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
@@ -1058,6 +1022,36 @@ namespace Boovey.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UsersFollowers", b =>
+                {
+                    b.HasOne("Boovey.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Boovey.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UsersFollowing", b =>
+                {
+                    b.HasOne("Boovey.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Boovey.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
