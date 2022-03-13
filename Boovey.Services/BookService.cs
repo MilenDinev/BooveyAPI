@@ -14,11 +14,13 @@
     using Data.Entities.Books;
     using Models.Requests;
     using Models.Responses.BookModels;
+    using Models.Responses.SharedModels;
 
     public class BookService : IBookService
     {
         private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
+
         public BookService(BooveyDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
@@ -27,11 +29,9 @@
 
         public async Task<AddedBookModel> AddAsync(AddBookModel bookModel, int currentUserId)
         {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Title == bookModel.Title);
-            if (book != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Book), bookModel.Title));
+            await AlreadyExistBookByTitleChecker(bookModel.Title);
 
-            book = mapper.Map<Book>(bookModel);
+            var book = mapper.Map<Book>(bookModel);
 
             var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Name == bookModel.Country)
                 ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), bookModel.Country));
@@ -40,7 +40,7 @@
             var authors = new List<Author>();
             foreach (var authorModel in bookModel.Authors)
             {
-                var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Fullname.ToLower() == authorModel.Fullname.ToLower()) 
+                var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Fullname.ToLower() == authorModel.Fullname.ToLower())
                     ?? mapper.Map<Author>(authorModel);
                 authors.Add(author);
             }
@@ -50,14 +50,14 @@
             var genres = new List<Genre>();
             foreach (var genreModel in bookModel.Genres)
             {
-                var genre = await this.dbContext.Genres.FirstOrDefaultAsync(g => g.Title.ToLower() == genreModel.Title.ToLower()) 
+                var genre = await this.dbContext.Genres.FirstOrDefaultAsync(g => g.Title.ToLower() == genreModel.Title.ToLower())
                     ?? mapper.Map<Genre>(genreModel);
                 genres.Add(genre);
             }
 
             book.Genres = genres;
 
-            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Name.ToLower() == bookModel.Publisher.Name.ToLower()) 
+            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Name.ToLower() == bookModel.Publisher.Name.ToLower())
                 ?? mapper.Map<Publisher>(bookModel.Publisher);
             book.Publisher = publisher;
             book.CreatorId = currentUserId;
@@ -68,18 +68,16 @@
 
             return mapper.Map<AddedBookModel>(book);
         }
-
         public async Task<EditedBookModel> EditAsync(int bookId, EditBookModel bookModel, int currentUserId)
         {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
-               ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
+            var book = await GetBookById(bookId);
 
             var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == bookModel.CountryId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), bookModel.CountryId));
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), bookModel.CountryId));
             book.Country = country;
 
             var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Id == bookModel.PublisherId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), bookModel.PublisherId));
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), bookModel.PublisherId));
 
             var isValidDate = DateTime.TryParseExact(bookModel.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
 
@@ -100,54 +98,130 @@
 
             return mapper.Map<EditedBookModel>(book);
         }
+        public async Task<AssignedAuthorBookModel> AssignAuthorAsync(int bookId, int authorId, int modifierId)
+        {
+            var book = await GetBookById(bookId);
+            var author = await GetAuthorById(authorId);
+            await AlreadyAssignedAuthorChecker(book, author);
 
+            book.Authors.Add(author);
+            book.LastModifiedOn = DateTime.UtcNow;
+            book.LastModifierId = modifierId;
+
+            await this.dbContext.SaveChangesAsync();
+
+            return this.mapper.Map<AssignedAuthorBookModel>(book);
+        }
+        public async Task<AssignedBookGenreModel> AssignGenreAsync(int bookId, int genreId, int modifierId)
+        {
+            var book = await GetBookById(bookId);
+            var genre = await GetGenreById(genreId);
+
+            await AlreadyAssignedGenreChecker(book, genre);
+
+            book.Genres.Add(genre);
+            book.LastModifiedOn = DateTime.UtcNow;
+            book.LastModifierId = modifierId;
+
+            await this.dbContext.SaveChangesAsync();
+
+            return this.mapper.Map<AssignedBookGenreModel>(book);
+        }
         public async Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser)
         {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
+            await AlreadyFavoriteBookChecker(bookId, currentUser);
 
-            var isAlreadyFavoriteBook = currentUser.FavoriteBooks.FirstOrDefault(b => b.Id == bookId);
-
-            if (isAlreadyFavoriteBook != null)
-                throw new ArgumentException(string.Format(ErrorMessages.IsAlreadyFavorite, nameof(Book), book.Title));
+            var book = await GetBookById(bookId);
 
             currentUser.FavoriteBooks.Add(book);
 
             foreach (var genre in book.Genres)
             {
-                var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(g => g.Id == genre.Id);
-                if (isAlreadyFavoriteGenre == null)
+                var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.Any(g => g.Id == genre.Id);
+                if (isAlreadyFavoriteGenre)
                 {
                     currentUser.FavoriteGenres.Add(genre);
                 }
-
             }
 
             await dbContext.SaveChangesAsync();
             return mapper.Map<AddedFavoriteBookModel>(book);
         }
-
         public async Task<RemovedFavoriteBookModel> RemoveFavoriteBook(int bookId, User currentUser)
         {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
+            await NotFavoriteBookChecker(bookId, currentUser);
 
-            var isAlreadyFavoriteBook = currentUser.FavoriteBooks.FirstOrDefault(b => b.Id == bookId);
-
-            if (isAlreadyFavoriteBook == null)
-                throw new ArgumentException(string.Format(ErrorMessages.IsNotFavorite, nameof(Book), book.Title));
+            var book = await GetBookById(bookId);
 
             currentUser.FavoriteBooks.Remove(book);
 
             await dbContext.SaveChangesAsync();
             return mapper.Map<RemovedFavoriteBookModel>(book);
         }
-
         public async Task<ICollection<BooksListingModel>> GetAllBooksAsync()
         {
             var books = await this.dbContext.Books.ToListAsync();
 
             return mapper.Map<ICollection<BooksListingModel>>(books);
+        }
+
+        private async Task AlreadyExistBookByTitleChecker(string bookTitle)
+        {
+            var IsbookAlreadyExists = await this.dbContext.Books.AnyAsync(b => b.Title == bookTitle)
+                ? throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Book), bookTitle)) : false;
+
+            await Task.Delay(300);
+        }
+        private async Task AlreadyFavoriteBookChecker(int bookId, User user)
+        {
+            var isAlreadyFavoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId) 
+                ? throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Book), bookId)) : false;
+
+            await Task.Delay(300);
+        }
+        private async Task NotFavoriteBookChecker(int bookId, User user)
+        {
+            var favoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId)
+                ? true : throw new KeyNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Book), bookId));
+
+            await Task.Delay(300);
+        }
+        private async Task<Book> GetBookById(int bookId)
+        {
+            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
+
+            return book;
+        }
+
+        private async Task<Author> GetAuthorById(int authorId)
+        {
+            var author = await this.dbContext.Authors.FirstOrDefaultAsync(b => b.Id == authorId)
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
+
+            return author;
+        }
+        private async Task<Genre> GetGenreById(int genreId)
+        {
+            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(g => g.Id == genreId)
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
+
+            return genre;
+        }
+
+        private async Task AlreadyAssignedAuthorChecker(Book book, Author author)
+        {
+            var IsAuthorAlreadyAssigned = book.Authors.Contains(author)
+                ? throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Author), author.Id, nameof(Book), book.Id)) : false;
+
+            await Task.Delay(300);
+        }
+        private async Task AlreadyAssignedGenreChecker(Book book, Genre genre)
+        {
+            var isGenreAlreadyAssigned = book.Genres.Contains(genre)
+                ? throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Genre), genre.Id, nameof(Book), book.Id)) : false;
+
+            await Task.Delay(300);
         }
     }
 }
