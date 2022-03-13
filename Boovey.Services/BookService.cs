@@ -98,35 +98,6 @@
 
             return mapper.Map<EditedBookModel>(book);
         }
-        public async Task<AssignedAuthorBookModel> AssignAuthorAsync(int bookId, int authorId, int modifierId)
-        {
-            var book = await GetBookById(bookId);
-            var author = await GetAuthorById(authorId);
-            await AlreadyAssignedAuthorChecker(book, author);
-
-            book.Authors.Add(author);
-            book.LastModifiedOn = DateTime.UtcNow;
-            book.LastModifierId = modifierId;
-
-            await this.dbContext.SaveChangesAsync();
-
-            return this.mapper.Map<AssignedAuthorBookModel>(book);
-        }
-        public async Task<AssignedBookGenreModel> AssignGenreAsync(int bookId, int genreId, int modifierId)
-        {
-            var book = await GetBookById(bookId);
-            var genre = await GetGenreById(genreId);
-
-            await AlreadyAssignedGenreChecker(book, genre);
-
-            book.Genres.Add(genre);
-            book.LastModifiedOn = DateTime.UtcNow;
-            book.LastModifierId = modifierId;
-
-            await this.dbContext.SaveChangesAsync();
-
-            return this.mapper.Map<AssignedBookGenreModel>(book);
-        }
         public async Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser)
         {
             await AlreadyFavoriteBookChecker(bookId, currentUser);
@@ -163,6 +134,51 @@
             var books = await this.dbContext.Books.ToListAsync();
 
             return mapper.Map<ICollection<BooksListingModel>>(books);
+        }
+
+        public async Task<AssignedAuthorBookModel> AssignAuthorAsync(int bookId, int authorId, int modifierId)
+        {
+            var book = await GetBookById(bookId);
+            var author = await GetAuthorById(authorId);
+            await AlreadyAssignedAuthorChecker(book, author);
+
+            book.Authors.Add(author);
+            book.LastModifiedOn = DateTime.UtcNow;
+            book.LastModifierId = modifierId;
+
+            await this.dbContext.SaveChangesAsync();
+
+            return this.mapper.Map<AssignedAuthorBookModel>(book);
+        }
+        public async Task<AssignedBookGenreModel> AssignGenreAsync(int bookId, int genreId, int modifierId)
+        {
+            var book = await GetBookById(bookId);
+            var genre = await GetGenreById(genreId);
+
+            await AlreadyAssignedGenreChecker(book, genre);
+
+            book.Genres.Add(genre);
+            book.LastModifiedOn = DateTime.UtcNow;
+            book.LastModifierId = modifierId;
+
+            await this.dbContext.SaveChangesAsync();
+
+            return this.mapper.Map<AssignedBookGenreModel>(book);
+        }
+        public async Task<AssignedPublisherBookModel> AssignPublisherAsync(int bookId, int publisherId, int modifierId)
+        {
+            var book = await GetBookById(bookId);
+            var publisher = await GetPublisherById(publisherId);
+
+            await AlreadyAssignedPublisherChecker(book, publisherId);
+
+            book.PublisherId = publisher.Id;
+            book.LastModifiedOn = DateTime.UtcNow;
+            book.LastModifierId = modifierId;
+
+            await this.dbContext.SaveChangesAsync();
+
+            return this.mapper.Map<AssignedPublisherBookModel>(book);
         }
 
         private async Task AlreadyExistBookByTitleChecker(string bookTitle)
@@ -208,6 +224,13 @@
 
             return genre;
         }
+        private async Task<Publisher> GetPublisherById(int publisherId)
+        {
+            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(g => g.Id == publisherId)
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), publisherId));
+
+            return publisher;
+        }
 
         private async Task AlreadyAssignedAuthorChecker(Book book, Author author)
         {
@@ -220,6 +243,13 @@
         {
             var isGenreAlreadyAssigned = book.Genres.Contains(genre)
                 ? throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Genre), genre.Id, nameof(Book), book.Id)) : false;
+
+            await Task.Delay(300);
+        }
+        private async Task AlreadyAssignedPublisherChecker(Book book, int publisherId)
+        {
+            var isPublisherAlreadyAssigned = book.PublisherId == publisherId
+                ? throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Publisher), publisherId, nameof(Book), book.Id)) : false;
 
             await Task.Delay(300);
         }
