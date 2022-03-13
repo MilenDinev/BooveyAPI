@@ -33,7 +33,7 @@
             author = mapper.Map<Author>(authorModel);
 
             var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == authorModel.CountryId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), authorModel.CountryId));
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), authorModel.CountryId));
             author.Country = country;
 
             author.CreatorId = currentUserId;
@@ -48,10 +48,10 @@
         public async Task<EditedAuthorModel> EditAsync(int authorId, EditAuthorModel authorModel, int currentUserId)
         {
             var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId)
-               ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
+               ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
 
             var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == authorModel.CountryId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), authorModel.CountryId));
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), authorModel.CountryId));
             author.Country = country;
 
             author.Fullname = authorModel.Fullname;
@@ -66,12 +66,12 @@
         public async Task<AddedFavoriteAuthorModel> AddFavoriteAuthor(int authorId, User currentUser)
         {
             var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
 
             var isAlreadyFavoriteAuthor = currentUser.FavoriteAuthors.FirstOrDefault(a => a.Id == authorId);
 
             if (isAlreadyFavoriteAuthor != null)
-                throw new ArgumentException(string.Format(ErrorMessages.IsAlreadyFavorite, nameof(Author), author.Fullname));
+                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Author), author.Fullname));
 
             currentUser.FavoriteAuthors.Add(author);
 
@@ -91,12 +91,12 @@
         public async Task<RemovedFavoriteAuthorModel> RemoveFavoriteAuthor(int authorId, User currentUser)
         {
             var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
+                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
 
             var isFavoriteAuthor = currentUser.FavoriteAuthors.FirstOrDefault(a => a.Id == authorId);
 
             if (isFavoriteAuthor == null)
-                throw new ArgumentException(string.Format(ErrorMessages.IsNotFavorite, nameof(Author), author.Fullname));
+                throw new KeyNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), author.Fullname));
 
             currentUser.FavoriteAuthors.Remove(author);
 
@@ -110,6 +110,7 @@
 
             return mapper.Map<ICollection<AuthorsListingModel>>(authors);
         }
+
     }
 }
 
