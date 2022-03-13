@@ -23,6 +23,7 @@
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public bool Deleted { get; set; }
         public virtual ICollection<Book> FavoriteBooks { get; set; }
         public virtual ICollection<Genre> FavoriteGenres { get; set; }
         public virtual ICollection<Author> FavoriteAuthors { get; set; }
