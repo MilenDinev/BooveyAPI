@@ -25,10 +25,19 @@
         }
 
         [HttpPost("Register/")]
-        public async Task<ActionResult> Post(RegistrationModel userInput)
+        public async Task<ActionResult> Register(RegistrationModel userInput)
         {
             var registeredUser = await this.userService.CreateAsync(userInput);
             return CreatedAtAction(nameof(Get), "Users", new { username = registeredUser.Username }, registeredUser);
         }
+
+        [HttpPut("Follow/{followedId}")]
+        public async Task<ActionResult<FollowerModel>> Follow(int followedId)
+        {
+            await GetCurrentUserAsync();
+            var followerFollowed = await this.userService.Follow(CurrentUser, followedId);
+            return followerFollowed;
+        }
+
     }
 }
