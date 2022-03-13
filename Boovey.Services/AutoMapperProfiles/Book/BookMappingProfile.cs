@@ -40,6 +40,9 @@
             this.CreateMap<Book, AssignedBookGenreModel>()
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.GenreId, e => e.MapFrom(b => b.Genres.Select(g => g.Id).LastOrDefault()));
+            this.CreateMap<Book, AssignedPublisherBookModel>()
+                .ForMember(m => m.PublisherId, e => e.MapFrom(b => b.PublisherId))
+                .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id));
             this.CreateMap<Book, BooksListingModel>()
                 .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name))
                 .ForMember(m => m.PublicationDate, e => e.MapFrom(b => b.PublicationDate.ToString("dd-MM-yyyy")))
