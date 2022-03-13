@@ -6,6 +6,7 @@
     using Data.Entities.Books;
     using Models.Requests;
     using Models.Responses.BookModels;
+    using Models.Responses.SharedModels;
 
     public class BookMappingProfile : Profile
     {
@@ -33,6 +34,12 @@
             this.CreateMap<Book, AddedFavoriteBookModel>()
                 .ForMember(m => m.Username, e => e.MapFrom(b => b.FavoriteByUsers.Select(u => u.UserName).LastOrDefault()));
             this.CreateMap<Book, RemovedFavoriteBookModel>();
+            this.CreateMap<Book, AssignedAuthorBookModel>()
+                .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
+                .ForMember(m => m.AuthorId, e => e.MapFrom(b => b.Authors.Select(a => a.Id).LastOrDefault()));
+            this.CreateMap<Book, AssignedBookGenreModel>()
+                .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
+                .ForMember(m => m.GenreId, e => e.MapFrom(b => b.Genres.Select(g => g.Id).LastOrDefault()));
             this.CreateMap<Book, BooksListingModel>()
                 .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name))
                 .ForMember(m => m.PublicationDate, e => e.MapFrom(b => b.PublicationDate.ToString("dd-MM-yyyy")))
