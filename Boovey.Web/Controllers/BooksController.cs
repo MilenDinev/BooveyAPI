@@ -8,7 +8,8 @@
     using Services.Interfaces;
     using Models.Requests;
     using Models.Responses.BookModels;
-   
+    using Models.Responses.SharedModels;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -41,6 +42,22 @@
             await GetCurrentUserAsync();
             var editedBook = await this.bookService.EditAsync(bookId, bookInput, CurrentUser.Id);
             return editedBook;
+        }
+
+        [HttpPut("Assign/{bookId}/Author/{authorId}")]
+        public async Task<AssignedAuthorBookModel> AssignAuthor(int bookId, int authorId)
+        {
+            await GetCurrentUserAsync();
+            var assignedAuthorModel = await this.bookService.AssignAuthorAsync(bookId, authorId, CurrentUser.Id);
+            return assignedAuthorModel;
+        }
+
+        [HttpPut("Assign/Book/{bookId}/Genre/{genreId}")]
+        public async Task<AssignedBookGenreModel> AssignGenre(int bookId, int genreId)
+        {
+            await GetCurrentUserAsync();
+            var assignedGenreModel = await this.bookService.AssignGenreAsync(bookId, genreId, CurrentUser.Id);
+            return assignedGenreModel;
         }
 
         [HttpPut("Add-To-Favorites/{bookId}")]
