@@ -10,8 +10,8 @@
     using Constants;
     using Data;
     using Data.Entities;
-    using Models.Responses.GenreModels;
     using Models.Requests.GenreModels;
+    using Models.Responses.GenreModels;
 
     public class GenreService : IGenreService
     {
@@ -27,7 +27,7 @@
 
         public async Task<AddedGenreModel> AddAsync(AddGenreModel genreModel, int currentUserId)
         {
-            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(a => a.Title == genreModel.Title);
+            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(p => p.Title == genreModel.Title);
             if (genre != null)
                 throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Genre), genreModel.Title));
 
@@ -77,7 +77,7 @@
             var isFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(g => g.Id == genreId);
 
             if (isFavoriteGenre == null)
-                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Genre), genre.Id));
+                throw new ArgumentException(string.Format(ErrorMessages.NotFavoriteId, nameof(Genre), genre.Id));
 
             currentUser.FavoriteGenres.Remove(genre);
 

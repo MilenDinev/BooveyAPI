@@ -1,6 +1,8 @@
 ﻿namespace Boovey.Services
 {
-    public class QuoteService
+    using Interfaces;
+
+    public class QuoteService : IQuoteService
     {
     }
 }
