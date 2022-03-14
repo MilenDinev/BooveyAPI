@@ -30,7 +30,7 @@
         {
             await GetCurrentUserAsync();
             var addedAuthor = await this.authorService.AddAsync(authorInput, CurrentUser.Id);
-            return CreatedAtAction(nameof(Get), "Authors", new { title = addedAuthor.Fullname }, addedAuthor);
+            return CreatedAtAction(nameof(Get), "Authors", new { id = addedAuthor.Id }, addedAuthor);
         }
 
         [HttpPut("Edit/{authorId}")]
