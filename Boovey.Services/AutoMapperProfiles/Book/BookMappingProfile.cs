@@ -32,7 +32,7 @@
             this.CreateMap<Book, AddedFavoriteBookModel>()
                 .ForMember(m => m.UserId, e => e.MapFrom(b => b.FavoriteByUsers.Select(u => u.Id).LastOrDefault()));
             this.CreateMap<Book, RemovedFavoriteBookModel>()
-                .ForMember(m => m.UserId, r => r.Ignore());
+                .ForMember(m => m.UserId, e => e.Ignore());
             this.CreateMap<Book, AssignedAuthorBookModel>()
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.AuthorId, e => e.MapFrom(b => b.Authors.Select(a => a.Id).LastOrDefault()));
