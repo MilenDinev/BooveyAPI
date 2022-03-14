@@ -14,9 +14,7 @@
         {
             this.CreateMap<AddBookModel, Book>()
                 .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
-                .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now))
-                .ForMember(e => e.Genres, m => m.Ignore())
-                .ForMember(e => e.Authors, m => m.Ignore());
+                .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
             this.CreateMap<Book, AddedBookModel>()
                 .ForMember(m => m.Authors, e => e.MapFrom(b => string.Join(", ", b.Authors.Select(a => a.Fullname))))
                 .ForMember(m => m.Genres, e => e.MapFrom(b => string.Join(", ", b.Genres.Select(g => g.Title))))

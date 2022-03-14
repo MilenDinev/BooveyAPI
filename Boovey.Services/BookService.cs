@@ -98,6 +98,7 @@
             book.PublicationDate = publicationDate;
             book.Publisher = publisher;
             book.LastModifierId = currentUserId;
+            book.LastModifiedOn = DateTime.UtcNow;
 
             await this.dbContext.SaveChangesAsync();
 

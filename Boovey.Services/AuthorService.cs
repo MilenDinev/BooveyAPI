@@ -56,6 +56,7 @@
             author.Fullname = authorModel.Fullname;
             author.Summary = authorModel.Summary;
             author.LastModifierId = currentUserId;
+            author.LastModifiedOn = DateTime.UtcNow;
 
             await this.dbContext.SaveChangesAsync();
 

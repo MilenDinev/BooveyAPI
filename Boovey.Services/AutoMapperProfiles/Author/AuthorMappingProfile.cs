@@ -1,5 +1,6 @@
 ﻿namespace Boovey.Services.AutoMapperProfiles.Author
 {
+    using System;
     using System.Linq;
     using AutoMapper;
     using Data.Entities;
@@ -10,7 +11,9 @@
     {
         public AuthorMappingProfile()
         {
-            this.CreateMap<AddAuthorModel, Author>();
+            this.CreateMap<AddAuthorModel, Author>()
+                .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
+                .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
             this.CreateMap<Author, AddedAuthorModel>();
             this.CreateMap<Author, EditedAuthorModel>()
                 .ForMember(m => m.Nationality, e => e.MapFrom(a => a.Country.Name));
