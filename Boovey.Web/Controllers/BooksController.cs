@@ -22,7 +22,7 @@
         }
 
         [HttpGet("List/")]
-        public async Task<ActionResult<IEnumerable<BooksListingModel>>> Get()
+        public async Task<ActionResult<IEnumerable<BookListingModel>>> Get()
         {
             var allBooks = await this.bookService.GetAllBooksAsync();
             return allBooks.ToList();

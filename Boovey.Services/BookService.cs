@@ -135,11 +135,11 @@
             await dbContext.SaveChangesAsync();
             return mapper.Map<RemovedFavoriteBookModel>(book);
         }
-        public async Task<ICollection<BooksListingModel>> GetAllBooksAsync()
+        public async Task<ICollection<BookListingModel>> GetAllBooksAsync()
         {
             var books = await this.dbContext.Books.ToListAsync();
 
-            return mapper.Map<ICollection<BooksListingModel>>(books);
+            return mapper.Map<ICollection<BookListingModel>>(books);
         }
 
         public async Task<AssignedAuthorBookModel> AssignAuthorAsync(int bookId, int authorId, int modifierId)

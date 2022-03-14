@@ -40,7 +40,7 @@
             this.CreateMap<Book, AssignedPublisherBookModel>()
                 .ForMember(m => m.PublisherId, e => e.MapFrom(b => b.PublisherId))
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id));
-            this.CreateMap<Book, BooksListingModel>()
+            this.CreateMap<Book, BookListingModel>()
                 .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name))
                 .ForMember(m => m.PublicationDate, e => e.MapFrom(b => b.PublicationDate.ToString("dd-MM-yyyy")))
                 .ForMember(m => m.Authors, e => e.MapFrom(b => string.Join(", ", b.Authors.Select(a => a.Fullname))))
