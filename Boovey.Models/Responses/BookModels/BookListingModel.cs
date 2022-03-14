@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Models.Responses.BookModels
 {
-    public class BooksListingModel
+    public class BookListingModel
     {
         public int Id { get; set; }
         public string Title { get; set; }

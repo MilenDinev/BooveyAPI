@@ -1,4 +1,4 @@
-﻿namespace Boovey.Data.Entities.Books
+﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
 

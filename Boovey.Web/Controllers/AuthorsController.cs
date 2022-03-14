@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
     using Services.Interfaces;
-    using Models.Requests;
+    using Models.Requests.AuthorModels;
     using Models.Responses.AuthorModels;
 
     [Route("api/[controller]")]
@@ -19,7 +19,7 @@
         }
 
         [HttpGet("List/")]
-        public async Task<ActionResult<IEnumerable<AuthorsListingModel>>> Get()
+        public async Task<ActionResult<IEnumerable<AuthorListingModel>>> Get()
         {
             var allAuthors = await this.authorService.GetAllAuthorsAsync();
             return allAuthors.ToList();

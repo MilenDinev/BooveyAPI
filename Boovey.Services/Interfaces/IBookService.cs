@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Data.Entities;
-    using Models.Requests;
+    using Models.Requests.BookModels;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
 
@@ -13,7 +13,7 @@
         Task<EditedBookModel> EditAsync(int bookId, EditBookModel bookModel, int currentUserId);
         Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser);
         Task<RemovedFavoriteBookModel> RemoveFavoriteBook(int bookId, User currentUser);
-        Task<ICollection<BooksListingModel>> GetAllBooksAsync();
+        Task<ICollection<BookListingModel>> GetAllBooksAsync();
 
         Task<AssignedAuthorBookModel> AssignAuthorAsync(int bookId, int authorId, int modifierId);
         Task<AssignedBookGenreModel> AssignGenreAsync(int bookId, int genreId, int modifierId);

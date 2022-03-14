@@ -2,7 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
-    using Entities.Books;
+    using Entities;
 
     public class PublishersSampleSeeder
     {

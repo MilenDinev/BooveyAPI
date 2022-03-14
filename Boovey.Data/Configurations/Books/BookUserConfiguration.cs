@@ -4,7 +4,6 @@
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
     using System.Collections.Generic;
     using Entities;
-    using Entities.Books;
 
     public class BookUserConfiguration : IEntityTypeConfiguration<User>
     {

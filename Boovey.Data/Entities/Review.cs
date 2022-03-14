@@ -1,6 +1,5 @@
 ﻿namespace Boovey.Data.Entities
 {
-    using Books;
 
     public class Review : Entity
     {

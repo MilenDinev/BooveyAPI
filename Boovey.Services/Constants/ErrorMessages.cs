@@ -3,6 +3,7 @@
     public static class ErrorMessages
     {
         public const string InvalidCredentials = "Invalid credentials, please try again!";
+        public const string InvalidPublicationDate = "Please provide valid publication date in format 'dd/MM/yyyy'!";
         public const string EntityDoesNotExist = @"{0} '{1}' does not exist!";
         public const string EntityIdDoesNotExist = @"{0} with id '{1}' does not exist!";
         public const string EntityAlreadyExists = @"{0} '{1}' already exists in our system!";

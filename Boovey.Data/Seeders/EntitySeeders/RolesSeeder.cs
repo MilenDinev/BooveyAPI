@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Threading.Tasks;
-
-namespace Boovey.Data.Seeders
+﻿namespace Boovey.Data.Seeders.EntitySeeders
 {
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Identity;
+
     public static class RolesSeeder
     {
         public static async Task SeedRolesAsync(RoleManager<IdentityRole<int>> roleManager)

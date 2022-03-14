@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Identity;
-    using Books;
     using Requests;
 
     public class User : IdentityUser<int>

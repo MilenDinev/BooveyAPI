@@ -6,7 +6,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Authorization;
     using Services.Interfaces;
-    using Models.Requests;
+    using Models.Requests.BookModels;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
 
@@ -22,7 +22,7 @@
         }
 
         [HttpGet("List/")]
-        public async Task<ActionResult<IEnumerable<BooksListingModel>>> Get()
+        public async Task<ActionResult<IEnumerable<BookListingModel>>> Get()
         {
             var allBooks = await this.bookService.GetAllBooksAsync();
             return allBooks.ToList();
@@ -81,6 +81,7 @@
         {
             await GetCurrentUserAsync();
             var removedFavoriteBook = await this.bookService.RemoveFavoriteBook(bookId, CurrentUser);
+            removedFavoriteBook.UserId = CurrentUser.Id;
             return removedFavoriteBook;
         }
     }

@@ -1,6 +1,9 @@
-﻿namespace Boovey.Models.Requests
+﻿namespace Boovey.Models.Requests.BookModels
 {
     using System.Collections.Generic;
+    using GenreModels;
+    using AuthorModels;
+    using PublisherModels;
 
     public class AddBookModel
     {
@@ -14,7 +17,7 @@
         public string Title { get; set; }
         public int Pages { get; set; }
         public string PublicationDate { get; set; }
-        public string Country { get; set; }
+        public int CountryId { get; set; }
         public string Description { get; set; }
         public AddPublisherModel Publisher  { get; set; }
         public ICollection<AddGenreModel> Genres { get; set; }

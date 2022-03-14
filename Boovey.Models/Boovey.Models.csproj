@@ -4,4 +4,10 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Requests\UserModels\" />
+    <Folder Include="Requests\QuoteModels\" />
+    <Folder Include="Requests\ReviewModels\" />
+  </ItemGroup>
+
 </Project>

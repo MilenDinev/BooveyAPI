@@ -2,7 +2,7 @@
 {
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
-    using Entities.Books;
+    using Entities;
 
     public class ShelveConfiguration : IEntityTypeConfiguration<Shelve>
     {

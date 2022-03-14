@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Models.Responses.AuthorModels
 {
-    public class AuthorsListingModel
+    public class AuthorListingModel
     {
         public int Id { get; set; }
         public string Fullname { get; set; }

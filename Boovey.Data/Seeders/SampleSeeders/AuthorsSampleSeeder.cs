@@ -1,7 +1,7 @@
 ﻿namespace Boovey.Data.Seeders.SampleSeeders
 {
     using System;
-    using Entities.Books;
+    using Entities;
     using System.Threading.Tasks;
 
     public static class AuthorsSampleSeeder
