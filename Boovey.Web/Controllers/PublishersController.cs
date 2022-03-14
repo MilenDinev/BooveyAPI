@@ -4,9 +4,9 @@
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
+    using Services.Interfaces;
     using Models.Requests.PublisherModels;
     using Models.Responses.PublisherModels;
-    using Services.Interfaces;
 
     [Route("api/[controller]")]
     [ApiController]
