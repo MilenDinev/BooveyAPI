@@ -16,6 +16,7 @@
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IBookService, BookService>();
             services.AddTransient<IAuthorService, AuthorService>();
+            services.AddTransient<IGenreService, GenreService>();
             services.AddHttpContextAccessor();
         }
     }
