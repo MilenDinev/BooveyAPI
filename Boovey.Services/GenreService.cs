@@ -27,7 +27,7 @@
 
         public async Task<AddedGenreModel> AddAsync(AddGenreModel genreModel, int currentUserId)
         {
-            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(a => a.Title == genreModel.Title);
+            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(p => p.Title == genreModel.Title);
             if (genre != null)
                 throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Genre), genreModel.Title));
 
