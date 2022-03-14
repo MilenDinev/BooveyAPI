@@ -11,8 +11,7 @@
     using Constants;
     using Data;
     using Data.Entities;
-    using Data.Entities.Books;
-    using Models.Requests;
+    using Models.Requests.BookModels;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
 
@@ -31,31 +30,40 @@
         {
             await AlreadyExistBookByTitleChecker(bookModel.Title);
 
+            var isValidDate = DateTime.TryParseExact(bookModel.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
+            if (!isValidDate)
+                throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
+
             var book = mapper.Map<Book>(bookModel);
 
-            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Name == bookModel.Country)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), bookModel.Country));
-            book.Country = country;
+            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == bookModel.CountryId)
+                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), bookModel.CountryId));
 
-            var authors = new List<Author>();
+            book.CountryId = bookModel.CountryId;
+
+            var authors = await this.dbContext.Authors.ToListAsync();
             foreach (var authorModel in bookModel.Authors)
             {
-                var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Fullname.ToLower() == authorModel.Fullname.ToLower())
+                var author = authors.FirstOrDefault(a => a.Fullname.ToLower() == authorModel.Fullname.ToLower() && a.CountryId == authorModel.CountryId)
                     ?? mapper.Map<Author>(authorModel);
-                authors.Add(author);
+
+                if (book.Authors.Any(a => a.Fullname.ToLower() == author.Fullname.ToLower() && a.CountryId == author.CountryId))
+                    continue;
+
+                book.Authors.Add(author);
             }
 
-            book.Authors = authors;
-
-            var genres = new List<Genre>();
+            var genres = await this.dbContext.Genres.ToListAsync();
             foreach (var genreModel in bookModel.Genres)
             {
-                var genre = await this.dbContext.Genres.FirstOrDefaultAsync(g => g.Title.ToLower() == genreModel.Title.ToLower())
+                var genre = genres.FirstOrDefault(g => g.Title.ToLower() == genreModel.Title.ToLower())
                     ?? mapper.Map<Genre>(genreModel);
-                genres.Add(genre);
-            }
 
-            book.Genres = genres;
+                if (book.Genres.Any(g => g.Title.ToLower() == genre.Title.ToLower()))
+                    continue;
+
+                book.Genres.Add(genre);
+            }
 
             var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Name.ToLower() == bookModel.Publisher.Name.ToLower())
                 ?? mapper.Map<Publisher>(bookModel.Publisher);
@@ -81,11 +89,8 @@
 
             var isValidDate = DateTime.TryParseExact(bookModel.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
 
-            // TOO FIX DATETIME INPUT IN ADD BOOK METHOD
             if (!isValidDate)
-            {
-                throw new ArgumentException("Please provide valid publication date!");
-            }
+                throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
 
             book.Title = bookModel.Title;
             book.Description = bookModel.Description;
