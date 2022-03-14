@@ -33,7 +33,7 @@
         {
             await GetCurrentUserAsync();
             var addedBook = await this.bookService.AddAsync(bookInput, CurrentUser.Id);
-            return CreatedAtAction(nameof(Get), "Books", new { title = addedBook.Title }, addedBook);
+            return CreatedAtAction(nameof(Get), "Books", new { id = addedBook.Id }, addedBook);
         }
 
         [HttpPut("Edit/{bookId}")]
