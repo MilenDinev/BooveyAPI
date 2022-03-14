@@ -12,7 +12,7 @@
     [ApiController]
     public class GenresController : BooveyBaseController
     {
-        IGenreService genreService;
+       private readonly IGenreService genreService;
 
         public GenresController(IUserService userService, IGenreService genreService) : base(userService)
         {

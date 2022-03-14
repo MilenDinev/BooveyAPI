@@ -12,7 +12,7 @@
     [ApiController]
     public class PublishersController : BooveyBaseController
     {
-        IPublisherService publisherService;
+        private readonly IPublisherService publisherService;
 
         public PublishersController(IUserService userService, IPublisherService publisherService) : base(userService)
         {
