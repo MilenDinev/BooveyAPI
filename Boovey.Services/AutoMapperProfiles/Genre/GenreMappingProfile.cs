@@ -1,9 +1,11 @@
 ﻿namespace Boovey.Services.AutoMapperProfiles.Genre
 {
     using System;
+    using System.Linq;
     using AutoMapper;
     using Data.Entities;
     using Models.Requests.GenreModels;
+    using Models.Responses.GenreModels;
 
     public class GenreMappingProfile : Profile
     {
@@ -12,6 +14,12 @@
             this.CreateMap<AddGenreModel, Genre>()
                 .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
                 .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
+            this.CreateMap<Genre, AddedGenreModel>();
+            this.CreateMap<Genre, EditedGenreModel>();
+            this.CreateMap<Genre, AddedFavoriteGenreModel>()
+                .ForMember(m => m.UserId, e => e.MapFrom(g => g.FavoriteByUsers.Select(u => u.Id).LastOrDefault()));
+            this.CreateMap<Genre, RemovedFavoriteGenreModel>()
+                .ForMember(m => m.UserId, e => e.Ignore());
         }
     }
 }
