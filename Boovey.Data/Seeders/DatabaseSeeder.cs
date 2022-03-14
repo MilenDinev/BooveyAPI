@@ -8,6 +8,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Data.Entities;
+    using EntitySeeders;
     using SampleSeeders;
 
     [ExcludeFromCodeCoverage]

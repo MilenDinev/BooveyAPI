@@ -1,4 +1,4 @@
-﻿namespace Boovey.Data.Seeders
+﻿namespace Boovey.Data.Seeders.EntitySeeders
 {
     using System;
     using System.Threading.Tasks;
