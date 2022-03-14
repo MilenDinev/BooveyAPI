@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
     using Services.Interfaces;
-    using Models.Requests;
+    using Models.Requests.AuthorModels;
     using Models.Responses.AuthorModels;
 
     [Route("api/[controller]")]

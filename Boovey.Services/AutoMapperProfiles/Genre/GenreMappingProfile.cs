@@ -3,7 +3,7 @@
     using System;
     using AutoMapper;
     using Data.Entities;
-    using Models.Requests;
+    using Models.Requests.GenreModels;
 
     public class GenreMappingProfile : Profile
     {

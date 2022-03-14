@@ -3,7 +3,7 @@
     using System.Linq;
     using AutoMapper;
     using Data.Entities;
-    using Models.Requests;
+    using Models.Requests.AuthorModels;
     using Models.Responses.AuthorModels;
 
     public class AuthorMappingProfile : Profile

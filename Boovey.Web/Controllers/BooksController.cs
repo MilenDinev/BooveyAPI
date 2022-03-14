@@ -6,7 +6,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Authorization;
     using Services.Interfaces;
-    using Models.Requests;
+    using Models.Requests.BookModels;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
 

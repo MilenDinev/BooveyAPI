@@ -10,7 +10,7 @@
     using Interfaces;
     using Data;
     using Data.Entities;
-    using Models.Requests;
+    using Models.Requests.AuthorModels;
     using Models.Responses.AuthorModels;
 
     public class AuthorService : IAuthorService

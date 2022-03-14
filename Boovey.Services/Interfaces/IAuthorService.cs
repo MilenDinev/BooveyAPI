@@ -3,7 +3,7 @@
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using Data.Entities;
-    using Models.Requests;
+    using Models.Requests.AuthorModels;
     using Models.Responses.AuthorModels;
 
     public interface IAuthorService

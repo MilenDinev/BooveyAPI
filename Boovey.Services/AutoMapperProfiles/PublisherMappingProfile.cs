@@ -2,8 +2,8 @@
 {
     using System;
     using AutoMapper;
-    using Models.Requests;
-    using Data.Entities.Books;
+    using Data.Entities;
+    using Models.Requests.PublisherModels;
 
     public class PublisherMappingProfile : Profile
     {
