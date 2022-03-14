@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
     using AutoMapper;
-    using Data.Entities.Books;
+    using Data.Entities;
     using Models.Requests;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
@@ -13,10 +13,8 @@
         public BookMappingProfile()
         {
             this.CreateMap<AddBookModel, Book>()
-                .ForMember(e => e.Country, m => m.Ignore())
                 .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
                 .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now))
-                .ForMember(e => e.Publisher, m => m.Ignore())
                 .ForMember(e => e.Genres, m => m.Ignore())
                 .ForMember(e => e.Authors, m => m.Ignore());
             this.CreateMap<Book, AddedBookModel>()

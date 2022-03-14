@@ -4,7 +4,6 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
     using Entities;
-    using Entities.Books;
 
     public class BookGenreConfiguration : IEntityTypeConfiguration<Genre>
     {

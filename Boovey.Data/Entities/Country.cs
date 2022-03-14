@@ -1,7 +1,6 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
-    using Books;
 
     public class Country
     {

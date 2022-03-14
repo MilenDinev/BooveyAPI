@@ -10,7 +10,6 @@
     using Interfaces;
     using Data;
     using Data.Entities;
-    using Data.Entities.Books;
     using Models.Requests;
     using Models.Responses.AuthorModels;
 

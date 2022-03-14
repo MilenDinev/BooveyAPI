@@ -2,7 +2,7 @@
 {
     using System.Linq;
     using AutoMapper;
-    using Data.Entities.Books;
+    using Data.Entities;
     using Models.Requests;
     using Models.Responses.AuthorModels;
 

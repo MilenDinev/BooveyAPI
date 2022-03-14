@@ -4,7 +4,6 @@
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
     using Entities;
-    using Entities.Books;
     using Entities.Requests;
 
     public class BooveyDbContext : IdentityDbContext<User, IdentityRole<int>, int>
