@@ -73,6 +73,7 @@
         {
             await GetCurrentUserAsync();
             var addedFavoriteBook = await this.bookService.AddFavoriteBook(bookId, CurrentUser);
+            addedFavoriteBook.UserId = CurrentUser.Id;
             return addedFavoriteBook;
         }
 

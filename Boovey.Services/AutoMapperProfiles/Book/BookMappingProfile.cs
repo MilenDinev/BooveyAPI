@@ -28,8 +28,10 @@
                 .ForMember(m => m.Publisher, e => e.MapFrom(b => b.Publisher.Name))
                 .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name));
             this.CreateMap<Book, AddedFavoriteBookModel>()
+                .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.UserId, e => e.MapFrom(b => b.FavoriteByUsers.Select(u => u.Id).LastOrDefault()));
             this.CreateMap<Book, RemovedFavoriteBookModel>()
+                .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.UserId, e => e.Ignore());
             this.CreateMap<Book, AssignedAuthorBookModel>()
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
@@ -38,8 +40,8 @@
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.GenreId, e => e.MapFrom(b => b.Genres.Select(g => g.Id).LastOrDefault()));
             this.CreateMap<Book, AssignedPublisherBookModel>()
-                .ForMember(m => m.PublisherId, e => e.MapFrom(b => b.PublisherId))
-                .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id));
+                .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
+                .ForMember(m => m.PublisherId, e => e.MapFrom(b => b.PublisherId));
             this.CreateMap<Book, BookListingModel>()
                 .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name))
                 .ForMember(m => m.PublicationDate, e => e.MapFrom(b => b.PublicationDate.ToString("dd-MM-yyyy")))

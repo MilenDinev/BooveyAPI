@@ -3,9 +3,9 @@
     using AutoMapper;
     using Data.Entities;
 
-    public class CountyMappingProfile : Profile
+    public class CountryMappingProfile : Profile
     {
-        public CountyMappingProfile()
+        public CountryMappingProfile()
         {
             this.CreateMap<string, Country>();
         }
