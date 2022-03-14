@@ -81,6 +81,7 @@
         {
             await GetCurrentUserAsync();
             var removedFavoriteBook = await this.bookService.RemoveFavoriteBook(bookId, CurrentUser);
+            removedFavoriteBook.UserId = CurrentUser.Id;
             return removedFavoriteBook;
         }
     }
