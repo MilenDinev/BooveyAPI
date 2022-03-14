@@ -1,4 +1,4 @@
-﻿namespace Boovey.Models.Requests
+﻿namespace Boovey.Models.Requests.PublisherModels
 {
     public class AddPublisherModel
     {

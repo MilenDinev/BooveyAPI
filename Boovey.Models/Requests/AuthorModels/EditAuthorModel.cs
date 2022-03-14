@@ -1,4 +1,4 @@
-﻿namespace Boovey.Models.Requests
+﻿namespace Boovey.Models.Requests.AuthorModels
 {
     public class EditAuthorModel
     {
