@@ -71,7 +71,7 @@
             var isAlreadyFavoriteAuthor = currentUser.FavoriteAuthors.FirstOrDefault(a => a.Id == authorId);
 
             if (isAlreadyFavoriteAuthor != null)
-                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Author), author.Fullname));
+                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Author), author.Id));
 
             currentUser.FavoriteAuthors.Add(author);
 
@@ -104,11 +104,11 @@
             return mapper.Map<RemovedFavoriteAuthorModel>(author);
         }
 
-        public async Task<ICollection<AuthorsListingModel>> GetAllAuthorsAsync()
+        public async Task<ICollection<AuthorListingModel>> GetAllAuthorsAsync()
         {
             var authors = await this.dbContext.Authors.ToListAsync();
 
-            return mapper.Map<ICollection<AuthorsListingModel>>(authors);
+            return mapper.Map<ICollection<AuthorListingModel>>(authors);
         }
 
     }

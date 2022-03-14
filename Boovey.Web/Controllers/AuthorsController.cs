@@ -19,7 +19,7 @@
         }
 
         [HttpGet("List/")]
-        public async Task<ActionResult<IEnumerable<AuthorsListingModel>>> Get()
+        public async Task<ActionResult<IEnumerable<AuthorListingModel>>> Get()
         {
             var allAuthors = await this.authorService.GetAllAuthorsAsync();
             return allAuthors.ToList();

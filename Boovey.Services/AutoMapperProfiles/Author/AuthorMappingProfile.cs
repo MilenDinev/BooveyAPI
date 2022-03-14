@@ -20,7 +20,7 @@
             this.CreateMap<Author, AddedFavoriteAuthorModel>()
                 .ForMember(m => m.Username, e => e.MapFrom(a => a.FavoriteByUsers.Select(u => u.UserName).LastOrDefault()));
             this.CreateMap<Author, RemovedFavoriteAuthorModel>();
-            this.CreateMap<Author, AuthorsListingModel>()
+            this.CreateMap<Author, AuthorListingModel>()
                 .ForMember(m => m.Nationality, e => e.MapFrom(a => a.Country.Name));
         }
     }
