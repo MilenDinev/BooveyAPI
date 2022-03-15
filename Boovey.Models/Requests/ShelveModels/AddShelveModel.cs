@@ -2,5 +2,6 @@
 {
     public class AddShelveModel
     {
+        public string Title { get; set; }
     }
 }

@@ -2,5 +2,6 @@
 {
     public class EditShelveModel
     {
+        public string Title { get; set; }
     }
 }
