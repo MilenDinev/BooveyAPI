@@ -8,8 +8,8 @@
 
     public interface IAuthorService
     {
-        Task<AddedAuthorModel> AddAsync(AddAuthorModel bookModel, int currentUserId);
-        Task<EditedAuthorModel> EditAsync(int bookId, EditAuthorModel bookModel, int currentUserId);
+        Task<AddedAuthorModel> AddAsync(AddAuthorModel authorModel, int currentUserId);
+        Task<EditedAuthorModel> EditAsync(int authorId, EditAuthorModel authorModel, int currentUserId);
         Task<AddedFavoriteAuthorModel> AddFavoriteAuthor(int authorId, User currentUser);
         Task<RemovedFavoriteAuthorModel> RemoveFavoriteAuthor(int authorId, User currentUser);
         Task<ICollection<AuthorListingModel>> GetAllAuthorsAsync();

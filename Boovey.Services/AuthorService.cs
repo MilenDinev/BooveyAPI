@@ -96,7 +96,7 @@
             var isFavoriteAuthor = currentUser.FavoriteAuthors.FirstOrDefault(a => a.Id == authorId);
 
             if (isFavoriteAuthor == null)
-                throw new KeyNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), author.Fullname));
+                throw new KeyNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), author.Id));
 
             currentUser.FavoriteAuthors.Remove(author);
 
