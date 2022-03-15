@@ -38,7 +38,7 @@
         public async Task<AddedFavoriteQuoteModel> AddFavorite(int quoteId)
         {
             await GetCurrentUserAsync();
-            var addedFavoriteQuote = await this.quoteService.AddFavoriteQuote(quoteId, CurrentUser);
+            var addedFavoriteQuote = await this.quoteService.AddFavoriteQuoteAsync(quoteId, CurrentUser);
             return addedFavoriteQuote;
         }
 
@@ -46,7 +46,7 @@
         public async Task<RemovedFavoriteQuoteModel> RemoveFavorite(int quoteId)
         {
             await GetCurrentUserAsync();
-            var removedFavoriteQuote = await this.quoteService.RemoveFavoriteQuote(quoteId, CurrentUser);
+            var removedFavoriteQuote = await this.quoteService.RemoveFavoriteQuoteAsync(quoteId, CurrentUser);
             return removedFavoriteQuote;
         }
     }

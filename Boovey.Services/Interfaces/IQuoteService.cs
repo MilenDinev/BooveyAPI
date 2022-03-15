@@ -9,7 +9,7 @@
     {
         Task<AddedQuoteModel> AddAsync(AddQuoteModel quoteModel, int currentUserId);
         Task<EditedQuoteModel> EditAsync(int quoteId, EditQuoteModel quoteModel, int currentUserId);
-        Task<AddedFavoriteQuoteModel> AddFavoriteQuote(int quoteId, User currentUser);
-        Task<RemovedFavoriteQuoteModel> RemoveFavoriteQuote(int quoteId, User currentUser);
+        Task<AddedFavoriteQuoteModel> AddFavoriteQuoteAsync(int quoteId, User currentUser);
+        Task<RemovedFavoriteQuoteModel> RemoveFavoriteQuoteAsync(int quoteId, User currentUser);
     }
 }

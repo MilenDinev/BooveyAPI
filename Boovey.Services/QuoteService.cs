@@ -55,7 +55,7 @@
             return mapper.Map<EditedQuoteModel>(quote);
         }
 
-        public async Task<AddedFavoriteQuoteModel> AddFavoriteQuote(int quoteId, User currentUser)
+        public async Task<AddedFavoriteQuoteModel> AddFavoriteQuoteAsync(int quoteId, User currentUser)
         {
             var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Id == quoteId)
                 ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
@@ -71,7 +71,7 @@
             return mapper.Map<AddedFavoriteQuoteModel>(quote);
         }
 
-        public async Task<RemovedFavoriteQuoteModel> RemoveFavoriteQuote(int quoteId, User currentUser)
+        public async Task<RemovedFavoriteQuoteModel> RemoveFavoriteQuoteAsync(int quoteId, User currentUser)
         {
             var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Id == quoteId)
                 ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
