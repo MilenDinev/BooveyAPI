@@ -17,10 +17,10 @@
             this.CreateMap<Quote, AddedQuoteModel>();
             this.CreateMap<Quote, EditedQuoteModel>();
             this.CreateMap<Quote, AddedFavoriteQuoteModel>()
-                .ForMember(m => m.QuoteId, e => e.MapFrom(b => b.Id))
-                .ForMember(m => m.UserId, e => e.MapFrom(q => q.FavoriteByUsers.Select(u => u.UserName).LastOrDefault()));
+                .ForMember(m => m.QuoteId, e => e.MapFrom(q => q.Id))
+                .ForMember(m => m.UserId, e => e.MapFrom(q => q.FavoriteByUsers.Select(u => u.Id).LastOrDefault()));
             this.CreateMap<Quote, RemovedFavoriteQuoteModel>()
-                .ForMember(m => m.QuoteId, e => e.MapFrom(b => b.Id))
+                .ForMember(m => m.QuoteId, e => e.MapFrom(q => q.Id))
                 .ForMember(m => m.UserId, e => e.Ignore());
         }
 
