@@ -78,7 +78,7 @@
             var isFavoriteShelve = currentUser.FavoriteShelves.FirstOrDefault(s => s.Id == shelveId);
 
             if (isFavoriteShelve == null)
-                throw new ArgumentException(string.Format(ErrorMessages.NotFavoriteId, nameof(Shelve), shelve.Id));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Shelve), shelve.Id));
 
             currentUser.FavoriteShelves.Remove(shelve);
 

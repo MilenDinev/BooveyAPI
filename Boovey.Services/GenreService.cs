@@ -78,7 +78,7 @@
             var isFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(g => g.Id == genreId);
 
             if (isFavoriteGenre == null)
-                throw new ArgumentException(string.Format(ErrorMessages.NotFavoriteId, nameof(Genre), genre.Id));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Genre), genre.Id));
 
             currentUser.FavoriteGenres.Remove(genre);
 
