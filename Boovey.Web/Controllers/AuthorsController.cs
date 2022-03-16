@@ -25,6 +25,13 @@
             return allAuthors.ToList();
         }
 
+        [HttpGet("Get/{authorId}")]
+        public async Task<ActionResult<AuthorListingModel>> GetById(int authorId)
+        {
+            var allAuthor = await this.authorService.GetAuthorById(authorId);
+            return allAuthor;
+        }
+
         [HttpPost("Add/")]
         public async Task<ActionResult> Add(AddAuthorModel authorInput)
         {
@@ -54,6 +61,7 @@
         {
             await GetCurrentUserAsync();
             var removedFavoriteAuthor = await this.authorService.RemoveFavoriteAuthor(authorId, CurrentUser);
+            removedFavoriteAuthor.UserId = CurrentUser.Id;
             return removedFavoriteAuthor;
         }
     }
