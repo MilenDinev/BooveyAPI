@@ -39,6 +39,9 @@
                         break;                    
                     case ResourceNotFoundException resourceNotFoundEx:
                         response.StatusCode = (int)HttpStatusCode.NotFound;
+                        break;                    
+                    case ResourceAlreadyExistsException resourceAlreadyExistsEx:
+                        response.StatusCode = (int)HttpStatusCode.Conflict;
                         break;
                     case UnauthorizedAccessException unauthorizedAccessEx:
                         response.StatusCode = (int)HttpStatusCode.Unauthorized;
