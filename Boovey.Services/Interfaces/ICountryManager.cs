@@ -2,7 +2,7 @@
 {
     using System.Threading.Tasks;
 
-    public interface ICountryService
+    public interface ICountryManager
     {
         Task FindCountryById(int countryId);
     }

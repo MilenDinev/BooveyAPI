@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services
+﻿namespace Boovey.Services.Managers
 {
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -8,11 +8,11 @@
     using Services.Constants;
     using Services.Exceptions;
 
-    public class CountryService : ICountryService
+    public class CountryManager : ICountryManager
     {
         private readonly BooveyDbContext dbContext;
 
-        public CountryService(BooveyDbContext dbContext)
+        public CountryManager(BooveyDbContext dbContext)
         {
             this.dbContext = dbContext;
         }

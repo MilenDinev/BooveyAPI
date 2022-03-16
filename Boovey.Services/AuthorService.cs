@@ -18,18 +18,19 @@
     {
         private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
-        private readonly ICountryService countryService;
-        public AuthorService(BooveyDbContext dbContext, ICountryService countryService, IMapper mapper)
+        private readonly ICountryManager countryManager;
+
+        public AuthorService(BooveyDbContext dbContext, ICountryManager countryService, IMapper mapper)
         {
             this.dbContext = dbContext;
-            this.countryService = countryService;
+            this.countryManager = countryService;
             this.mapper = mapper;
         }
 
         public async Task<AddedAuthorModel> AddAsync(AddAuthorModel authorModel, int currentUserId)
         {
             await AuthorDuplicationChecker(authorModel.Fullname);
-            await this.countryService.FindCountryById(authorModel.CountryId);
+            await this.countryManager.FindCountryById(authorModel.CountryId);
 
             var author = mapper.Map<Author>(authorModel);
 
@@ -45,7 +46,7 @@
         public async Task<EditedAuthorModel> EditAsync(int authorId, EditAuthorModel authorModel, int currentUserId)
         {
             var author = await FindAuthorById(authorId);
-            await this.countryService.FindCountryById(authorModel.CountryId);
+            await this.countryManager.FindCountryById(authorModel.CountryId);
 
             author.CountryId = authorModel.CountryId;
             author.Fullname = authorModel.Fullname;
