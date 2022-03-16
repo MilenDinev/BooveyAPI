@@ -18,16 +18,19 @@
     {
         private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
-        public AuthorService(BooveyDbContext dbContext, IMapper mapper)
+        private readonly ICountryManager countryManager;
+
+        public AuthorService(BooveyDbContext dbContext, ICountryManager countryService, IMapper mapper)
         {
             this.dbContext = dbContext;
+            this.countryManager = countryService;
             this.mapper = mapper;
         }
 
         public async Task<AddedAuthorModel> AddAsync(AddAuthorModel authorModel, int currentUserId)
         {
             await AuthorDuplicationChecker(authorModel.Fullname);
-            await CountryExistenceChecker(authorModel.CountryId);
+            await this.countryManager.FindCountryById(authorModel.CountryId);
 
             var author = mapper.Map<Author>(authorModel);
 
@@ -43,8 +46,7 @@
         public async Task<EditedAuthorModel> EditAsync(int authorId, EditAuthorModel authorModel, int currentUserId)
         {
             var author = await FindAuthorById(authorId);
-
-            await CountryExistenceChecker(authorModel.CountryId);
+            await this.countryManager.FindCountryById(authorModel.CountryId);
 
             author.CountryId = authorModel.CountryId;
             author.Fullname = authorModel.Fullname;
@@ -113,13 +115,6 @@
         private async Task<bool> IsFavoriteAuthor(int authorId, User user)
         {
             return await Task.Run(() => user.FavoriteAuthors.Any(a => a.Id == authorId));
-        }
-
-        private async Task CountryExistenceChecker(int countryId)
-        {
-            var isCountryExists = await this.dbContext.Countries.AnyAsync(c => c.Id == countryId)
-                ? true 
-                : throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), countryId));
         }
     }
 }
