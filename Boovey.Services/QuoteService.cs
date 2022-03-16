@@ -7,6 +7,7 @@
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
+    using Exceptions;
     using Constants;
     using Data;
     using Data.Entities;
@@ -28,7 +29,7 @@
         {
             var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Content == quoteModel.Content);
             if (quote != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Quote), quoteModel.Content));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Quote), quoteModel.Content));
 
             quote = mapper.Map<Quote>(quoteModel);
 
@@ -44,7 +45,7 @@
         public async Task<EditedQuoteModel> EditAsync(int quoteId, EditQuoteModel quoteModel, int currentUserId)
         {
             var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Id == quoteId)
-            ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
 
             quote.Content = quoteModel.Content;
             quote.LastModifierId = currentUserId;
@@ -58,12 +59,12 @@
         public async Task<AddedFavoriteQuoteModel> AddFavoriteQuoteAsync(int quoteId, User currentUser)
         {
             var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Id == quoteId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
 
             var isAlreadyFavoriteQuote = currentUser.FavoriteQuotes.FirstOrDefault(a => a.Id == quoteId);
 
             if (isAlreadyFavoriteQuote != null)
-                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Quote), quote.Id));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Quote), quote.Id));
 
             currentUser.FavoriteQuotes.Add(quote);
 
@@ -74,12 +75,12 @@
         public async Task<RemovedFavoriteQuoteModel> RemoveFavoriteQuoteAsync(int quoteId, User currentUser)
         {
             var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Id == quoteId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
 
             var isFavoriteQuote = currentUser.FavoriteQuotes.FirstOrDefault(q => q.Id == quoteId);
 
             if (isFavoriteQuote == null)
-                throw new KeyNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Quote), quote.Id));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Quote), quote.Id));
 
             currentUser.FavoriteQuotes.Remove(quote);
 
