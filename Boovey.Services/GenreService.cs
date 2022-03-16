@@ -7,6 +7,7 @@
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
+    using Exceptions;
     using Constants;
     using Data;
     using Data.Entities;
@@ -95,7 +96,7 @@
         private async Task<Genre> GetGenreById(int genreId)
         {
             var genre = await this.dbContext.Genres.FirstOrDefaultAsync(g => g.Id == genreId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
 
             return genre;
         }
