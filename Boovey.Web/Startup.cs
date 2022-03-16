@@ -5,6 +5,7 @@ namespace Boovey.Web
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Middleware;
     using Extensions;
     using Extensions.Authentication;
     using Data.Seeders;
@@ -45,6 +46,8 @@ namespace Boovey.Web
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Boovey.Web v1"));
             }
+
+            app.UseMiddleware<ErrorHandler>();
 
             app.UseHttpsRedirection();
 
