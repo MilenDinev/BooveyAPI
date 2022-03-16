@@ -28,7 +28,7 @@
         {
             var review = await this.dbContext.Reviews.FirstOrDefaultAsync(r => r.BookId == reviewModel.BookId && r.CreatorId == currentUserId);
             if (review != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Review), reviewModel.BookId));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Review), reviewModel.BookId));
 
             review = mapper.Map<Review>(reviewModel);
 

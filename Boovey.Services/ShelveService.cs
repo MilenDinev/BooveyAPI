@@ -30,7 +30,7 @@
         {
             var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Title == shelveModel.Title);
             if (shelve != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Shelve), shelveModel.Title));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Shelve), shelveModel.Title));
 
             shelve = mapper.Map<Shelve>(shelveModel);
 
@@ -63,7 +63,7 @@
             var isAlreadyFavoriteShelve = currentUser.FavoriteShelves.FirstOrDefault(s => s.Id == shelveId);
 
             if (isAlreadyFavoriteShelve != null)
-                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Shelve), shelve.Id));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Shelve), shelve.Id));
 
             currentUser.FavoriteShelves.Add(shelve);
 

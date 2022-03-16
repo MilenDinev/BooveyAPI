@@ -62,7 +62,7 @@
 
             var followed = await GetUserByIdAsync(followedId);
             if (follower.Following.Contains(followed))
-                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFollowing, nameof(User), followed.UserName));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFollowing, nameof(User), followed.UserName));
            
             follower.Following.Add(followed);
 

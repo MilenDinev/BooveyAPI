@@ -29,7 +29,7 @@
         {
             var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Content == quoteModel.Content);
             if (quote != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Quote), quoteModel.Content));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Quote), quoteModel.Content));
 
             quote = mapper.Map<Quote>(quoteModel);
 
@@ -64,7 +64,7 @@
             var isAlreadyFavoriteQuote = currentUser.FavoriteQuotes.FirstOrDefault(a => a.Id == quoteId);
 
             if (isAlreadyFavoriteQuote != null)
-                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Quote), quote.Id));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Quote), quote.Id));
 
             currentUser.FavoriteQuotes.Add(quote);
 

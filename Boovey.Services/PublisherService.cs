@@ -29,7 +29,7 @@
         {
             var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Name == publisherModel.Name);
             if (publisher != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Publisher), publisherModel.Name));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Publisher), publisherModel.Name));
 
             publisher = mapper.Map<Publisher>(publisherModel);
 
