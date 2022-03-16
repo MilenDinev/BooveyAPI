@@ -7,6 +7,7 @@
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
+    using Exceptions;
     using Constants;
     using Data;
     using Data.Entities;
@@ -95,7 +96,7 @@
         private async Task<Shelve> GetShelveById(int shelveId)
         {
             var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Id == shelveId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Shelve), shelveId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Shelve), shelveId));
 
             return shelve;
         }

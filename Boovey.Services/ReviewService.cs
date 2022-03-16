@@ -6,6 +6,7 @@
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
+    using Exceptions;
     using Constants;
     using Data;
     using Data.Entities;
@@ -58,7 +59,7 @@
         private async Task<Review> GetReviewById(int reviewId)
         {
             var review = await this.dbContext.Reviews.FirstOrDefaultAsync(g => g.Id == reviewId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Review), reviewId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Review), reviewId));
 
             return review;
         }

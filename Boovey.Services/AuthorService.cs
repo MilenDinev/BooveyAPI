@@ -6,8 +6,9 @@
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
-    using Constants;
     using Interfaces;
+    using Exceptions;
+    using Constants;
     using Data;
     using Data.Entities;
     using Models.Requests.AuthorModels;
@@ -32,7 +33,7 @@
             author = mapper.Map<Author>(authorModel);
 
             var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == authorModel.CountryId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), authorModel.CountryId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), authorModel.CountryId));
             author.Country = country;
 
             author.CreatorId = currentUserId;
@@ -47,10 +48,10 @@
         public async Task<EditedAuthorModel> EditAsync(int authorId, EditAuthorModel authorModel, int currentUserId)
         {
             var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId)
-               ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
+               ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
 
             var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == authorModel.CountryId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), authorModel.CountryId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), authorModel.CountryId));
             author.Country = country;
 
             author.Fullname = authorModel.Fullname;
@@ -66,7 +67,7 @@
         public async Task<AddedFavoriteAuthorModel> AddFavoriteAuthor(int authorId, User currentUser)
         {
             var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
 
             var isAlreadyFavoriteAuthor = currentUser.FavoriteAuthors.FirstOrDefault(a => a.Id == authorId);
 
@@ -91,12 +92,12 @@
         public async Task<RemovedFavoriteAuthorModel> RemoveFavoriteAuthor(int authorId, User currentUser)
         {
             var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
 
             var isFavoriteAuthor = currentUser.FavoriteAuthors.FirstOrDefault(a => a.Id == authorId);
 
             if (isFavoriteAuthor == null)
-                throw new KeyNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), author.Id));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), author.Id));
 
             currentUser.FavoriteAuthors.Remove(author);
 

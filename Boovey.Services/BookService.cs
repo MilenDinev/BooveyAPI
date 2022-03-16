@@ -8,6 +8,7 @@
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
+    using Exceptions;
     using Constants;
     using Data;
     using Data.Entities;
@@ -81,11 +82,11 @@
             var book = await GetBookById(bookId);
 
             var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == bookModel.CountryId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), bookModel.CountryId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), bookModel.CountryId));
             book.Country = country;
 
             var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Id == bookModel.PublisherId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), bookModel.PublisherId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), bookModel.PublisherId));
 
             var isValidDate = DateTime.TryParseExact(bookModel.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
 
@@ -204,14 +205,14 @@
         private async Task NotFavoriteBookChecker(int bookId, User user)
         {
             var favoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId)
-                ? true : throw new KeyNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Book), bookId));
+                ? true : throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Book), bookId));
 
             await Task.Delay(300);
         }
         private async Task<Book> GetBookById(int bookId)
         {
             var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
 
             return book;
         }
@@ -219,21 +220,21 @@
         private async Task<Author> GetAuthorById(int authorId)
         {
             var author = await this.dbContext.Authors.FirstOrDefaultAsync(b => b.Id == authorId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
 
             return author;
         }
         private async Task<Genre> GetGenreById(int genreId)
         {
             var genre = await this.dbContext.Genres.FirstOrDefaultAsync(g => g.Id == genreId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
 
             return genre;
         }
         private async Task<Publisher> GetPublisherById(int publisherId)
         {
             var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(g => g.Id == publisherId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), publisherId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), publisherId));
 
             return publisher;
         }

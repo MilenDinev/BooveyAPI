@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using AutoMapper;
     using Interfaces;
+    using Exceptions;
     using Constants;
     using Data;
     using Data.Entities;
@@ -77,7 +78,7 @@
         private async Task<User> GetUserByIdAsync(int userId)
         {
             var user = await this.userManager.FindByIdAsync(userId.ToString())
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), userId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), userId));
 
             return user;
         }
