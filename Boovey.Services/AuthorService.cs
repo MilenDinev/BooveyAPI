@@ -28,7 +28,7 @@
         {
             var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Fullname == authorModel.Fullname);
             if (author != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Author), authorModel.Fullname));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Author), authorModel.Fullname));
 
             author = mapper.Map<Author>(authorModel);
 
@@ -72,7 +72,7 @@
             var isAlreadyFavoriteAuthor = currentUser.FavoriteAuthors.FirstOrDefault(a => a.Id == authorId);
 
             if (isAlreadyFavoriteAuthor != null)
-                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Author), author.Id));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Author), author.Id));
 
             currentUser.FavoriteAuthors.Add(author);
 

@@ -30,7 +30,7 @@
         {
             var genre = await this.dbContext.Genres.FirstOrDefaultAsync(p => p.Title == genreModel.Title);
             if (genre != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Genre), genreModel.Title));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Genre), genreModel.Title));
 
             genre = mapper.Map<Genre>(genreModel);
 
@@ -63,7 +63,7 @@
             var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(g => g.Id == genreId);
 
             if (isAlreadyFavoriteGenre != null)
-                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Genre), genre.Id));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Genre), genre.Id));
 
             currentUser.FavoriteGenres.Add(genre);
 

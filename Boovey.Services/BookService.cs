@@ -38,7 +38,7 @@
             var book = mapper.Map<Book>(bookModel);
 
             var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == bookModel.CountryId)
-                ?? throw new ArgumentException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), bookModel.CountryId));
+                ?? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), bookModel.CountryId));
 
             book.CountryId = bookModel.CountryId;
 
@@ -191,14 +191,14 @@
         private async Task AlreadyExistBookByTitleChecker(string bookTitle)
         {
             var IsbookAlreadyExists = await this.dbContext.Books.AnyAsync(b => b.Title == bookTitle)
-                ? throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Book), bookTitle)) : false;
+                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Book), bookTitle)) : false;
 
             await Task.Delay(300);
         }
         private async Task AlreadyFavoriteBookChecker(int bookId, User user)
         {
             var isAlreadyFavoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId) 
-                ? throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Book), bookId)) : false;
+                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Book), bookId)) : false;
 
             await Task.Delay(300);
         }
@@ -242,21 +242,21 @@
         private async Task AlreadyAssignedAuthorChecker(Book book, Author author)
         {
             var IsAuthorAlreadyAssigned = book.Authors.Contains(author)
-                ? throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Author), author.Id, nameof(Book), book.Id)) : false;
+                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Author), author.Id, nameof(Book), book.Id)) : false;
 
             await Task.Delay(300);
         }
         private async Task AlreadyAssignedGenreChecker(Book book, Genre genre)
         {
             var isGenreAlreadyAssigned = book.Genres.Contains(genre)
-                ? throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Genre), genre.Id, nameof(Book), book.Id)) : false;
+                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Genre), genre.Id, nameof(Book), book.Id)) : false;
 
             await Task.Delay(300);
         }
         private async Task AlreadyAssignedPublisherChecker(Book book, int publisherId)
         {
             var isPublisherAlreadyAssigned = book.PublisherId == publisherId
-                ? throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Publisher), publisherId, nameof(Book), book.Id)) : false;
+                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Publisher), publisherId, nameof(Book), book.Id)) : false;
 
             await Task.Delay(300);
         }
