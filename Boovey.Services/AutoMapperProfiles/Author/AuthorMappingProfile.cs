@@ -18,8 +18,11 @@
             this.CreateMap<Author, EditedAuthorModel>()
                 .ForMember(m => m.Nationality, e => e.MapFrom(a => a.Country.Name));
             this.CreateMap<Author, AddedFavoriteAuthorModel>()
-                .ForMember(m => m.Username, e => e.MapFrom(a => a.FavoriteByUsers.Select(u => u.UserName).LastOrDefault()));
-            this.CreateMap<Author, RemovedFavoriteAuthorModel>();
+                .ForMember(m => m.AuthorId, e => e.MapFrom(a => a.Id))
+                .ForMember(m => m.UserId, e => e.MapFrom(a => a.FavoriteByUsers.Select(u => u.Id).LastOrDefault()));
+            this.CreateMap<Author, RemovedFavoriteAuthorModel>()
+                .ForMember(m => m.AuthorId, e => e.MapFrom(a => a.Id))
+                .ForMember(m => m.UserId, e => e.Ignore());
             this.CreateMap<Author, AuthorListingModel>()
                 .ForMember(m => m.Nationality, e => e.MapFrom(a => a.Country.Name));
         }
