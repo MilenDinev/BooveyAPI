@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Folder Include="Requests\UserModels\" />
-    <Folder Include="Requests\ReviewModels\" />
   </ItemGroup>
 
 </Project>

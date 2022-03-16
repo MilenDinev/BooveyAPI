@@ -19,6 +19,8 @@
             services.AddTransient<IGenreService, GenreService>();
             services.AddTransient<IPublisherService, PublisherService>();
             services.AddTransient<IQuoteService, QuoteService>();
+            services.AddTransient<IReviewService, ReviewService>();
+            services.AddTransient<IShelveService, ShelveService>();
             services.AddHttpContextAccessor();
         }
     }

@@ -4,14 +4,16 @@ using Boovey.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Boovey.Data.Migrations
 {
     [DbContext(typeof(BooveyDbContext))]
-    partial class BooveyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220315183720_CreatingReviewConfig")]
+    partial class CreatingReviewConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -762,21 +764,6 @@ namespace Boovey.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("UserShelves", b =>
-                {
-                    b.Property<int>("ShelveId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ShelveId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserShelves");
-                });
-
             modelBuilder.Entity("UsersAuthors", b =>
                 {
                     b.Property<int>("AuthorId")
@@ -1068,21 +1055,6 @@ namespace Boovey.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("UserShelves", b =>
-                {
-                    b.HasOne("Boovey.Data.Entities.Shelve", null)
-                        .WithMany()
-                        .HasForeignKey("ShelveId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Boovey.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

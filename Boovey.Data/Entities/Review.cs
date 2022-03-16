@@ -8,5 +8,7 @@
         public int Likes { get; set; }
         public int BookId { get; set; }
         public virtual Book Book { get; set; }
+
+        public virtual User Creator { get; set; }
     }
 }

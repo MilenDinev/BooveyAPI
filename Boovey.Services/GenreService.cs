@@ -7,6 +7,7 @@
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
+    using Exceptions;
     using Constants;
     using Data;
     using Data.Entities;
@@ -29,7 +30,7 @@
         {
             var genre = await this.dbContext.Genres.FirstOrDefaultAsync(p => p.Title == genreModel.Title);
             if (genre != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Genre), genreModel.Title));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Genre), genreModel.Title));
 
             genre = mapper.Map<Genre>(genreModel);
 
@@ -62,7 +63,7 @@
             var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(g => g.Id == genreId);
 
             if (isAlreadyFavoriteGenre != null)
-                throw new ArgumentException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Genre), genre.Id));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Genre), genre.Id));
 
             currentUser.FavoriteGenres.Add(genre);
 
@@ -77,7 +78,7 @@
             var isFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(g => g.Id == genreId);
 
             if (isFavoriteGenre == null)
-                throw new ArgumentException(string.Format(ErrorMessages.NotFavoriteId, nameof(Genre), genre.Id));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Genre), genre.Id));
 
             currentUser.FavoriteGenres.Remove(genre);
 
@@ -95,7 +96,7 @@
         private async Task<Genre> GetGenreById(int genreId)
         {
             var genre = await this.dbContext.Genres.FirstOrDefaultAsync(g => g.Id == genreId)
-                ?? throw new KeyNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
 
             return genre;
         }

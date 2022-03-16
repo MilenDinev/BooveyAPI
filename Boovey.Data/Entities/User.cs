@@ -13,6 +13,7 @@
             this.FavoriteAuthors = new HashSet<Author>();
             this.FavoriteQuotes = new HashSet<Quote>();
             this.Shelves = new HashSet<Shelve>();
+            this.FavoriteShelves = new HashSet<Shelve>();
             this.Reviews = new HashSet<Review>();
             this.Followers = new HashSet<User>();
             this.Following = new HashSet<User>();
@@ -28,6 +29,7 @@
         public virtual ICollection<Author> FavoriteAuthors { get; set; }
         public virtual ICollection<Quote> FavoriteQuotes { get; set; }
         public virtual ICollection<Shelve> Shelves { get; set; }
+        public virtual ICollection<Shelve> FavoriteShelves { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<Request> RequestsToApprove { get; set; }
         public virtual ICollection<Request> SentRequests { get; set; }
