@@ -2,6 +2,7 @@
 {
     public class RemovedFavoriteAuthorModel
     {
-        public string Fullname { get; set; }
+        public int AuthorId { get; set; }
+        public int UserId { get; set; }
     }
 }

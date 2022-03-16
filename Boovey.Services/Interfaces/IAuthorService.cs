@@ -12,6 +12,7 @@
         Task<EditedAuthorModel> EditAsync(int authorId, EditAuthorModel authorModel, int currentUserId);
         Task<AddedFavoriteAuthorModel> AddFavoriteAuthor(int authorId, User currentUser);
         Task<RemovedFavoriteAuthorModel> RemoveFavoriteAuthor(int authorId, User currentUser);
+        Task<AuthorListingModel> GetAuthorById(int authorId);
         Task<ICollection<AuthorListingModel>> GetAllAuthorsAsync();
     }
 }
