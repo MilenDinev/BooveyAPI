@@ -21,6 +21,7 @@
             services.AddTransient<IQuoteService, QuoteService>();
             services.AddTransient<IReviewService, ReviewService>();
             services.AddTransient<IShelveService, ShelveService>();
+            services.AddTransient<ICountryService, CountryService>();
             services.AddHttpContextAccessor();
         }
     }
