@@ -28,9 +28,8 @@
 
         public async Task<AddedShelveModel> AddAsync(AddShelveModel shelveModel, int currentUserId)
         {
-            var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Title == shelveModel.Title);
-            if (shelve != null)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Shelve), shelveModel.Title));
+            var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Title == shelveModel.Title)
+            ?? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Shelve), shelveModel.Title));
 
             shelve = mapper.Map<Shelve>(shelveModel);
 
@@ -45,7 +44,7 @@
 
         public async Task<EditedShelveModel> EditAsync(int shelveId, EditShelveModel shelveModel, int currentUserId)
         {
-            var shelve = await GetShelveById(shelveId);
+            var shelve = await FindShelveById(shelveId);
 
             shelve.Title = shelveModel.Title;
             shelve.LastModifierId = currentUserId;
@@ -58,11 +57,11 @@
 
         public async Task<AddedFavoriteShelveModel> AddFavoriteShelveAsync(int shelveId, User currentUser)
         {
-            var shelve = await GetShelveById(shelveId);
+            var shelve = await FindShelveById(shelveId);
 
-            var isAlreadyFavoriteShelve = currentUser.FavoriteShelves.FirstOrDefault(s => s.Id == shelveId);
+            var isAlreadyFavoriteShelve = currentUser.FavoriteShelves.Any(s => s.Id == shelveId);
 
-            if (isAlreadyFavoriteShelve != null)
+            if (isAlreadyFavoriteShelve)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Shelve), shelve.Id));
 
             currentUser.FavoriteShelves.Add(shelve);
@@ -73,7 +72,7 @@
 
         public async Task<RemovedFavoriteShelveModel> RemoveFavoriteShelveAsync(int shelveId, User currentUser)
         {
-            var shelve = await GetShelveById(shelveId);
+            var shelve = await FindShelveById(shelveId);
 
             var isFavoriteShelve = currentUser.FavoriteShelves.FirstOrDefault(s => s.Id == shelveId);
 
@@ -93,7 +92,7 @@
             return mapper.Map<ICollection<ShelveListingModel>>(shelves);
         }
 
-        private async Task<Shelve> GetShelveById(int shelveId)
+        private async Task<Shelve> FindShelveById(int shelveId)
         {
             var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Id == shelveId)
                 ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Shelve), shelveId));
