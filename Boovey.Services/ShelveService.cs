@@ -16,48 +16,38 @@
 
     public class ShelveService : IShelveService
     {
-
         private readonly BooveyDbContext dbContext;
+        private readonly IMapper mapper;
 
         public ShelveService(BooveyDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
         }
-        public async Task<CreatedShelveModel> CreateAsync(AddShelveModel shelveModel, int currentUserId)
+        public async Task CreateAsync(CreateShelveModel model, int creatorId)
         {
-            var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Title == shelveModel.Title)
-            ?? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Shelve), shelveModel.Title));
+            var shelve = this.mapper.Map<Shelve>(model);
 
-            shelve = mapper.Map<Shelve>(shelveModel);
+            await SetCreatorAsync(shelve, creatorId) ;
 
-            shelve.CreatorId = currentUserId;
-            shelve.LastModifierId = currentUserId;
+            await this.dbContext.AddAsync(shelve);
 
-            await this.dbContext.Shelves.AddAsync(shelve);
-            await this.dbContext.SaveChangesAsync();
-
-            return mapper.Map<CreatedShelveModel>(shelve);
+            await SaveModificationAsync(shelve, creatorId);
         }
-        public async Task<EditedShelveModel> EditAsync(int shelveId, EditShelveModel shelveModel, int currentUserId)
+        public async Task EditAsync(Shelve shelve, EditShelveModel model, int modifierId)
         {
-            var shelve = await FindById(shelveId);
-
-            shelve.Title = shelveModel.Title;
-            shelve.LastModifierId = currentUserId;
-            shelve.LastModifiedOn = DateTime.UtcNow;
-
-            await this.dbContext.SaveChangesAsync();
-
-            return mapper.Map<EditedShelveModel>(shelve);
+            await SetTitle(shelve, model.Title);
+            await SaveModificationAsync(shelve, modifierId);
         }
-        public async Task DeleteAsync(Shelve shelve)
+        public async Task DeleteAsync(Shelve shelve, int modifierId)
         {
-            await Task.Run(() => shelve.Deleted = true);
+            shelve.Deleted = true;
+            await SaveModificationAsync(shelve, modifierId);
         }
+
         public async Task<AddedFavoriteShelveModel> AddFavoriteAsync(int shelveId, User currentUser)
         {
-            var shelve = await FindById(shelveId);
+            var shelve = await FindByIdOrDefault(shelveId);
 
             var isAlreadyFavoriteShelve = currentUser.FavoriteShelves.Any(s => s.Id == shelveId);
 
@@ -71,7 +61,7 @@
         }
         public async Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(int shelveId, User currentUser)
         {
-            var shelve = await FindById(shelveId);
+            var shelve = await FindByIdOrDefault(shelveId);
 
             var isFavoriteShelve = currentUser.FavoriteShelves.FirstOrDefault(s => s.Id == shelveId);
 
@@ -83,12 +73,20 @@
             await dbContext.SaveChangesAsync();
             return mapper.Map<RemovedFavoriteShelveModel>(shelve);
         }
-        public async Task SaveChangesAsync(Shelve shelve, int modifierId)
-        {
-            shelve.LastModifiedOn = DateTime.UtcNow;
-            shelve.LastModifierId = modifierId;
 
-            await dbContext.SaveChangesAsync();
+        public async Task<Shelve> GetById(int shelveId)
+        {
+            var shelve = await FindByIdOrDefault(shelveId)
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Shelve), shelveId));
+
+            return shelve;
+        }
+        public async Task<Shelve> GetByTitle(string title)
+        {
+            var shelve = await FindByTitleOrDefault(title)
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Shelve), title));
+
+            return shelve;
         }
         public async Task<ICollection<Shelve>> GetAllAsync()
         {
@@ -96,16 +94,47 @@
 
             return shelves;
         }
-        public async Task<Shelve> GetById(int shelveId)
+
+        public async Task TitleDuplicationChecker(string title, User user)
         {
-            return await FindById(shelveId);
+            var isDeleted = await IsDeletedByTitle(title);
+            var exists = user.Shelves.Any(s => s.Title == title && !isDeleted);
+
+            if (exists)
+            throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyCreatedByUser, nameof(Shelve), user.Id));
         }
-        private async Task<Shelve> FindById(int shelveId)
+
+        private async Task SetTitle(Shelve shelve, string title)
         {
-            var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Id == shelveId && !s.Deleted)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Shelve), shelveId));
+            await Task.Run(() => shelve.Title = title);
+        }
+        private async Task SetCreatorAsync(Shelve shelve, int creatorId)
+        {
+            await Task.Run(() => shelve.CreatorId = creatorId);
+        }
+        private async Task SaveModificationAsync(Shelve shelve, int modifierId)
+        {
+            shelve.LastModifierId = modifierId;
+            shelve.LastModifiedOn = DateTime.UtcNow;
+
+            await dbContext.SaveChangesAsync();
+        }
+        private async Task<Shelve> FindByIdOrDefault(int id)
+        {
+            var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Id == id);
 
             return shelve;
+        }
+        private async Task<Shelve> FindByTitleOrDefault(string title)
+        {
+            var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Title == title);
+            return shelve;
+        }
+        private async Task<bool> IsDeletedByTitle(string title)
+        {
+            var shelve = await FindByTitleOrDefault(title);
+
+            return shelve == null || shelve.Deleted;
         }
     }
 }
