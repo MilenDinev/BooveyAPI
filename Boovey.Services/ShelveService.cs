@@ -95,10 +95,10 @@
             return shelves;
         }
 
-        public async Task TitleDuplicationChecker(string title, User user)
+        public async Task TitleDuplicationChecker(string title, ICollection<Shelve> shelves)
         {
             var isDeleted = await IsDeletedByTitle(title);
-            var exists = user.Shelves.Any(s => s.Title == title && !isDeleted);
+            var exists = shelves.Any(s => s.Title == title && !isDeleted);
 
             if (exists)
             throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyCreatedByUser, nameof(Shelve), user.Id));

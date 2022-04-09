@@ -15,7 +15,7 @@
         Task<AddedFavoriteShelveModel> AddFavoriteAsync(int Id, User currentUser);
         Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(int Id, User currentUser);
 
-        Task TitleDuplicationChecker(string title, User user);
+        Task TitleDuplicationChecker(string title, ICollection<Shelve> shelves);
         Task<Shelve> GetById(int Id);
         Task<Shelve> GetByTitle(string title);
         Task<ICollection<Shelve>> GetAllAsync();
