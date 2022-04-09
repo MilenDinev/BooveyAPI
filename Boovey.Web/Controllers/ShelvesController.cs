@@ -4,11 +4,13 @@
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
-    using Services.Interfaces;
     using AutoMapper;
+    using Data.Entities;
+    using Services.Constants;
+    using Services.Interfaces;
+    using Services.Exceptions;
     using Models.Requests.ShelveModels;
     using Models.Responses.ShelveModels;
-
 
     [Route("api/[controller]")]
     [ApiController]
@@ -34,10 +36,11 @@
         public async Task<ActionResult> Create(CreateShelveModel shelveInput)
         {
             await AssignCurrentUserAsync();
-            await this.shelveService.TitleDuplicationChecker(shelveInput.Title, CurrentUser.Shelves);
-            await this.shelveService.CreateAsync(shelveInput, CurrentUser.Id);
+            var alreadyExists = await this.shelveService.ContainsActiveByTitleAsync(shelveInput.Title, CurrentUser.Shelves);
+            if (alreadyExists)
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Shelve)));
 
-            var shelve = await this.shelveService.GetByTitle(shelveInput.Title);
+            var shelve = await this.shelveService.CreateAsync(shelveInput, CurrentUser.Id);
             var createdShelve = mapper.Map<CreatedShelveModel>(shelve);
 
             return CreatedAtAction(nameof(Get), "Shelves", new {id = createdShelve.Id}, createdShelve);
@@ -47,7 +50,8 @@
         public async Task<ActionResult<EditedShelveModel>> Edit(EditShelveModel shelveInput, int shelveId)
         {
             await AssignCurrentUserAsync();
-            var shelve = await this.shelveService.GetById(shelveId);
+            var shelve = await this.shelveService.GetActiveByIdAsync(shelveId);
+
             await this.shelveService.EditAsync(shelve, shelveInput, CurrentUser.Id);
 
             return mapper.Map<EditedShelveModel>(shelve);
@@ -75,7 +79,7 @@
         public async Task<DeletedShelveModel> Delete(int shelveId)
         {
             await AssignCurrentUserAsync(); 
-            var shelve = await this.shelveService.GetById(shelveId);
+            var shelve = await this.shelveService.GetByIdAsync(shelveId);
             await this.shelveService.DeleteAsync(shelve, CurrentUser.Id);
             return mapper.Map<DeletedShelveModel>(shelve);
         }

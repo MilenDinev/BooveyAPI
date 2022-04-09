@@ -8,16 +8,17 @@
 
     public interface IShelveService
     {
-        Task CreateAsync(CreateShelveModel model, int creatorId);
+        Task<Shelve> CreateAsync(CreateShelveModel model, int creatorId);
         Task EditAsync(Shelve shelve, EditShelveModel shelveModel, int modifierId);
         Task DeleteAsync(Shelve shelve, int modifierId);
 
         Task<AddedFavoriteShelveModel> AddFavoriteAsync(int Id, User currentUser);
         Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(int Id, User currentUser);
 
-        Task TitleDuplicationChecker(string title, ICollection<Shelve> shelves);
-        Task<Shelve> GetById(int Id);
-        Task<Shelve> GetByTitle(string title);
+        Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Shelve> shelves);
+        Task<Shelve> GetActiveByIdAsync(int Id);
+        Task<Shelve> GetByIdAsync(int Id);
+        Task<Shelve> GetByTitleAsync(string title);
         Task<ICollection<Shelve>> GetAllAsync();
     }
 }
