@@ -10,9 +10,8 @@
     {
         public ShelveMappingProfile()
         {
-            this.CreateMap<AddShelveModel, Shelve>()
-                .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
-                .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
+            this.CreateMap<CreateShelveModel, Shelve>()
+                .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.UtcNow));
             this.CreateMap<Shelve, CreatedShelveModel>();
             this.CreateMap<Shelve, EditedShelveModel>();
             this.CreateMap<Shelve, AddedFavoriteShelveModel>()
