@@ -8,10 +8,13 @@
 
     public interface IShelveService
     {
-        Task<AddedShelveModel> AddAsync(AddShelveModel shelveModel, int currentUserId);
+        Task<CreatedShelveModel> CreateAsync(AddShelveModel shelveModel, int currentUserId);
         Task<EditedShelveModel> EditAsync(int shelveId, EditShelveModel shelveModel, int currentUserId);
-        Task<AddedFavoriteShelveModel> AddFavoriteShelveAsync(int shelveId, User currentUser);
-        Task<RemovedFavoriteShelveModel> RemoveFavoriteShelveAsync(int shelveId, User currentUser);
-        Task<ICollection<ShelveListingModel>> GetAllShelvesAsync();
+        Task DeleteAsync(Shelve shelve);
+        Task<AddedFavoriteShelveModel> AddFavoriteAsync(int shelveId, User currentUser);
+        Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(int shelveId, User currentUser);
+        Task SaveChangesAsync(Shelve shelve, int modifierId);
+        Task<Shelve> GetById(int shelveId);
+        Task<ICollection<Shelve>> GetAllAsync();
     }
 }

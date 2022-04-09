@@ -29,7 +29,7 @@
         [HttpPost("Add/")]
         public async Task<ActionResult> Add(AddPublisherModel publisherInput)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var addedPublisher = await this.publisherService.AddAsync(publisherInput, CurrentUser.Id);
             return CreatedAtAction(nameof(Get), "Publishers", new { id = addedPublisher.Id }, addedPublisher);
         }
@@ -37,7 +37,7 @@
         [HttpPut("Edit/{publisherId}")]
         public async Task<ActionResult<EditedPublisherModel>> Edit(EditPublisherModel publisherInput, int publisherId)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var editedPublisher = await this.publisherService.EditAsync(publisherId, publisherInput, CurrentUser.Id);
             return editedPublisher;
         }

@@ -34,7 +34,7 @@
         [HttpPut("Follow/{followedId}")]
         public async Task<ActionResult<FollowerModel>> Follow(int followedId)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var followerFollowed = await this.userService.Follow(CurrentUser, followedId);
             return followerFollowed;
         }

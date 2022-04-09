@@ -20,7 +20,7 @@
         [HttpPost("Add/")]
         public async Task<ActionResult> Add(AddReviewModel reviewInput)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var addedReview = await this.reviewService.AddAsync(reviewInput, CurrentUser.Id);
             return CreatedAtAction(nameof(Add), "Reviews", new { id = addedReview.Id }, addedReview);
         }
@@ -28,7 +28,7 @@
         [HttpPut("Edit/{reviewId}")]
         public async Task<ActionResult<EditedReviewModel>> Edit(EditReviewModel reviewInput, int reviewId)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var editedReview = await this.reviewService.EditAsync(reviewId, reviewInput, CurrentUser.Id);
             return editedReview;
         }
