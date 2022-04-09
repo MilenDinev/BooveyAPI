@@ -101,7 +101,7 @@
             var exists = shelves.Any(s => s.Title == title && !isDeleted);
 
             if (exists)
-            throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyCreatedByUser, nameof(Shelve), user.Id));
+            throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyCreatedByUser, nameof(Shelve)));
         }
 
         private async Task SetTitle(Shelve shelve, string title)
