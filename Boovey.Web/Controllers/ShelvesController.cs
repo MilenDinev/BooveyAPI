@@ -5,9 +5,10 @@
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
     using Services.Interfaces;
+    using AutoMapper;
     using Models.Requests.ShelveModels;
     using Models.Responses.ShelveModels;
-    using AutoMapper;
+
 
     [Route("api/[controller]")]
     [ApiController]
@@ -16,32 +17,40 @@
         private readonly IShelveService shelveService;
         private readonly IMapper mapper;
 
-        public ShelvesController(IUserService userService, IShelveService shelveService) : base(userService)
+        public ShelvesController(IUserService userService, IShelveService shelveService, IMapper mapper) : base(userService)
         {
             this.shelveService = shelveService;
+            this.mapper = mapper;
         }
 
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<ShelveListingModel>>> Get()
         {
             var allShelves = await this.shelveService.GetAllAsync();
-            return allShelves.ToList();
+            return mapper.Map<ICollection<ShelveListingModel>>(allShelves).ToList();
         }
 
-        [HttpPost("Add/")]
-        public async Task<ActionResult> Add(AddShelveModel shelveInput)
+        [HttpPost("Create/")]
+        public async Task<ActionResult> Create(CreateShelveModel shelveInput)
         {
             await AssignCurrentUserAsync();
-            var addedShelve = await this.shelveService.CreateAsync(shelveInput, CurrentUser.Id);
-            return CreatedAtAction(nameof(Get), "Shelves", new { id = addedShelve.Id }, addedShelve);
+            await this.shelveService.TitleDuplicationChecker(shelveInput.Title, CurrentUser.Shelves);
+            await this.shelveService.CreateAsync(shelveInput, CurrentUser.Id);
+
+            var shelve = await this.shelveService.GetByTitle(shelveInput.Title);
+            var createdShelve = mapper.Map<CreatedShelveModel>(shelve);
+
+            return CreatedAtAction(nameof(Get), "Shelves", new {id = createdShelve.Id}, createdShelve);
         }
 
         [HttpPut("Edit/{shelveId}")]
         public async Task<ActionResult<EditedShelveModel>> Edit(EditShelveModel shelveInput, int shelveId)
         {
             await AssignCurrentUserAsync();
-            var editedShelve = await this.shelveService.EditAsync(shelveId, shelveInput, CurrentUser.Id);
-            return editedShelve;
+            var shelve = await this.shelveService.GetById(shelveId);
+            await this.shelveService.EditAsync(shelve, shelveInput, CurrentUser.Id);
+
+            return mapper.Map<EditedShelveModel>(shelve);
         }
 
         [HttpPut("Add-To-Favorites/{shelveId}")]
@@ -67,8 +76,7 @@
         {
             await AssignCurrentUserAsync(); 
             var shelve = await this.shelveService.GetById(shelveId);
-            await this.shelveService.DeleteAsync(shelve);
-            await this.shelveService.SaveChangesAsync(shelve, CurrentUser.Id);
+            await this.shelveService.DeleteAsync(shelve, CurrentUser.Id);
             return mapper.Map<DeletedShelveModel>(shelve);
         }
     }

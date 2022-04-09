@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Models.Requests.ShelveModels
 {
-    public class AddShelveModel
+    public class CreateShelveModel
     {
         public string Title { get; set; }
     }
