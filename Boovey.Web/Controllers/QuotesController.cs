@@ -21,7 +21,7 @@
         [HttpPost("Add/")]
         public async Task<ActionResult> Add(AddQuoteModel quoteInput)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var addedQuote = await this.quoteService.AddAsync(quoteInput, CurrentUser.Id);
             return CreatedAtAction(nameof(Add), "Quotes", new { id = addedQuote.Id }, addedQuote);
         }
@@ -29,7 +29,7 @@
         [HttpPut("Edit/{quoteId}")]
         public async Task<ActionResult<EditedQuoteModel>> Edit(EditQuoteModel quoteInput, int quoteId)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var editedQuote = await this.quoteService.EditAsync(quoteId, quoteInput, CurrentUser.Id);
             return editedQuote;
         }
@@ -37,7 +37,7 @@
         [HttpPut("Add-To-Favorites/{quoteId}")]
         public async Task<AddedFavoriteQuoteModel> AddFavorite(int quoteId)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var addedFavoriteQuote = await this.quoteService.AddFavoriteQuoteAsync(quoteId, CurrentUser);
             return addedFavoriteQuote;
         }
@@ -45,7 +45,7 @@
         [HttpPut("Remove-From-Favorites/{quoteId}")]
         public async Task<RemovedFavoriteQuoteModel> RemoveFavorite(int quoteId)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var removedFavoriteQuote = await this.quoteService.RemoveFavoriteQuoteAsync(quoteId, CurrentUser);
             return removedFavoriteQuote;
         }

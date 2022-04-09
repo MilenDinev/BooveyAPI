@@ -19,7 +19,7 @@
         public User CurrentUser { get; set; }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        protected async Task<ActionResult> GetCurrentUserAsync()
+        protected async Task<ActionResult> AssignCurrentUserAsync()
         {
             CurrentUser = await this.userService.GetCurrentUserAsync(User) ?? 
                 throw new UnauthorizedAccessException(ErrorMessages.InvalidCredentials);

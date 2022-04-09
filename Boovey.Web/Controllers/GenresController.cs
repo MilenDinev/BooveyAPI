@@ -29,7 +29,7 @@
         [HttpPost("Add/")]
         public async Task<ActionResult> Add(AddGenreModel genreInput)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var addedGenre = await this.genreService.AddAsync(genreInput, CurrentUser.Id);
             return CreatedAtAction(nameof(Get), "Genres", new { id = addedGenre.Id }, addedGenre);
         }
@@ -37,7 +37,7 @@
         [HttpPut("Edit/{genreId}")]
         public async Task<ActionResult<EditedGenreModel>> Edit(EditGenreModel genreInput, int genreId)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var editedGenre = await this.genreService.EditAsync(genreId, genreInput, CurrentUser.Id);
             return editedGenre;
         }
@@ -45,7 +45,7 @@
         [HttpPut("Add-To-Favorites/{genreId}")]
         public async Task<AddedFavoriteGenreModel> AddFavorite(int genreId)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var addedFavoriteGenre = await this.genreService.AddFavoriteGenre(genreId, CurrentUser);
             addedFavoriteGenre.UserId = CurrentUser.Id;
             return addedFavoriteGenre;
@@ -54,7 +54,7 @@
         [HttpPut("Remove-From-Favorites/{genreId}")]
         public async Task<RemovedFavoriteGenreModel> RemoveFavorite(int genreId)
         {
-            await GetCurrentUserAsync();
+            await AssignCurrentUserAsync();
             var removedFavoriteGenre = await this.genreService.RemoveFavoriteGenre(genreId, CurrentUser);
             removedFavoriteGenre.UserId = CurrentUser.Id;
             return removedFavoriteGenre;
