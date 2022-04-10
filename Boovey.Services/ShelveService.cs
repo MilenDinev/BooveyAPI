@@ -114,7 +114,11 @@
 
         private static async Task SetTitleAsync(Shelve shelve, string title)
         {
-            await Task.Run(() => shelve.Title = title);
+            if (title != shelve.Title)
+            {
+                await Task.Run(() => shelve.Title = title);
+            }
+
         }
         private static async Task SetCreatorAsync(Shelve shelve, int creatorId)
         {
