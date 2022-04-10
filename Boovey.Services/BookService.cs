@@ -16,14 +16,12 @@
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
 
-    public class BookService : IBookService
+    public class BookService : BaseService<Book>, IBookService
     {
-        private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
 
-        public BookService(BooveyDbContext dbContext, IMapper mapper)
+        public BookService(BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
         {
-            this.dbContext = dbContext;
             this.mapper = mapper;
         }
 
@@ -147,7 +145,7 @@
             var book = await FindByIdOrDefaultAsync(bookId)
                 ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
 
-            return book;
+            return book ;
         }
         public async Task<ICollection<BookListingModel>> GetAllBooksAsync()
         {
@@ -267,25 +265,11 @@
             await Task.Delay(300);
         }
 
-        private async Task<Book> FindByIdOrDefaultAsync(int id)
-        {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
-
-            return book;
-        }
         private async Task<Book> FindByTitleOrDefaultAsync(string title)
         {
             var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Title == title);
 
             return book;
-        }
-
-        private async Task SaveModificationAsync(Book book, int modifierId)
-        {
-            book.LastModifierId = modifierId;
-            book.LastModifiedOn = DateTime.UtcNow;
-
-            await this.dbContext.SaveChangesAsync();
         }
     }
 }
