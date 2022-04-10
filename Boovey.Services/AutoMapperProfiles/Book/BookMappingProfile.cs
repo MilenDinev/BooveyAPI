@@ -27,6 +27,8 @@
                 .ForMember(m => m.PublicationDate, e => e.MapFrom(b => b.PublicationDate.ToString("dd-MM-yyyy")))
                 .ForMember(m => m.Publisher, e => e.MapFrom(b => b.Publisher.Name))
                 .ForMember(m => m.Country, e => e.MapFrom(b => b.Country.Name));
+            this.CreateMap<Book, DeletedBookModel>()
+                .ForMember(m => m.Authors, e => e.MapFrom(b => string.Join(", ", b.Authors.Select(a => a.Fullname))));
             this.CreateMap<Book, AddedFavoriteBookModel>()
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.UserId, e => e.MapFrom(b => b.FavoriteByUsers.Select(u => u.Id).LastOrDefault()));
