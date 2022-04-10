@@ -11,8 +11,10 @@
     {
         Task<AddedBookModel> AddAsync(AddBookModel bookModel, int currentUserId);
         Task<EditedBookModel> EditAsync(int bookId, EditBookModel bookModel, int currentUserId);
+        Task DeleteAsync(Book book, int modifierId);
         Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser);
         Task<RemovedFavoriteBookModel> RemoveFavoriteBook(int bookId, User currentUser);
+        Task<Book> GetByIdAsync(int bookId);
         Task<ICollection<BookListingModel>> GetAllBooksAsync();
 
         Task<AssignedAuthorBookModel> AssignAuthorAsync(int bookId, int authorId, int modifierId);
