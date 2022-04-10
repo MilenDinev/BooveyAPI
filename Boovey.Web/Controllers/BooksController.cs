@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Authorization;
+    using AutoMapper;
     using Services.Interfaces;
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
@@ -16,9 +17,12 @@
     public class BooksController : BooveyBaseController
     {
         private readonly IBookService bookService;
-        public BooksController(IUserService userService, IBookService bookService) : base(userService)
+        private readonly IMapper mapper;
+
+        public BooksController(IUserService userService, IBookService bookService, IMapper mapper) : base(userService)
         {
             this.bookService = bookService;
+            this.mapper = mapper;
         }
 
         [HttpGet("List/")]
@@ -84,6 +88,15 @@
             var removedFavoriteBook = await this.bookService.RemoveFavoriteBook(bookId, CurrentUser);
             removedFavoriteBook.UserId = CurrentUser.Id;
             return removedFavoriteBook;
+        }
+
+        [HttpDelete("Delete/{bookId}")]
+        public async Task<DeletedBookModel> Delete(int bookId)
+        {
+            await AssignCurrentUserAsync();
+            var book = await this.bookService.GetByIdAsync(bookId);
+            await this.bookService.DeleteAsync(book, CurrentUser.Id);
+            return mapper.Map<DeletedBookModel>(book);
         }
     }
 }
