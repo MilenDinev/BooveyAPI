@@ -79,7 +79,7 @@
         public async Task<DeletedShelveModel> Delete(int shelveId)
         {
             await AssignCurrentUserAsync(); 
-            var shelve = await this.shelveService.GetByIdAsync(shelveId);
+            var shelve = await this.shelveService.GetActiveByIdAsync(shelveId);
             await this.shelveService.DeleteAsync(shelve, CurrentUser.Id);
             return mapper.Map<DeletedShelveModel>(shelve);
         }

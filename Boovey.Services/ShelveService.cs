@@ -52,7 +52,8 @@
 
             currentUser.FavoriteShelves.Add(shelve);
 
-            await dbContext.SaveChangesAsync();
+            await SaveModificationAsync(shelve, currentUser.Id);
+
             return mapper.Map<AddedFavoriteShelveModel>(shelve);
         }
         public async Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(int shelveId, User currentUser)
@@ -66,7 +67,8 @@
 
             currentUser.FavoriteShelves.Remove(shelve);
 
-            await dbContext.SaveChangesAsync();
+            await SaveModificationAsync(shelve, currentUser.Id);
+
             return mapper.Map<RemovedFavoriteShelveModel>(shelve);
         }
 
@@ -88,7 +90,7 @@
         {
             var shelve = await GetByIdAsync(shelveId);
             if (shelve.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Shelve), shelveId));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Shelve)));
 
             return shelve;
         }
