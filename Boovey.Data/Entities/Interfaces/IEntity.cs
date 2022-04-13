@@ -1,9 +1,8 @@
-﻿namespace Boovey.Data.Entities
+﻿namespace Boovey.Data.Entities.Interfaces
 {
     using System;
-    using Interfaces;
 
-    public abstract class Entity : IEntity
+    public interface IEntity
     {
         public int Id { get; set; }
         public int CreatorId { get; set; }

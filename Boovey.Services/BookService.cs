@@ -16,14 +16,12 @@
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
 
-    public class BookService : IBookService
+    public class BookService : BaseService<Book>, IBookService
     {
-        private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
 
-        public BookService(BooveyDbContext dbContext, IMapper mapper)
+        public BookService(BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
         {
-            this.dbContext = dbContext;
             this.mapper = mapper;
         }
 
@@ -79,7 +77,7 @@
         }
         public async Task<EditedBookModel> EditAsync(int bookId, EditBookModel bookModel, int currentUserId)
         {
-            var book = await GetBookById(bookId);
+            var book = await GetByIdAsync(bookId);
 
             var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == bookModel.CountryId)
                 ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), bookModel.CountryId));
@@ -105,11 +103,17 @@
 
             return mapper.Map<EditedBookModel>(book);
         }
+        public async Task DeleteAsync(Book book, int modifierId)
+        {
+            book.Deleted = true;
+            await SaveModificationAsync(book, modifierId);
+        }
+
         public async Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser)
         {
             await AlreadyFavoriteBookChecker(bookId, currentUser);
 
-            var book = await GetBookById(bookId);
+            var book = await GetByIdAsync(bookId);
 
             currentUser.FavoriteBooks.Add(book);
 
@@ -129,12 +133,19 @@
         {
             await NotFavoriteBookChecker(bookId, currentUser);
 
-            var book = await GetBookById(bookId);
+            var book = await GetByIdAsync(bookId);
 
             currentUser.FavoriteBooks.Remove(book);
 
             await dbContext.SaveChangesAsync();
             return mapper.Map<RemovedFavoriteBookModel>(book);
+        }
+        public async Task<Book> GetByIdAsync(int bookId)
+        {
+            var book = await FindByIdOrDefaultAsync(bookId)
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
+
+            return book ;
         }
         public async Task<ICollection<BookListingModel>> GetAllBooksAsync()
         {
@@ -145,7 +156,7 @@
 
         public async Task<AssignedAuthorBookModel> AssignAuthorAsync(int bookId, int authorId, int modifierId)
         {
-            var book = await GetBookById(bookId);
+            var book = await GetByIdAsync(bookId);
             var author = await GetAuthorById(authorId);
             await AlreadyAssignedAuthorChecker(book, author);
 
@@ -159,7 +170,7 @@
         }
         public async Task<AssignedBookGenreModel> AssignGenreAsync(int bookId, int genreId, int modifierId)
         {
-            var book = await GetBookById(bookId);
+            var book = await GetByIdAsync(bookId);
             var genre = await GetGenreById(genreId);
 
             await AlreadyAssignedGenreChecker(book, genre);
@@ -174,7 +185,7 @@
         }
         public async Task<AssignedPublisherBookModel> AssignPublisherAsync(int bookId, int publisherId, int modifierId)
         {
-            var book = await GetBookById(bookId);
+            var book = await GetByIdAsync(bookId);
             var publisher = await GetPublisherById(publisherId);
 
             await AlreadyAssignedPublisherChecker(book, publisherId);
@@ -208,13 +219,6 @@
                 ? true : throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Book), bookId));
 
             await Task.Delay(300);
-        }
-        private async Task<Book> GetBookById(int bookId)
-        {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
-
-            return book;
         }
 
         private async Task<Author> GetAuthorById(int authorId)
@@ -259,6 +263,13 @@
                 ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Publisher), publisherId, nameof(Book), book.Id)) : false;
 
             await Task.Delay(300);
+        }
+
+        private async Task<Book> FindByTitleOrDefaultAsync(string title)
+        {
+            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Title == title);
+
+            return book;
         }
     }
 }

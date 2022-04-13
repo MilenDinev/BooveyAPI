@@ -19,6 +19,6 @@
         Task<Shelve> GetActiveByIdAsync(int Id);
         Task<Shelve> GetByIdAsync(int Id);
         Task<Shelve> GetByTitleAsync(string title);
-        Task<ICollection<Shelve>> GetAllAsync();
+        Task<ICollection<Shelve>> GetAllActiveAsync();
     }
 }

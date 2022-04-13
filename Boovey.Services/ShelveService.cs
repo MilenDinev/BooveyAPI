@@ -14,35 +14,30 @@
     using Models.Requests.ShelveModels;
     using Models.Responses.ShelveModels;
 
-    public class ShelveService : IShelveService
+    public class ShelveService : BaseService<Shelve>, IShelveService
     {
-        private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
 
-        public ShelveService(BooveyDbContext dbContext, IMapper mapper)
+        public ShelveService(BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
         {
-            this.dbContext = dbContext;
             this.mapper = mapper;
         }
+
         public async Task<Shelve> CreateAsync(CreateShelveModel model, int creatorId)
         {
             var shelve = this.mapper.Map<Shelve>(model);
 
-            await SetCreatorAsync(shelve, creatorId) ;
-            await this.dbContext.AddAsync(shelve);
-            await SaveModificationAsync(shelve, creatorId);
+            await AddEntityAsync(shelve, creatorId);
 
             return shelve;
         }
         public async Task EditAsync(Shelve shelve, EditShelveModel model, int modifierId)
         {
-            await SetTitleAsync(shelve, model.Title);
-            await SaveModificationAsync(shelve, modifierId);
+            await SetTitleAsync(model.Title, shelve, modifierId);
         }
         public async Task DeleteAsync(Shelve shelve, int modifierId)
         {
-            shelve.Deleted = true;
-            await SaveModificationAsync(shelve, modifierId);
+            await DeleteEntityAsync(shelve, modifierId);
         }
 
         public async Task<AddedFavoriteShelveModel> AddFavoriteAsync(int shelveId, User currentUser)
@@ -56,7 +51,8 @@
 
             currentUser.FavoriteShelves.Add(shelve);
 
-            await dbContext.SaveChangesAsync();
+            await SaveModificationAsync(shelve, currentUser.Id);
+
             return mapper.Map<AddedFavoriteShelveModel>(shelve);
         }
         public async Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(int shelveId, User currentUser)
@@ -70,17 +66,9 @@
 
             currentUser.FavoriteShelves.Remove(shelve);
 
-            await dbContext.SaveChangesAsync();
+            await SaveModificationAsync(shelve, currentUser.Id);
+
             return mapper.Map<RemovedFavoriteShelveModel>(shelve);
-        }
-
-        public async Task<Shelve> GetActiveByIdAsync(int shelveId)
-        {
-            var shelve = await GetByIdAsync(shelveId);
-            if (shelve.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Shelve), shelveId));
-
-            return shelve;
         }
 
         public async Task<Shelve> GetByIdAsync(int shelveId)
@@ -90,7 +78,6 @@
 
             return shelve;
         }
-
         public async Task<Shelve> GetByTitleAsync(string title)
         {
             var shelve = await FindByTitleOrDefaultAsync(title)
@@ -98,11 +85,19 @@
 
             return shelve;
         }
-        public async Task<ICollection<Shelve>> GetAllAsync()
+        public async Task<Shelve> GetActiveByIdAsync(int shelveId)
         {
-            var shelves = await this.dbContext.Shelves.Where(s => !s.Deleted).ToListAsync();
+            var shelve = await GetByIdAsync(shelveId);
+            if (shelve.Deleted)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Shelve)));
 
-            return shelves;
+            return shelve;
+        }
+        public async Task<ICollection<Shelve>> GetAllActiveAsync()
+        {
+            var shelves = await GetAllAsync();
+
+            return shelves.Where(s => !s.Deleted).ToList();
         }
 
         public async Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Shelve> shelves)
@@ -112,31 +107,13 @@
             return await Task.Run(() => contains);
         }
 
-        private static async Task SetTitleAsync(Shelve shelve, string title)
+        private async Task SetTitleAsync(string title, Shelve shelve, int modifierId)
         {
             if (title != shelve.Title)
             {
-                await Task.Run(() => shelve.Title = title);
+                shelve.Title = title;
+                await SaveModificationAsync(shelve, modifierId);
             }
-
-        }
-        private static async Task SetCreatorAsync(Shelve shelve, int creatorId)
-        {
-            await Task.Run(() => shelve.CreatorId = creatorId);
-        }
-        private async Task SaveModificationAsync(Shelve shelve, int modifierId)
-        {
-            shelve.LastModifierId = modifierId;
-            shelve.LastModifiedOn = DateTime.UtcNow;
-
-            await this.dbContext.SaveChangesAsync();
-        }
-
-        private async Task<Shelve> FindByIdOrDefaultAsync(int id)
-        {
-            var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Id == id);
-
-            return shelve;
         }
         private async Task<Shelve> FindByTitleOrDefaultAsync(string title)
         {
