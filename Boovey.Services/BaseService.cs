@@ -5,6 +5,8 @@
     using Microsoft.EntityFrameworkCore;
     using Data;
     using Data.Entities.Interfaces;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public abstract class BaseService<TEntity> where TEntity : class, IEntity
     {
@@ -15,18 +17,46 @@
             this.dbContext = dbContext;
         }
 
-        public async Task<TEntity> FindByIdOrDefaultAsync(int id)
+        protected async Task<TEntity> AddEntityAsync(TEntity entity, int creatorId)
         {
-            var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(b => b.Id == id);
+            await SetCreatorAsync(entity, creatorId);
+            await this.dbContext.AddAsync(entity);
+            await SaveModificationAsync(entity, creatorId);
 
             return entity;
         }
-        public async Task SaveModificationAsync(TEntity entity, int modifierId)
+
+        protected async Task SetCreatorAsync(TEntity entity, int creatorId)
+        {
+            entity.CreatorId = creatorId;
+            await SaveModificationAsync(entity, creatorId);
+        }
+
+        protected async Task DeleteEntityAsync(TEntity entity, int modifierId)
+        {
+            entity.Deleted = true;
+            await SaveModificationAsync(entity, modifierId);
+        }
+
+        protected async Task SaveModificationAsync(TEntity entity, int modifierId)
         {
             entity.LastModifierId = modifierId;
             entity.LastModifiedOn = DateTime.UtcNow;
 
             await this.dbContext.SaveChangesAsync();
+        }
+
+        protected  async Task<IEnumerable<TEntity>> GetAllAsync()
+        {
+            var entities = await this.dbContext.Set<TEntity>().ToArrayAsync();
+
+            return entities;
+        }
+        protected async Task<TEntity> FindByIdOrDefaultAsync(int id)
+        {
+            var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(b => b.Id == id);
+
+            return entity;
         }
     }
 }
