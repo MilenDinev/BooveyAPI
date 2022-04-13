@@ -1,15 +1,12 @@
 ﻿namespace Boovey.Services
 {
-    using System.Linq;
-    using System.Collections.Generic;
-    using Data;
-    using Data.Entities.Interfaces;
+    using System;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using System;
-    using Interfaces;
+    using Data;
+    using Data.Entities.Interfaces;
 
-    public abstract class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class , IEntity
+    public abstract class BaseService<TEntity> where TEntity : class, IEntity
     {
         protected readonly BooveyDbContext dbContext;
 
