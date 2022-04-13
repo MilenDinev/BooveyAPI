@@ -6,7 +6,6 @@
     using Data;
     using Data.Entities.Interfaces;
     using System.Collections.Generic;
-    using System.Linq;
 
     public abstract class BaseService<TEntity> where TEntity : class, IEntity
     {
@@ -25,19 +24,16 @@
 
             return entity;
         }
-
-        protected async Task SetCreatorAsync(TEntity entity, int creatorId)
-        {
-            entity.CreatorId = creatorId;
-            await SaveModificationAsync(entity, creatorId);
-        }
-
         protected async Task DeleteEntityAsync(TEntity entity, int modifierId)
         {
             entity.Deleted = true;
             await SaveModificationAsync(entity, modifierId);
         }
-
+        protected async Task SetCreatorAsync(TEntity entity, int creatorId)
+        {
+            entity.CreatorId = creatorId;
+            await SaveModificationAsync(entity, creatorId);
+        }
         protected async Task SaveModificationAsync(TEntity entity, int modifierId)
         {
             entity.LastModifierId = modifierId;
@@ -45,7 +41,6 @@
 
             await this.dbContext.SaveChangesAsync();
         }
-
         protected  async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             var entities = await this.dbContext.Set<TEntity>().ToArrayAsync();
