@@ -33,8 +33,7 @@
         }
         public async Task EditAsync(Shelve shelve, EditShelveModel model, int modifierId)
         {
-            await SetTitleAsync(shelve, model.Title);
-            await SaveModificationAsync(shelve, modifierId);
+            await SetTitleAsync(model.Title, shelve, modifierId);
         }
         public async Task DeleteAsync(Shelve shelve, int modifierId)
         {
@@ -98,7 +97,7 @@
         {
             var shelves = await GetAllAsync();
 
-            return shelves.ToList();
+            return shelves.Where(s => !s.Deleted).ToList();
         }
 
         public async Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Shelve> shelves)
@@ -108,13 +107,13 @@
             return await Task.Run(() => contains);
         }
 
-        private static async Task SetTitleAsync(Shelve shelve, string title)
+        private async Task SetTitleAsync(string title, Shelve shelve, int modifierId)
         {
             if (title != shelve.Title)
             {
-                await Task.Run(() => shelve.Title = title);
+                shelve.Title = title;
+                await SaveModificationAsync(shelve, modifierId);
             }
-
         }
         private async Task<Shelve> FindByTitleOrDefaultAsync(string title)
         {
