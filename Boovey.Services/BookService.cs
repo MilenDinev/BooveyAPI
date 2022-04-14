@@ -25,7 +25,7 @@
             this.mapper = mapper;
         }
 
-        public async Task<AddedBookModel> AddAsync(AddBookModel bookModel, int currentUserId)
+        public async Task<AddedBookModel> AddAsync(CreateBookModel bookModel, int currentUserId)
         {
             await AlreadyExistBookByTitleChecker(bookModel.Title);
 

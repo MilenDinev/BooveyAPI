@@ -9,7 +9,7 @@
     public interface IShelveService
     {
         Task<Shelve> CreateAsync(CreateShelveModel model, int creatorId);
-        Task EditAsync(Shelve shelve, EditShelveModel shelveModel, int modifierId);
+        Task EditAsync(Shelve shelve, EditShelveModel model, int modifierId);
         Task DeleteAsync(Shelve shelve, int modifierId);
 
         Task<AddedFavoriteShelveModel> AddFavoriteAsync(Shelve shelve, User currentUser);

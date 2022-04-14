@@ -33,7 +33,7 @@
         }
 
         [HttpPost("Add/")]
-        public async Task<ActionResult> Add(AddBookModel bookInput)
+        public async Task<ActionResult> Add(CreateBookModel bookInput)
         {
             await AssignCurrentUserAsync();
             var addedBook = await this.bookService.AddAsync(bookInput, CurrentUser.Id);

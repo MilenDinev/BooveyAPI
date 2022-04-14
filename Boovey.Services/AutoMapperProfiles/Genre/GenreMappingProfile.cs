@@ -11,11 +11,12 @@
     {
         public GenreMappingProfile()
         {
-            this.CreateMap<AddGenreModel, Genre>()
+            this.CreateMap<CreateGenreModel, Genre>()
                 .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
                 .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
-            this.CreateMap<Genre, AddedGenreModel>();
+            this.CreateMap<Genre, CreatedGenreModel>();
             this.CreateMap<Genre, EditedGenreModel>();
+            this.CreateMap<Genre, DeletedGenreModel>();
             this.CreateMap<Genre, AddedFavoriteGenreModel>()
                 .ForMember(m => m.GenreId, e => e.MapFrom(g => g.Id))
                 .ForMember(m => m.UserId, e => e.Ignore());

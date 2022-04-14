@@ -1,6 +1,5 @@
 ﻿namespace Boovey.Services
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -14,90 +13,107 @@
     using Models.Requests.GenreModels;
     using Models.Responses.GenreModels;
 
-    public class GenreService : IGenreService
+    public class GenreService : BaseService<Genre>, IGenreService
     {
 
-        private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
 
-        public GenreService(BooveyDbContext dbContext, IMapper mapper)
+        public GenreService(BooveyDbContext dbContext, IMapper mapper) : base (dbContext)
         {
-            this.dbContext = dbContext;
             this.mapper = mapper;
         }
 
-        public async Task<AddedGenreModel> AddAsync(AddGenreModel genreModel, int currentUserId)
+        public async Task<Genre> CreateAsync(CreateGenreModel model, int creatorId)
         {
-            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(p => p.Title == genreModel.Title);
-            if (genre != null)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Genre), genreModel.Title));
+            var genre = this.mapper.Map<Genre>(model);
 
-            genre = mapper.Map<Genre>(genreModel);
+            await AddEntityAsync(genre, creatorId);
 
-            genre.CreatorId = currentUserId;
-            genre.LastModifierId = currentUserId;
-
-            await this.dbContext.Genres.AddAsync(genre);
-            await this.dbContext.SaveChangesAsync();
-
-            return mapper.Map<AddedGenreModel>(genre);
+            return genre;
+        }
+        public async Task EditAsync(Genre genre, EditGenreModel model, int modifierId)
+        {
+            await SetTitleAsync(model.Title, genre, modifierId);
+        }
+        public async Task DeleteAsync(Genre genre, int modifierId)
+        {
+            await DeleteEntityAsync(genre, modifierId);
         }
 
-        public async Task<EditedGenreModel> EditAsync(int genreId, EditGenreModel genreModel, int currentUserId)
+        public async Task<AddedFavoriteGenreModel> AddFavoriteAsync(Genre genre, User currentUser)
         {
-            var genre = await GetGenreById(genreId);
+            var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.Any(s => s.Id == genre.Id);
 
-            genre.Title = genreModel.Title;
-            genre.LastModifierId = currentUserId;
-            genre.LastModifiedOn = DateTime.UtcNow;
-
-            await this.dbContext.SaveChangesAsync();
-
-            return mapper.Map<EditedGenreModel>(genre);
-        }
-
-        public async Task<AddedFavoriteGenreModel> AddFavoriteGenre(int genreId, User currentUser)
-        {
-            var genre = await GetGenreById(genreId);
-
-            var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(g => g.Id == genreId);
-
-            if (isAlreadyFavoriteGenre != null)
+            if (isAlreadyFavoriteGenre)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Genre), genre.Id));
 
             currentUser.FavoriteGenres.Add(genre);
 
-            await dbContext.SaveChangesAsync();
+            await SaveModificationAsync(genre, currentUser.Id);
+
             return mapper.Map<AddedFavoriteGenreModel>(genre);
         }
-       
-        public async Task<RemovedFavoriteGenreModel> RemoveFavoriteGenre(int genreId, User currentUser)
+        public async Task<RemovedFavoriteGenreModel> RemoveFavoriteAsync(Genre genre, User currentUser)
         {
-            var genre = await GetGenreById(genreId);
-
-            var isFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(g => g.Id == genreId);
+            var isFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(s => s.Id == genre.Id);
 
             if (isFavoriteGenre == null)
                 throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Genre), genre.Id));
 
             currentUser.FavoriteGenres.Remove(genre);
 
-            await dbContext.SaveChangesAsync();
+            await SaveModificationAsync(genre, currentUser.Id);
+
             return mapper.Map<RemovedFavoriteGenreModel>(genre);
         }
 
-        public async Task<ICollection<GenreListingModel>> GetAllGenresAsync()
+        public async Task<Genre> GetByIdAsync(int genreId)
         {
-            var genres = await this.dbContext.Genres.ToListAsync();
+            var genre = await FindByIdOrDefaultAsync(genreId)
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
 
-            return mapper.Map<ICollection<GenreListingModel>>(genres);
+            return genre;
+        }
+        public async Task<Genre> GetByTitleAsync(string title)
+        {
+            var genre = await FindByTitleOrDefaultAsync(title)
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), title));
+
+            return genre;
+        }
+        public async Task<Genre> GetActiveByIdAsync(int genreId)
+        {
+            var genre = await GetByIdAsync(genreId);
+            if (genre.Deleted)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Genre)));
+
+            return genre;
+        }
+        public async Task<ICollection<Genre>> GetAllActiveAsync()
+        {
+            var genres = await GetAllAsync();
+
+            return genres.Where(s => !s.Deleted).ToList();
+        }
+        public async Task<bool> ContainsActiveByTitleAsync(string title)
+        {
+            var genres = await GetAllAsync();
+            var contains = genres.Any(s => s.Title == title && !s.Deleted);
+
+            return await Task.Run(() => contains);
         }
 
-        private async Task<Genre> GetGenreById(int genreId)
+        private async Task SetTitleAsync(string title, Genre genre, int modifierId)
         {
-            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(g => g.Id == genreId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
-
+            if (title != genre.Title)
+            {
+                genre.Title = title;
+                await SaveModificationAsync(genre, modifierId);
+            }
+        }
+        private async Task<Genre> FindByTitleOrDefaultAsync(string title)
+        {
+            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(s => s.Title == title);
             return genre;
         }
     }
