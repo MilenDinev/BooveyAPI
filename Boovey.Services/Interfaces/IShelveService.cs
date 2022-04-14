@@ -12,8 +12,8 @@
         Task EditAsync(Shelve shelve, EditShelveModel shelveModel, int modifierId);
         Task DeleteAsync(Shelve shelve, int modifierId);
 
-        Task<AddedFavoriteShelveModel> AddFavoriteAsync(int Id, User currentUser);
-        Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(int Id, User currentUser);
+        Task<AddedFavoriteShelveModel> AddFavoriteAsync(Shelve shelve, User currentUser);
+        Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(Shelve shelve, User currentUser);
 
         Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Shelve> shelves);
         Task<Shelve> GetActiveByIdAsync(int Id);
