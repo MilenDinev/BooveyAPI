@@ -39,11 +39,9 @@
             await DeleteEntityAsync(shelve, modifierId);
         }
 
-        public async Task<AddedFavoriteShelveModel> AddFavoriteAsync(int shelveId, User currentUser)
+        public async Task<AddedFavoriteShelveModel> AddFavoriteAsync(Shelve shelve, User currentUser)
         {
-            var shelve = await FindByIdOrDefaultAsync(shelveId);
-
-            var isAlreadyFavoriteShelve = currentUser.FavoriteShelves.Any(s => s.Id == shelveId);
+            var isAlreadyFavoriteShelve = currentUser.FavoriteShelves.Any(s => s.Id == shelve.Id);
 
             if (isAlreadyFavoriteShelve)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Shelve), shelve.Id));
@@ -54,11 +52,9 @@
 
             return mapper.Map<AddedFavoriteShelveModel>(shelve);
         }
-        public async Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(int shelveId, User currentUser)
+        public async Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(Shelve shelve, User currentUser)
         {
-            var shelve = await FindByIdOrDefaultAsync(shelveId);
-
-            var isFavoriteShelve = currentUser.FavoriteShelves.FirstOrDefault(s => s.Id == shelveId);
+            var isFavoriteShelve = currentUser.FavoriteShelves.FirstOrDefault(s => s.Id == shelve.Id);
 
             if (isFavoriteShelve == null)
                 throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Shelve), shelve.Id));
