@@ -10,11 +10,12 @@
     {
         public PublisherMappingProfile()
         {
-            this.CreateMap<AddPublisherModel, Publisher>()
+            this.CreateMap<CreatePublisherModel, Publisher>()
             .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
             .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
-            this.CreateMap<Publisher, AddedPublisherModel>();
+            this.CreateMap<Publisher, CreatedPublisherModel>();
             this.CreateMap<Publisher, EditedPublisherModel>();
+            this.CreateMap<Publisher, DeletedPublisherModel>();
             this.CreateMap<Publisher, PublisherListingModel>();
         }
     }

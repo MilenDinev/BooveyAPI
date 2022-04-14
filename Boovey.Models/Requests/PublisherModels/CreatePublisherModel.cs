@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Models.Requests.PublisherModels
 {
-    public class AddPublisherModel
+    public class CreatePublisherModel
     {
         public string Name { get; set; }
     }

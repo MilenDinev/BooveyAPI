@@ -2,13 +2,19 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Data.Entities;
     using Models.Requests.PublisherModels;
-    using Models.Responses.PublisherModels;
 
     public interface IPublisherService
     {
-        Task<AddedPublisherModel> AddAsync(AddPublisherModel publisherModel, int currentUserId);
-        Task<EditedPublisherModel> EditAsync(int publisherId, EditPublisherModel publisherModel, int currentUserId);
-        Task<ICollection<PublisherListingModel>> GetAllPublishersAsync();
+        Task<Publisher> CreateAsync(CreatePublisherModel model, int creatorId);
+        Task EditAsync(Publisher publisher, EditPublisherModel model, int modifierId);
+        Task DeleteAsync(Publisher publisher, int modifierId);
+
+        Task<Publisher> GetByIdAsync(int Id);
+        Task<Publisher> GetByNameAsync(string name);
+        Task<Publisher> GetActiveByIdAsync(int Id);
+        Task<ICollection<Publisher>> GetAllActiveAsync();
+        Task<bool> ContainsActiveByNameAsync(string name);
     }
 }

@@ -19,7 +19,7 @@
         public string PublicationDate { get; set; }
         public int CountryId { get; set; }
         public string Description { get; set; }
-        public AddPublisherModel Publisher  { get; set; }
+        public CreatePublisherModel Publisher  { get; set; }
         public ICollection<CreateGenreModel> Genres { get; set; }
         public ICollection<CreateAuthorModel> Authors { get; set; }
     }
