@@ -1,9 +1,7 @@
 ﻿namespace Boovey.Services
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
@@ -14,78 +12,83 @@
     using Models.Requests.QuoteModels;
     using Models.Responses.QuoteModels;
 
-    public class QuoteService : IQuoteService
+    public class QuoteService : BaseService<Quote>, IQuoteService
     {
 
-        private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
-        public QuoteService(BooveyDbContext dbContext, IMapper mapper)
+
+        public QuoteService(BooveyDbContext dbContext, IMapper mapper) : base (dbContext)
         {
-            this.dbContext = dbContext;
             this.mapper = mapper;
         }
 
-        public async Task<AddedQuoteModel> AddAsync(AddQuoteModel quoteModel, int currentUserId)
+        public async Task<Quote> CreateAsync(CreateQuoteModel model, int creatorId)
         {
-            var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Content == quoteModel.Content);
+            var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Content == model.Content);
             if (quote != null)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Quote), quoteModel.Content));
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Quote), model.Content));
 
-            quote = mapper.Map<Quote>(quoteModel);
+            quote = mapper.Map<Quote>(model);
 
-            quote.CreatorId = currentUserId;
-            quote.LastModifierId = currentUserId;
+            await AddEntityAsync(quote, creatorId);
 
-            await this.dbContext.Quotes.AddAsync(quote);
-            await this.dbContext.SaveChangesAsync();
-
-            return mapper.Map<AddedQuoteModel>(quote);
+            return quote;
         }
      
-        public async Task<EditedQuoteModel> EditAsync(int quoteId, EditQuoteModel quoteModel, int currentUserId)
+        public async Task EditAsync(Quote quote, EditQuoteModel model, int currentUserId)
         {
-            var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Id == quoteId)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
-
-            quote.Content = quoteModel.Content;
-            quote.LastModifierId = currentUserId;
-            quote.LastModifiedOn = DateTime.UtcNow;
-
-            await this.dbContext.SaveChangesAsync();
-
-            return mapper.Map<EditedQuoteModel>(quote);
+            quote.Content = model.Content;
+            await SaveModificationAsync(quote, currentUserId);
         }
 
-        public async Task<AddedFavoriteQuoteModel> AddFavoriteQuoteAsync(int quoteId, User currentUser)
+        public async Task DeleteAsync(Quote quote, int modifierId)
         {
-            var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Id == quoteId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
+            await DeleteEntityAsync(quote, modifierId);
+        }
 
-            var isAlreadyFavoriteQuote = currentUser.FavoriteQuotes.FirstOrDefault(a => a.Id == quoteId);
+        public async Task<AddedFavoriteQuoteModel> AddFavoriteAsync(Quote quote, User currentUser)
+        {
+            var isAlreadyFavoriteQuote = currentUser.FavoriteQuotes.FirstOrDefault(a => a.Id == quote.Id);
 
             if (isAlreadyFavoriteQuote != null)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Quote), quote.Id));
 
             currentUser.FavoriteQuotes.Add(quote);
 
-            await dbContext.SaveChangesAsync();
+            await SaveModificationAsync(quote, currentUser.Id);
+
             return mapper.Map<AddedFavoriteQuoteModel>(quote);
         }
 
-        public async Task<RemovedFavoriteQuoteModel> RemoveFavoriteQuoteAsync(int quoteId, User currentUser)
+        public async Task<RemovedFavoriteQuoteModel> RemoveFavoriteAsync(Quote quote, User currentUser)
         {
-            var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Id == quoteId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
 
-            var isFavoriteQuote = currentUser.FavoriteQuotes.FirstOrDefault(q => q.Id == quoteId);
+            var isFavoriteQuote = currentUser.FavoriteQuotes.FirstOrDefault(q => q.Id == quote.Id);
 
             if (isFavoriteQuote == null)
                 throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Quote), quote.Id));
 
             currentUser.FavoriteQuotes.Remove(quote);
 
-            await dbContext.SaveChangesAsync();
+            await SaveModificationAsync(quote, currentUser.Id);
             return mapper.Map<RemovedFavoriteQuoteModel>(quote);
+        }
+
+        public async Task<Quote> GetActiveByIdAsync(int quoteId)
+        {
+            var quote = await GetByIdAsync(quoteId);
+
+            if (quote.Deleted)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Quote)));
+
+            return quote;
+        }
+        public async Task<Quote> GetByIdAsync(int quoteId)
+        {
+            var quote = await FindByIdOrDefaultAsync(quoteId)
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
+
+            return quote;
         }
     }
 }
