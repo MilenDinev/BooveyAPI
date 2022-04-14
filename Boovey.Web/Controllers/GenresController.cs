@@ -60,22 +60,18 @@
         public async Task<AddedFavoriteGenreModel> AddFavorite(int genreId)
         {
             await AssignCurrentUserAsync();
-
             var genre = await this.genreService.GetActiveByIdAsync(genreId);
-            var addedFavoriteGenre = await this.genreService.AddFavoriteAsync(genre, CurrentUser);
-
-            addedFavoriteGenre.UserId = CurrentUser.Id;
-            return addedFavoriteGenre;
+            await this.genreService.AddFavoriteAsync(genre, CurrentUser);
+            return mapper.Map<AddedFavoriteGenreModel>(genre);
         }
 
         [HttpPut("Remove-From-Favorites/{genreId}")]
         public async Task<RemovedFavoriteGenreModel> RemoveFavorite(int genreId)
         {
             await AssignCurrentUserAsync();
-
             var genre = await this.genreService.GetActiveByIdAsync(genreId);
-            var removedFavoriteGenre = await this.genreService.RemoveFavoriteAsync(genre, CurrentUser);
-
+            await this.genreService.RemoveFavoriteAsync(genre, CurrentUser);
+            var removedFavoriteGenre = mapper.Map<RemovedFavoriteGenreModel>(genre);
             removedFavoriteGenre.UserId = CurrentUser.Id;
             return removedFavoriteGenre;
         }

@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Models.Requests.AuthorModels
 {
-    public class AddAuthorModel
+    public class CreateAuthorModel
     {
         public string Fullname { get; set; }
         public int CountryId { get; set; }

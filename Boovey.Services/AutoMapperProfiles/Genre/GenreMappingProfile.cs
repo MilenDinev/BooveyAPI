@@ -19,7 +19,7 @@
             this.CreateMap<Genre, DeletedGenreModel>();
             this.CreateMap<Genre, AddedFavoriteGenreModel>()
                 .ForMember(m => m.GenreId, e => e.MapFrom(g => g.Id))
-                .ForMember(m => m.UserId, e => e.Ignore());
+                .ForMember(m => m.UserId, e => e.MapFrom(g => g.FavoriteByUsers.Select(u => u.Id).LastOrDefault()));
             this.CreateMap<Genre, RemovedFavoriteGenreModel>()
                 .ForMember(m => m.GenreId, e => e.MapFrom(g => g.Id))
                 .ForMember(m => m.UserId, e => e.Ignore());

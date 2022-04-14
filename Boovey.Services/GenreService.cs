@@ -11,7 +11,6 @@
     using Data;
     using Data.Entities;
     using Models.Requests.GenreModels;
-    using Models.Responses.GenreModels;
 
     public class GenreService : BaseService<Genre>, IGenreService
     {
@@ -26,9 +25,7 @@
         public async Task<Genre> CreateAsync(CreateGenreModel model, int creatorId)
         {
             var genre = this.mapper.Map<Genre>(model);
-
             await AddEntityAsync(genre, creatorId);
-
             return genre;
         }
         public async Task EditAsync(Genre genre, EditGenreModel model, int modifierId)
@@ -40,31 +37,23 @@
             await DeleteEntityAsync(genre, modifierId);
         }
 
-        public async Task<AddedFavoriteGenreModel> AddFavoriteAsync(Genre genre, User currentUser)
+        public async Task AddFavoriteAsync(Genre genre, User currentUser)
         {
             var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.Any(s => s.Id == genre.Id);
-
             if (isAlreadyFavoriteGenre)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Genre), genre.Id));
 
             currentUser.FavoriteGenres.Add(genre);
-
             await SaveModificationAsync(genre, currentUser.Id);
-
-            return mapper.Map<AddedFavoriteGenreModel>(genre);
         }
-        public async Task<RemovedFavoriteGenreModel> RemoveFavoriteAsync(Genre genre, User currentUser)
+        public async Task RemoveFavoriteAsync(Genre genre, User currentUser)
         {
-            var isFavoriteGenre = currentUser.FavoriteGenres.FirstOrDefault(s => s.Id == genre.Id);
-
-            if (isFavoriteGenre == null)
+            var isFavorite = currentUser.FavoriteGenres.Any(s => s.Id == genre.Id);
+            if (!isFavorite)
                 throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Genre), genre.Id));
 
             currentUser.FavoriteGenres.Remove(genre);
-
             await SaveModificationAsync(genre, currentUser.Id);
-
-            return mapper.Map<RemovedFavoriteGenreModel>(genre);
         }
 
         public async Task<Genre> GetByIdAsync(int genreId)

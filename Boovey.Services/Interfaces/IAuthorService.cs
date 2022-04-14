@@ -4,15 +4,18 @@
     using System.Collections.Generic;
     using Data.Entities;
     using Models.Requests.AuthorModels;
-    using Models.Responses.AuthorModels;
 
     public interface IAuthorService
     {
-        Task<AddedAuthorModel> AddAsync(AddAuthorModel authorModel, int currentUserId);
-        Task<EditedAuthorModel> EditAsync(int authorId, EditAuthorModel authorModel, int currentUserId);
-        Task<AddedFavoriteAuthorModel> AddFavoriteAuthor(int authorId, User currentUser);
-        Task<RemovedFavoriteAuthorModel> RemoveFavoriteAuthor(int authorId, User currentUser);
-        Task<AuthorListingModel> GetAuthorById(int authorId);
-        Task<ICollection<AuthorListingModel>> GetAllAuthorsAsync();
+        Task<Author> CreateAsync(CreateAuthorModel model, int creatorId);
+        Task EditAsync(Author author, EditAuthorModel model, int modifierId);
+        Task DeleteAsync(Author author, int modifierId);
+        Task AddFavoriteAuthorAsync(Author author, User user);
+        Task RemoveFavoriteAuthorAsync(Author author, User user);
+        Task<bool> ContainsActiveByNameAsync(string name);
+        Task<Author> GetByIdAsync(int Id);
+        Task<Author> GetByNameAsync(string name);
+        Task<Author> GetActiveByIdAsync(int Id);
+        Task<ICollection<Author>> GetAllActiveAsync();
     }
 }

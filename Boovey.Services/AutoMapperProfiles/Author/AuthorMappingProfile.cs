@@ -11,12 +11,13 @@
     {
         public AuthorMappingProfile()
         {
-            this.CreateMap<AddAuthorModel, Author>()
+            this.CreateMap<CreateAuthorModel, Author>()
                 .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
                 .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
-            this.CreateMap<Author, AddedAuthorModel>();
+            this.CreateMap<Author, CreatedAuthorModel>();
             this.CreateMap<Author, EditedAuthorModel>()
                 .ForMember(m => m.Nationality, e => e.MapFrom(a => a.Country.Name));
+            this.CreateMap<Author, DeletedAuthorModel>();
             this.CreateMap<Author, AddedFavoriteAuthorModel>()
                 .ForMember(m => m.AuthorId, e => e.MapFrom(a => a.Id))
                 .ForMember(m => m.UserId, e => e.MapFrom(a => a.FavoriteByUsers.Select(u => u.Id).LastOrDefault()));

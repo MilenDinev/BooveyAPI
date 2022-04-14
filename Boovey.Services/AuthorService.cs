@@ -1,6 +1,5 @@
 ﻿namespace Boovey.Services
 {
-    using System;
     using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -12,109 +11,98 @@
     using Data;
     using Data.Entities;
     using Models.Requests.AuthorModels;
-    using Models.Responses.AuthorModels;
 
-    public class AuthorService : IAuthorService
+    public class AuthorService : BaseService<Author>, IAuthorService
     {
-        private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
         private readonly ICountryManager countryManager;
 
-        public AuthorService(BooveyDbContext dbContext, ICountryManager countryService, IMapper mapper)
+        public AuthorService(BooveyDbContext dbContext, ICountryManager countryService, IMapper mapper) : base(dbContext)
         {
-            this.dbContext = dbContext;
             this.countryManager = countryService;
             this.mapper = mapper;
         }
 
-        public async Task<AddedAuthorModel> AddAsync(AddAuthorModel authorModel, int currentUserId)
+        public async Task<Author> CreateAsync(CreateAuthorModel authorModel, int creatorId)
         {
-            await AuthorDuplicationChecker(authorModel.Fullname);
             await this.countryManager.FindCountryById(authorModel.CountryId);
-
             var author = mapper.Map<Author>(authorModel);
-
-            author.CreatorId = currentUserId;
-            author.LastModifierId = currentUserId;
-
-            await this.dbContext.Authors.AddAsync(author);
-            await this.dbContext.SaveChangesAsync();
-
-            return mapper.Map<AddedAuthorModel>(author);
+            await AddEntityAsync(author, creatorId);
+            return author;
         }
-
-        public async Task<EditedAuthorModel> EditAsync(int authorId, EditAuthorModel authorModel, int currentUserId)
+        public async Task EditAsync(Author author, EditAuthorModel authorModel, int modifierId)
         {
-            var author = await FindAuthorById(authorId);
             await this.countryManager.FindCountryById(authorModel.CountryId);
 
             author.CountryId = authorModel.CountryId;
             author.Fullname = authorModel.Fullname;
             author.Summary = authorModel.Summary;
-            author.LastModifierId = currentUserId;
-            author.LastModifiedOn = DateTime.UtcNow;
 
-            await this.dbContext.SaveChangesAsync();
-
-            return mapper.Map<EditedAuthorModel>(author);
+            await SaveModificationAsync(author, modifierId);
+        }
+        public async Task DeleteAsync(Author author, int modifierId)
+        {
+            await DeleteEntityAsync(author, modifierId);
         }
 
-        public async Task<AddedFavoriteAuthorModel> AddFavoriteAuthor(int authorId, User currentUser)
+        public async Task AddFavoriteAuthorAsync(Author author, User currentUser)
         {
-            var author = await FindAuthorById(authorId);
+            var isFavorite = currentUser.FavoriteAuthors.Any(a => a.Id == author.Id);
+            if (isFavorite)
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), author.Id));
 
-            var isFavorite = await IsFavoriteAuthor(authorId, currentUser)
-                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), authorId))
-                : false;
+            currentUser.FavoriteAuthors.Add(author);
+            await SaveModificationAsync(author, currentUser.Id);
+        }
+        public async Task RemoveFavoriteAuthorAsync(Author author, User currentUser)
+        {
+            var isFavorite = currentUser.FavoriteAuthors.Any(a => a.Id == author.Id);
+            if (!isFavorite)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), author.Id));
 
-            currentUser.FavoriteAuthors.Add(author) ;
-
-            await dbContext.SaveChangesAsync();
-            return mapper.Map<AddedFavoriteAuthorModel>(author);
+            currentUser.FavoriteAuthors.Remove(author);
+            await SaveModificationAsync(author, currentUser.Id);
         }
 
-        public async Task<RemovedFavoriteAuthorModel> RemoveFavoriteAuthor(int authorId, User currentUser)
+        public async Task<Author> GetByIdAsync(int authorId)
         {
-            var author = await FindAuthorById(authorId);
-
-            var isFavorite = await IsFavoriteAuthor(authorId, currentUser)
-                ? currentUser.FavoriteAuthors.Remove(author) 
-                : throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), authorId));
-
-            await dbContext.SaveChangesAsync();
-            return mapper.Map<RemovedFavoriteAuthorModel>(author);
-        }
-
-        public async Task<ICollection<AuthorListingModel>> GetAllAuthorsAsync()
-        {
-            var authors = await this.dbContext.Authors.ToListAsync();
-
-            return mapper.Map<ICollection<AuthorListingModel>>(authors);
-        }
-
-        public async Task<AuthorListingModel> GetAuthorById(int authorId)
-        {
-            return mapper.Map<AuthorListingModel>(await FindAuthorById(authorId));
-        }
-
-        private async Task<Author> FindAuthorById(int authorId)
-        {
-            var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
+            var author = await FindByIdOrDefaultAsync(authorId)
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
 
             return author;
         }
-
-        private async Task AuthorDuplicationChecker(string authorFullName)
+        public async Task<Author> GetByNameAsync(string name)
         {
-            var IsAuthorExists = await this.dbContext.Authors.AnyAsync(a => a.Fullname == authorFullName)
-                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Author), authorFullName))
-                : false;
+            var author = await FindByNameOrDefaultAsync(name)
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), name));
+
+            return author;
         }
-
-        private async Task<bool> IsFavoriteAuthor(int authorId, User user)
+        public async Task<Author> GetActiveByIdAsync(int authorId)
         {
-            return await Task.Run(() => user.FavoriteAuthors.Any(a => a.Id == authorId));
+            var author = await GetByIdAsync(authorId);
+            if (author.Deleted)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Author)));
+
+            return author;
+        }
+        public async Task<ICollection<Author>> GetAllActiveAsync()
+        {
+            var authors = await GetAllAsync();
+
+            return authors.Where(s => !s.Deleted).ToList();
+        }
+        public async Task<bool> ContainsActiveByNameAsync(string name)
+        {
+            var authors = await GetAllAsync();
+            var contains = authors.Any(a => a.Fullname == name && !a.Deleted);
+
+            return await Task.Run(() => contains);
+        }
+        private async Task<Author> FindByNameOrDefaultAsync(string name)
+        {
+            var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Fullname == name);
+            return author;
         }
     }
 }
