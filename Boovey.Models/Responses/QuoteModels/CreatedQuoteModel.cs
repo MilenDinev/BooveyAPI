@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Models.Responses.QuoteModels
 {
-    public class AddedQuoteModel
+    public class CreatedQuoteModel
     {
         public int Id { get; set; }
         public string Content { get; set; }
