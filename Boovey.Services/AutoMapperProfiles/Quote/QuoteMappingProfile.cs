@@ -11,7 +11,7 @@
     {
         public QuoteMappingProfile()
         {
-            this.CreateMap<AddQuoteModel, Quote>()
+            this.CreateMap<CreateQuoteModel, Quote>()
                 .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
                 .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
             this.CreateMap<Quote, AddedQuoteModel>();
