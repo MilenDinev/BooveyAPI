@@ -1,7 +1,5 @@
 ﻿namespace Boovey.Services
 {
-    using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
@@ -13,14 +11,12 @@
     using Models.Requests.ReviewModels;
     using Models.Responses.ReviewModels;
 
-    public class ReviewService : IReviewService
+    public class ReviewService : BaseService<Review>, IReviewService
     {
-        private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
 
-        public ReviewService(BooveyDbContext dbContext, IMapper mapper)
+        public ReviewService(BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
         {
-            this.dbContext = dbContext;
             this.mapper = mapper;
         }
 
@@ -32,33 +28,27 @@
 
             review = mapper.Map<Review>(reviewModel);
 
-            review.CreatorId = currentUserId;
-            review.LastModifierId = currentUserId;
-
-            await this.dbContext.Reviews.AddAsync(review);
-            await this.dbContext.SaveChangesAsync();
+            await AddEntityAsync(review, currentUserId);
 
             return mapper.Map<AddedReviewModel>(review);
         }
 
         public async Task<EditedReviewModel> EditAsync(int reviewId, EditReviewModel reviewModel, int currentUserId)
         {
-            var review = await GetReviewById(reviewId);
+            var review = await GetByIdAsync(reviewId);
 
             review.Comment = reviewModel.Comment;
             review.Rating = reviewModel.Rating;
             review.BookId = reviewModel.BookId;
-            review.LastModifierId = currentUserId;
-            review.LastModifiedOn = DateTime.UtcNow;
-
-            await this.dbContext.SaveChangesAsync();
+            
+            await SaveModificationAsync(review, currentUserId);
 
             return mapper.Map<EditedReviewModel>(review);
         }
 
-        private async Task<Review> GetReviewById(int reviewId)
+        public async Task<Review> GetByIdAsync(int reviewId)
         {
-            var review = await this.dbContext.Reviews.FirstOrDefaultAsync(g => g.Id == reviewId)
+            var review = await FindByIdOrDefaultAsync(reviewId)
                 ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Review), reviewId));
 
             return review;
