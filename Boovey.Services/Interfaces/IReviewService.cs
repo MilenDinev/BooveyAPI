@@ -1,12 +1,15 @@
 ﻿namespace Boovey.Services.Interfaces
 {
     using System.Threading.Tasks;
+    using Data.Entities;
     using Models.Requests.ReviewModels;
-    using Models.Responses.ReviewModels;
 
     public interface IReviewService
     {
-        Task<AddedReviewModel> AddAsync(AddReviewModel reviewModel, int currentUserId);
-        Task<EditedReviewModel> EditAsync(int reviewId, EditReviewModel reviewModel, int currentUserId);
+        Task<Review> CreateAsync(CreateReviewModel model, int creatorId);
+        Task EditAsync(Review review, EditReviewModel model, int modifierId);
+        Task DeleteAsync(Review review, int modifierId);
+        Task<Review> GetByIdAsync(int reviewId);
+        Task<Review> GetActiveByIdAsync(int reviewId);
     }
 }
