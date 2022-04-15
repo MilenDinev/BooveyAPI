@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Models.Requests.GenreModels
 {
-    public class AddGenreModel
+    public class CreateGenreModel
     {
         public string Title { get; set; }
     }

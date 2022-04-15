@@ -10,11 +10,12 @@
     {
         public ReviewMappingProfile()
         {
-            this.CreateMap<AddReviewModel, Review>()
+            this.CreateMap<CreateReviewModel, Review>()
             .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
             .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
-            this.CreateMap<Review, AddedReviewModel>();
+            this.CreateMap<Review, CreatedReviewModel>();
             this.CreateMap<Review, EditedReviewModel>();
+            this.CreateMap<Review, DeletedReviewModel>();
             this.CreateMap<Review, ReviewListingModel>();
         }
     }

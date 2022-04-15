@@ -12,7 +12,7 @@
     {
         public BookMappingProfile()
         {
-            this.CreateMap<AddBookModel, Book>()
+            this.CreateMap<CreateBookModel, Book>()
                 .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
                 .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
             this.CreateMap<Book, AddedBookModel>()

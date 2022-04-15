@@ -1,6 +1,5 @@
 ﻿namespace Boovey.Services
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -40,11 +39,9 @@
             await DeleteEntityAsync(shelve, modifierId);
         }
 
-        public async Task<AddedFavoriteShelveModel> AddFavoriteAsync(int shelveId, User currentUser)
+        public async Task<AddedFavoriteShelveModel> AddFavoriteAsync(Shelve shelve, User currentUser)
         {
-            var shelve = await FindByIdOrDefaultAsync(shelveId);
-
-            var isAlreadyFavoriteShelve = currentUser.FavoriteShelves.Any(s => s.Id == shelveId);
+            var isAlreadyFavoriteShelve = currentUser.FavoriteShelves.Any(s => s.Id == shelve.Id);
 
             if (isAlreadyFavoriteShelve)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Shelve), shelve.Id));
@@ -55,11 +52,9 @@
 
             return mapper.Map<AddedFavoriteShelveModel>(shelve);
         }
-        public async Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(int shelveId, User currentUser)
+        public async Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(Shelve shelve, User currentUser)
         {
-            var shelve = await FindByIdOrDefaultAsync(shelveId);
-
-            var isFavoriteShelve = currentUser.FavoriteShelves.FirstOrDefault(s => s.Id == shelveId);
+            var isFavoriteShelve = currentUser.FavoriteShelves.FirstOrDefault(s => s.Id == shelve.Id);
 
             if (isFavoriteShelve == null)
                 throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Shelve), shelve.Id));
@@ -71,6 +66,14 @@
             return mapper.Map<RemovedFavoriteShelveModel>(shelve);
         }
 
+        public async Task<Shelve> GetActiveByIdAsync(int shelveId)
+        {
+            var shelve = await GetByIdAsync(shelveId);
+            if (shelve.Deleted)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Shelve)));
+
+            return shelve;
+        }
         public async Task<Shelve> GetByIdAsync(int shelveId)
         {
             var shelve = await FindByIdOrDefaultAsync(shelveId)
@@ -85,14 +88,7 @@
 
             return shelve;
         }
-        public async Task<Shelve> GetActiveByIdAsync(int shelveId)
-        {
-            var shelve = await GetByIdAsync(shelveId);
-            if (shelve.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Shelve)));
 
-            return shelve;
-        }
         public async Task<ICollection<Shelve>> GetAllActiveAsync()
         {
             var shelves = await GetAllAsync();

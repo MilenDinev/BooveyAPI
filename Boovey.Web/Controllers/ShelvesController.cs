@@ -51,7 +51,6 @@
         {
             await AssignCurrentUserAsync();
             var shelve = await this.shelveService.GetActiveByIdAsync(shelveId);
-
             await this.shelveService.EditAsync(shelve, shelveInput, CurrentUser.Id);
 
             return mapper.Map<EditedShelveModel>(shelve);
@@ -61,7 +60,10 @@
         public async Task<AddedFavoriteShelveModel> AddFavorite(int shelveId)
         {
             await AssignCurrentUserAsync();
-            var addedFavoriteShelve = await this.shelveService.AddFavoriteAsync(shelveId, CurrentUser);
+
+            var shelve = await this.shelveService.GetActiveByIdAsync(shelveId);
+            var addedFavoriteShelve = await this.shelveService.AddFavoriteAsync(shelve, CurrentUser);
+
             addedFavoriteShelve.UserId = CurrentUser.Id;
             return addedFavoriteShelve;
         }
@@ -70,7 +72,10 @@
         public async Task<RemovedFavoriteShelveModel> RemoveFavorite(int shelveId)
         {
             await AssignCurrentUserAsync();
-            var removedFavoriteShelve = await this.shelveService.RemoveFavoriteAsync(shelveId, CurrentUser);
+
+            var shelve = await this.shelveService.GetActiveByIdAsync(shelveId);
+            var removedFavoriteShelve = await this.shelveService.RemoveFavoriteAsync(shelve, CurrentUser);
+
             removedFavoriteShelve.UserId = CurrentUser.Id;
             return removedFavoriteShelve;
         }

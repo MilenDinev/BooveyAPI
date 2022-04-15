@@ -1,7 +1,8 @@
-﻿namespace Boovey.Models.Requests.QuoteModels
+﻿namespace Boovey.Models.Responses.QuoteModels
 {
-    public class AddQuoteModel
+    public class CreatedQuoteModel
     {
+        public int Id { get; set; }
         public string Content { get; set; }
         public int? AuthorId { get; set; }
         public int? BookId { get; set; }

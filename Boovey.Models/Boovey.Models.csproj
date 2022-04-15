@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Requests\UserModels\" />
+    <Compile Remove="Requests\UserModels\**" />
+    <EmbeddedResource Remove="Requests\UserModels\**" />
+    <None Remove="Requests\UserModels\**" />
   </ItemGroup>
 
 </Project>

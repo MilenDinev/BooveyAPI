@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using AutoMapper;
     using Services.Interfaces;
     using Models.Requests.ReviewModels;
     using Models.Responses.ReviewModels;
@@ -11,17 +12,18 @@
     public class ReviewsController : BooveyBaseController
     {
         private readonly IReviewService reviewService;
-
-        public ReviewsController(IUserService userService, IReviewService reviewService) : base(userService)
+        private readonly IMapper mapper;
+        public ReviewsController(IUserService userService, IReviewService reviewService, IMapper mapper) : base(userService)
         {
             this.reviewService = reviewService;
+            this.mapper = mapper;
         }
 
         [HttpPost("Add/")]
-        public async Task<ActionResult> Add(AddReviewModel reviewInput)
+        public async Task<ActionResult> Add(CreateReviewModel reviewInput)
         {
             await AssignCurrentUserAsync();
-            var addedReview = await this.reviewService.AddAsync(reviewInput, CurrentUser.Id);
+            var addedReview = await this.reviewService.CreateAsync(reviewInput, CurrentUser.Id);
             return CreatedAtAction(nameof(Add), "Reviews", new { id = addedReview.Id }, addedReview);
         }
 
@@ -29,8 +31,18 @@
         public async Task<ActionResult<EditedReviewModel>> Edit(EditReviewModel reviewInput, int reviewId)
         {
             await AssignCurrentUserAsync();
-            var editedReview = await this.reviewService.EditAsync(reviewId, reviewInput, CurrentUser.Id);
-            return editedReview;
+            var review = await this.reviewService.GetByIdAsync(reviewId);
+            await this.reviewService.EditAsync(review, reviewInput, CurrentUser.Id);
+            return mapper.Map<EditedReviewModel>(review);
+        }
+
+        [HttpDelete("Delete/{genreId}")]
+        public async Task<DeletedReviewModel> Delete(int reviewId)
+        {
+            await AssignCurrentUserAsync();
+            var review = await this.reviewService.GetActiveByIdAsync(reviewId);
+            await this.reviewService.DeleteAsync(review, CurrentUser.Id);
+            return mapper.Map<DeletedReviewModel>(review);
         }
     }
 }

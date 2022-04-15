@@ -7,9 +7,12 @@
 
     public interface IQuoteService
     {
-        Task<AddedQuoteModel> AddAsync(AddQuoteModel quoteModel, int currentUserId);
-        Task<EditedQuoteModel> EditAsync(int quoteId, EditQuoteModel quoteModel, int currentUserId);
-        Task<AddedFavoriteQuoteModel> AddFavoriteQuoteAsync(int quoteId, User currentUser);
-        Task<RemovedFavoriteQuoteModel> RemoveFavoriteQuoteAsync(int quoteId, User currentUser);
+        Task<Quote> CreateAsync(CreateQuoteModel model, int creatorId);
+        Task EditAsync(Quote quote, EditQuoteModel model, int modifierId);
+        Task DeleteAsync(Quote quote, int modifierId);
+        Task<AddedFavoriteQuoteModel> AddFavoriteAsync(Quote quote, User user);
+        Task<RemovedFavoriteQuoteModel> RemoveFavoriteAsync(Quote quote, User user);
+        Task<Quote> GetActiveByIdAsync(int id);
+        Task<Quote> GetByIdAsync(int id);
     }
 }
