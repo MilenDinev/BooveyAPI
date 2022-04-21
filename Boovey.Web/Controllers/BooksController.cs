@@ -10,6 +10,9 @@
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
+    using Boovey.Services.Exceptions;
+    using Boovey.Services.Constants;
+    using Boovey.Data.Entities;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -28,15 +31,20 @@
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<BookListingModel>>> Get()
         {
-            var allBooks = await this.bookService.GetAllBooksAsync();
-            return allBooks.ToList();
+            var allBooks = await this.bookService.GetAllActiveAsync();
+            return mapper.Map<ICollection<BookListingModel>>(allBooks).ToList();
         }
 
         [HttpPost("Add/")]
         public async Task<ActionResult> Add(CreateBookModel bookInput)
         {
             await AssignCurrentUserAsync();
-            var addedBook = await this.bookService.AddAsync(bookInput, CurrentUser.Id);
+            var allBooks = await this.bookService.GetAllActiveAsync();
+            var alreadyExists = await this.bookService.ContainsActiveByTitleAsync(bookInput.Title, allBooks);
+            if (alreadyExists)
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Book)));
+
+            var addedBook = await this.bookService.CreateAsync(bookInput, CurrentUser.Id);
             return CreatedAtAction(nameof(Get), "Books", new { id = addedBook.Id }, addedBook);
         }
 
@@ -44,8 +52,10 @@
         public async Task<ActionResult<EditedBookModel>> Edit(EditBookModel bookInput, int bookId)
         {
             await AssignCurrentUserAsync();
-            var editedBook = await this.bookService.EditAsync(bookId, bookInput, CurrentUser.Id);
-            return editedBook;
+            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            await this.bookService.EditAsync(book, bookInput, CurrentUser.Id);
+
+            return mapper.Map<EditedBookModel>(book);
         }
 
         [HttpPut("Assign/{bookId}/Author/{authorId}")]
@@ -76,7 +86,7 @@
         public async Task<AddedFavoriteBookModel> AddFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var addedFavoriteBook = await this.bookService.AddFavoriteBook(bookId, CurrentUser);
+            var addedFavoriteBook = await this.bookService.AddFavorite(bookId, CurrentUser);
             addedFavoriteBook.UserId = CurrentUser.Id;
             return addedFavoriteBook;
         }
@@ -85,7 +95,7 @@
         public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var removedFavoriteBook = await this.bookService.RemoveFavoriteBook(bookId, CurrentUser);
+            var removedFavoriteBook = await this.bookService.RemoveFavorite(bookId, CurrentUser);
             removedFavoriteBook.UserId = CurrentUser.Id;
             return removedFavoriteBook;
         }
@@ -94,7 +104,7 @@
         public async Task<DeletedBookModel> Delete(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookService.GetByIdAsync(bookId);
+            var book = await this.bookService.GetActiveByIdAsync(bookId);
             await this.bookService.DeleteAsync(book, CurrentUser.Id);
             return mapper.Map<DeletedBookModel>(book);
         }

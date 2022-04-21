@@ -5,20 +5,20 @@
     using Data.Entities;
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
-    using Models.Responses.SharedModels;
 
     public interface IBookService
     {
-        Task<AddedBookModel> AddAsync(CreateBookModel model, int creatorId);
-        Task<EditedBookModel> EditAsync(int bookId, EditBookModel model, int modifierId);
+        Task<Book> CreateAsync(CreateBookModel bookModel, int currentUserId);
+        Task EditAsync(Book book, EditBookModel bookModel, int currentUserId);
         Task DeleteAsync(Book book, int modifierId);
-        Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser);
-        Task<RemovedFavoriteBookModel> RemoveFavoriteBook(int bookId, User currentUser);
+        Task<AddedFavoriteBookModel> AddFavorite(int bookId, User currentUser);
+        Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId, User currentUser);
         Task<Book> GetByIdAsync(int bookId);
-        Task<ICollection<BookListingModel>> GetAllBooksAsync();
-
-        Task<AssignedAuthorBookModel> AssignAuthorAsync(int bookId, int authorId, int modifierId);
-        Task<AssignedBookGenreModel> AssignGenreAsync(int bookId, int genreId, int modifierId);
-        Task<AssignedPublisherBookModel> AssignPublisherAsync(int bookId, int publisherId, int modifierId);
+        Task<Book> GetActiveByIdAsync(int bookId);
+        Task<ICollection<Book>> GetAllActiveAsync();
+        Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Book> books);
+        Task<Book> AssignAuthorAsync(Book book, Author author, int modifierId);
+        Task<Book> AssignGenreAsync(Book book, Genre genre, int modifierId);
+        Task<Book> AssignPublisherAsync(Book book, Publisher publisher, int modifierId);
     }
 }
