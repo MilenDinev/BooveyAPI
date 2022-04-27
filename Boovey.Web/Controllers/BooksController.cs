@@ -59,27 +59,30 @@
         }
 
         [HttpPut("AssignAuthor/Book/{bookId}/Author/{authorId}")]
-        public async Task<AssignedAuthorBookModel> AssignAuthor(int bookId, int authorId)
+        public async Task<AssignedBookAuthorModel> AssignAuthor(int bookId, int authorId)
         {
             await AssignCurrentUserAsync();
-            var assignedAuthorModel = await this.bookService.AssignAuthorAsync(bookId, authorId, CurrentUser.Id);
-            return assignedAuthorModel;
+            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            var updatedBook = await this.bookService.AssignAuthorAsync(book, authorId, CurrentUser.Id);
+            return mapper.Map<AssignedBookAuthorModel>(updatedBook);
         }
 
         [HttpPut("AssignGenre/Book/{bookId}/Genre/{genreId}")]
         public async Task<AssignedBookGenreModel> AssignGenre(int bookId, int genreId)
         {
             await AssignCurrentUserAsync();
-            var assignedGenreModel = await this.bookService.AssignGenreAsync(bookId, genreId, CurrentUser.Id);
-            return assignedGenreModel;
+            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            var updatedBook = await this.bookService.AssignGenreAsync(book, genreId, CurrentUser.Id);
+            return mapper.Map<AssignedBookGenreModel>(updatedBook);
         }
 
         [HttpPut("AssignPublisher/Book/{bookId}/Publisher/{publisherId}")]
-        public async Task<AssignedPublisherBookModel> AssignPublisher(int bookId, int publisherId)
+        public async Task<AssignedBookPublisherModel> AssignPublisher(int bookId, int publisherId)
         {
             await AssignCurrentUserAsync();
-            var assignedPublisherModel = await this.bookService.AssignPublisherAsync(bookId, publisherId, CurrentUser.Id);
-            return assignedPublisherModel;
+            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            var updatedBook = await this.bookService.AssignPublisherAsync(book, publisherId, CurrentUser.Id);
+            return mapper.Map<AssignedBookPublisherModel>(updatedBook);
         }
 
         [HttpPut("AddFavorite/Book/{bookId}")]
