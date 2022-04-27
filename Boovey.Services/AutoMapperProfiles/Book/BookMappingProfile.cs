@@ -35,13 +35,13 @@
             this.CreateMap<Book, RemovedFavoriteBookModel>()
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.UserId, e => e.Ignore());
-            this.CreateMap<Book, AssignedAuthorBookModel>()
+            this.CreateMap<Book, AssignedBookAuthorModel>()
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.AuthorId, e => e.MapFrom(b => b.Authors.Select(a => a.Id).LastOrDefault()));
             this.CreateMap<Book, AssignedBookGenreModel>()
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.GenreId, e => e.MapFrom(b => b.Genres.Select(g => g.Id).LastOrDefault()));
-            this.CreateMap<Book, AssignedPublisherBookModel>()
+            this.CreateMap<Book, AssignedBookPublisherModel>()
                 .ForMember(m => m.BookId, e => e.MapFrom(b => b.Id))
                 .ForMember(m => m.PublisherId, e => e.MapFrom(b => b.PublisherId));
             this.CreateMap<Book, BookListingModel>()

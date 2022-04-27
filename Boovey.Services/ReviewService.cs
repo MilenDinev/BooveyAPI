@@ -21,7 +21,7 @@
         public async Task<Review> CreateAsync(CreateReviewModel reviewModel, int currentUserId)
         {
             var review = mapper.Map<Review>(reviewModel);
-            await AddEntityAsync(review, currentUserId);
+            await CreateEntityAsync(review, currentUserId);
 
             return review;
         }

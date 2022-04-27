@@ -16,10 +16,9 @@
             this.dbContext = dbContext;
         }
 
-        protected async Task AddEntityAsync(TEntity entity, int creatorId)
+        protected async Task CreateEntityAsync(TEntity entity, int creatorId)
         {
-            await SetCreatorAsync(entity, creatorId);
-            await this.dbContext.AddAsync(entity);
+            await AddEntityAsync(entity, creatorId);
             await SaveModificationAsync(entity, creatorId);
         }
         protected async Task DeleteEntityAsync(TEntity entity, int modifierId)
@@ -36,9 +35,9 @@
         protected async Task<TEntity> FindByIdOrDefaultAsync(int id)
         {
             var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(b => b.Id == id);
-
             return entity;
         }
+        
         protected async Task SaveModificationAsync(TEntity entity, int modifierId)
         {
             entity.LastModifierId = modifierId;
@@ -46,10 +45,10 @@
 
             await this.dbContext.SaveChangesAsync();
         }
-        private async Task SetCreatorAsync(TEntity entity, int creatorId)
+        private async Task AddEntityAsync(TEntity entity, int creatorId)
         {
             entity.CreatorId = creatorId;
-            await SaveModificationAsync(entity, creatorId);
+            await this.dbContext.AddAsync(entity);
         }
     }
 }

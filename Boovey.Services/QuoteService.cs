@@ -30,7 +30,7 @@
 
             quote = mapper.Map<Quote>(model);
 
-            await AddEntityAsync(quote, creatorId);
+            await CreateEntityAsync(quote, creatorId);
 
             return quote;
         }

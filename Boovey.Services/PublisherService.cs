@@ -24,7 +24,7 @@
         public async Task<Publisher> CreateAsync(CreatePublisherModel model, int creatorId)
         {
             var publisher = this.mapper.Map<Publisher>(model);
-            await AddEntityAsync(publisher, creatorId);
+            await CreateEntityAsync(publisher, creatorId);
             return publisher;
         }
         public async Task EditAsync(Publisher publisher, EditPublisherModel publisherModel, int modifierId)

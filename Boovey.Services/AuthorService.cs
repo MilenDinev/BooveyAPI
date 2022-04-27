@@ -27,7 +27,7 @@
         {
             await this.countryManager.FindCountryById(authorModel.CountryId);
             var author = mapper.Map<Author>(authorModel);
-            await AddEntityAsync(author, creatorId);
+            await CreateEntityAsync(author, creatorId);
             return author;
         }
         public async Task EditAsync(Author author, EditAuthorModel authorModel, int modifierId)

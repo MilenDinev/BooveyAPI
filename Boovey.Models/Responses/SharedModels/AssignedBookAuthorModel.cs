@@ -1,8 +1,8 @@
 ﻿namespace Boovey.Models.Responses.SharedModels
 {
-    public class AssignedPublisherBookModel
+    public class AssignedBookAuthorModel
     {
-        public int PublisherId { get; set; }
+        public int AuthorId { get; set; }
         public int BookId { get; set; }
     }
 }

@@ -26,7 +26,7 @@
         {
             var shelve = this.mapper.Map<Shelve>(model);
 
-            await AddEntityAsync(shelve, creatorId);
+            await CreateEntityAsync(shelve, creatorId);
 
             return shelve;
         }
