@@ -25,7 +25,7 @@
         public async Task<Genre> CreateAsync(CreateGenreModel model, int creatorId)
         {
             var genre = this.mapper.Map<Genre>(model);
-            await AddEntityAsync(genre, creatorId);
+            await CreateEntityAsync(genre, creatorId);
             return genre;
         }
         public async Task EditAsync(Genre genre, EditGenreModel model, int modifierId)
