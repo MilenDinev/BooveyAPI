@@ -14,7 +14,6 @@
     using Data.Entities;
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
-    using Models.Responses.SharedModels;
 
     public class BookService : BaseService<Book>, IBookService
     {
@@ -25,23 +24,22 @@
             this.mapper = mapper;
         }
 
-        public async Task<AddedBookModel> AddAsync(CreateBookModel bookModel, int currentUserId)
+        public async Task<Book> CreateAsync(CreateBookModel model, int currentUserId)
         {
-            await AlreadyExistBookByTitleChecker(bookModel.Title);
 
-            var isValidDate = DateTime.TryParseExact(bookModel.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
+            var isValidDate = DateTime.TryParseExact(model.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
             if (!isValidDate)
                 throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
 
-            var book = mapper.Map<Book>(bookModel);
+            var book = mapper.Map<Book>(model);
 
-            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == bookModel.CountryId)
-                ?? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), bookModel.CountryId));
+            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == model.CountryId)
+                ?? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), model.CountryId));
 
-            book.CountryId = bookModel.CountryId;
+            book.CountryId = model.CountryId;
 
             var authors = await this.dbContext.Authors.ToListAsync();
-            foreach (var authorModel in bookModel.Authors)
+            foreach (var authorModel in model.Authors)
             {
                 var author = authors.FirstOrDefault(a => a.Fullname.ToLower() == authorModel.Fullname.ToLower() && a.CountryId == authorModel.CountryId)
                     ?? mapper.Map<Author>(authorModel);
@@ -53,7 +51,7 @@
             }
 
             var genres = await this.dbContext.Genres.ToListAsync();
-            foreach (var genreModel in bookModel.Genres)
+            foreach (var genreModel in model.Genres)
             {
                 var genre = genres.FirstOrDefault(g => g.Title.ToLower() == genreModel.Title.ToLower())
                     ?? mapper.Map<Genre>(genreModel);
@@ -64,8 +62,8 @@
                 book.Genres.Add(genre);
             }
 
-            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Name.ToLower() == bookModel.Publisher.Name.ToLower())
-                ?? mapper.Map<Publisher>(bookModel.Publisher);
+            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Name.ToLower() == model.Publisher.Name.ToLower())
+                ?? mapper.Map<Publisher>(model.Publisher);
             book.Publisher = publisher;
             book.CreatorId = currentUserId;
             book.LastModifierId = currentUserId;
@@ -73,35 +71,29 @@
             await this.dbContext.Books.AddAsync(book);
             await this.dbContext.SaveChangesAsync();
 
-            return mapper.Map<AddedBookModel>(book);
+            return book;
         }
-        public async Task<EditedBookModel> EditAsync(int bookId, EditBookModel bookModel, int currentUserId)
+        public async Task EditAsync(Book book, EditBookModel model, int modifierId)
         {
-            var book = await GetByIdAsync(bookId);
 
-            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == bookModel.CountryId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), bookModel.CountryId));
+            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == model.CountryId)
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), model.CountryId));
             book.Country = country;
 
-            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Id == bookModel.PublisherId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), bookModel.PublisherId));
+            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Id == model.PublisherId)
+                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), model.PublisherId));
 
-            var isValidDate = DateTime.TryParseExact(bookModel.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
+            var isValidDate = DateTime.TryParseExact(model.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
 
             if (!isValidDate)
                 throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
 
-            book.Title = bookModel.Title;
-            book.Description = bookModel.Description;
-            book.Pages = bookModel.Pages;
+            book.Description = model.Description;
+            book.Pages = model.Pages;
             book.PublicationDate = publicationDate;
             book.Publisher = publisher;
-            book.LastModifierId = currentUserId;
-            book.LastModifiedOn = DateTime.UtcNow;
+            await SetTitleAsync(model.Title, book, modifierId);
 
-            await this.dbContext.SaveChangesAsync();
-
-            return mapper.Map<EditedBookModel>(book);
         }
         public async Task DeleteAsync(Book book, int modifierId)
         {
@@ -109,7 +101,7 @@
             await SaveModificationAsync(book, modifierId);
         }
 
-        public async Task<AddedFavoriteBookModel> AddFavoriteBook(int bookId, User currentUser)
+        public async Task<AddedFavoriteBookModel> AddFavorite(int bookId, User currentUser)
         {
             await AlreadyFavoriteBookChecker(bookId, currentUser);
 
@@ -129,7 +121,7 @@
             await dbContext.SaveChangesAsync();
             return mapper.Map<AddedFavoriteBookModel>(book);
         }
-        public async Task<RemovedFavoriteBookModel> RemoveFavoriteBook(int bookId, User currentUser)
+        public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId, User currentUser)
         {
             await NotFavoriteBookChecker(bookId, currentUser);
 
@@ -140,72 +132,43 @@
             await dbContext.SaveChangesAsync();
             return mapper.Map<RemovedFavoriteBookModel>(book);
         }
+
+        public async Task<Book> GetActiveByIdAsync(int bookId)
+        {
+            var book = await GetByIdAsync(bookId);
+            if (book.Deleted)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Book)));
+
+            return book;
+        }
         public async Task<Book> GetByIdAsync(int bookId)
         {
             var book = await FindByIdOrDefaultAsync(bookId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
 
-            return book ;
+            return book;
         }
-        public async Task<ICollection<BookListingModel>> GetAllBooksAsync()
+        public async Task<Book> GetByTitleAsync(string title)
         {
-            var books = await this.dbContext.Books.ToListAsync();
+            var book = await FindByTitleOrDefaultAsync(title)
+            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), title));
 
-            return mapper.Map<ICollection<BookListingModel>>(books);
+            return book;
         }
-
-        public async Task<AssignedAuthorBookModel> AssignAuthorAsync(int bookId, int authorId, int modifierId)
+        public async Task<ICollection<Book>> GetAllActiveAsync()
         {
-            var book = await GetByIdAsync(bookId);
-            var author = await GetAuthorById(authorId);
-            await AlreadyAssignedAuthorChecker(book, author);
+            var books = await GetAllAsync();
 
-            book.Authors.Add(author);
-            book.LastModifiedOn = DateTime.UtcNow;
-            book.LastModifierId = modifierId;
-
-            await this.dbContext.SaveChangesAsync();
-
-            return this.mapper.Map<AssignedAuthorBookModel>(book);
+            return books.Where(s => !s.Deleted).ToList();
         }
-        public async Task<AssignedBookGenreModel> AssignGenreAsync(int bookId, int genreId, int modifierId)
+        public async Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Book> books)
         {
-            var book = await GetByIdAsync(bookId);
-            var genre = await GetGenreById(genreId);
+            var contains = books.Any(s => s.Title == title && !s.Deleted);
 
-            await AlreadyAssignedGenreChecker(book, genre);
-
-            book.Genres.Add(genre);
-            book.LastModifiedOn = DateTime.UtcNow;
-            book.LastModifierId = modifierId;
-
-            await this.dbContext.SaveChangesAsync();
-
-            return this.mapper.Map<AssignedBookGenreModel>(book);
-        }
-        public async Task<AssignedPublisherBookModel> AssignPublisherAsync(int bookId, int publisherId, int modifierId)
-        {
-            var book = await GetByIdAsync(bookId);
-            var publisher = await GetPublisherById(publisherId);
-
-            await AlreadyAssignedPublisherChecker(book, publisherId);
-
-            book.PublisherId = publisher.Id;
-            book.LastModifiedOn = DateTime.UtcNow;
-            book.LastModifierId = modifierId;
-
-            await this.dbContext.SaveChangesAsync();
-
-            return this.mapper.Map<AssignedPublisherBookModel>(book);
+            return await Task.Run(() => contains);
         }
 
-        private async Task AlreadyExistBookByTitleChecker(string bookTitle)
-        {
-            var IsbookAlreadyExists = await this.dbContext.Books.AnyAsync(b => b.Title == bookTitle)
-                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Book), bookTitle)) : false;
 
-            await Task.Delay(300);
-        }
         private async Task AlreadyFavoriteBookChecker(int bookId, User user)
         {
             var isAlreadyFavoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId) 
@@ -221,28 +184,41 @@
             await Task.Delay(300);
         }
 
-        private async Task<Author> GetAuthorById(int authorId)
+        public async Task<Book> AssignAuthorAsync(Book book, Author author, int modifierId)
         {
-            var author = await this.dbContext.Authors.FirstOrDefaultAsync(b => b.Id == authorId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
-
-            return author;
+            await AlreadyAssignedAuthorChecker(book, author);
+            book.Authors.Add(author);
+            await SaveModificationAsync(book, modifierId);
+            return book;
         }
-        private async Task<Genre> GetGenreById(int genreId)
+        public async Task<Book> AssignGenreAsync(Book book, Genre genre, int modifierId)
         {
-            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(g => g.Id == genreId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
-
-            return genre;
+            await AlreadyAssignedGenreChecker(book, genre);
+            book.Genres.Add(genre);
+            await SaveModificationAsync(book, modifierId);
+            return book;
         }
-        private async Task<Publisher> GetPublisherById(int publisherId)
+        public async Task<Book> AssignPublisherAsync(Book book, Publisher publisher, int modifierId)
         {
-            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(g => g.Id == publisherId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), publisherId));
-
-            return publisher;
+            await AlreadyAssignedPublisherChecker(book, publisher.Id);
+            book.PublisherId = publisher.Id;
+            await SaveModificationAsync(book, modifierId);
+            return book;
         }
 
+        private async Task SetTitleAsync(string title, Book book, int modifierId)
+        {
+            if (title != book.Title)
+            {
+                book.Title = title;
+                await SaveModificationAsync(book, modifierId);
+            }
+        }
+        private async Task<Book> FindByTitleOrDefaultAsync(string title)
+        {
+            var book = await this.dbContext.Books.FirstOrDefaultAsync(s => s.Title == title);
+            return book;
+        }
         private async Task AlreadyAssignedAuthorChecker(Book book, Author author)
         {
             var IsAuthorAlreadyAssigned = book.Authors.Contains(author)
@@ -265,11 +241,5 @@
             await Task.Delay(300);
         }
 
-        private async Task<Book> FindByTitleOrDefaultAsync(string title)
-        {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(b => b.Title == title);
-
-            return book;
-        }
     }
 }
