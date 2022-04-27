@@ -59,7 +59,7 @@
             await SaveModificationAsync(book, modifierId);
         }
 
-        public async Task AddFavorite(Book book, User currentUser)
+        public async Task AddFavoriteAsync(Book book, User currentUser)
         {
             await AlreadyFavoriteBookChecker(book.Id, currentUser);
             currentUser.FavoriteBooks.Add(book);
@@ -74,7 +74,7 @@
             }
             await SaveModificationAsync(book, currentUser.Id);
         }
-        public async Task RemoveFavorite(Book book, User currentUser)
+        public async Task RemoveFavoriteAsync(Book book, User currentUser)
         {
             await NotFavoriteBookChecker(book.Id, currentUser);
 

@@ -90,7 +90,7 @@
         {
             await AssignCurrentUserAsync();
             var book = await this.bookService.GetActiveByIdAsync(bookId);
-            await this.bookService.AddFavorite(book, CurrentUser);
+            await this.bookService.AddFavoriteAsync(book, CurrentUser);
             return mapper.Map<AddedFavoriteBookModel>(book);
         }
 
@@ -99,7 +99,7 @@
         {
             await AssignCurrentUserAsync();
             var book = await this.bookService.GetActiveByIdAsync(bookId);
-            await this.bookService.RemoveFavorite(book, CurrentUser);
+            await this.bookService.RemoveFavoriteAsync(book, CurrentUser);
             var removedFavoriteBook = mapper.Map<RemovedFavoriteBookModel>(book);
             removedFavoriteBook.UserId = CurrentUser.Id;
             return removedFavoriteBook;

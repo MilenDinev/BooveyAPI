@@ -10,8 +10,8 @@
         Task<Book> CreateAsync(CreateBookModel bookModel, int creatorId);
         Task EditAsync(Book book, EditBookModel bookModel, int creatorId);
         Task DeleteAsync(Book book, int modifierId);
-        Task AddFavorite(Book book, User user);
-        Task RemoveFavorite(Book book, User user);
+        Task AddFavoriteAsync(Book book, User user);
+        Task RemoveFavoriteAsync(Book book, User user);
         Task<Book> GetByIdAsync(int Id);
         Task<Book> GetActiveByIdAsync(int Id);
         Task<ICollection<Book>> GetAllActiveAsync();
