@@ -10,9 +10,9 @@
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
-    using Boovey.Services.Exceptions;
-    using Boovey.Services.Constants;
-    using Boovey.Data.Entities;
+    using Services.Exceptions;
+    using Services.Constants;
+    using Data.Entities;
 
     [Route("api/[controller]")]
     [ApiController]
