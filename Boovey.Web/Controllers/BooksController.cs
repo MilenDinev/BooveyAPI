@@ -48,7 +48,7 @@
             return CreatedAtAction(nameof(Get), "Books", new { id = addedBook.Id }, addedBook);
         }
 
-        [HttpPut("Edit/{bookId}")]
+        [HttpPut("Edit/Book/{bookId}")]
         public async Task<ActionResult<EditedBookModel>> Edit(EditBookModel bookInput, int bookId)
         {
             await AssignCurrentUserAsync();
@@ -58,7 +58,7 @@
             return mapper.Map<EditedBookModel>(book);
         }
 
-        [HttpPut("Assign/{bookId}/Author/{authorId}")]
+        [HttpPut("AssignAuthor/Book/{bookId}/Author/{authorId}")]
         public async Task<AssignedAuthorBookModel> AssignAuthor(int bookId, int authorId)
         {
             await AssignCurrentUserAsync();
@@ -66,7 +66,7 @@
             return assignedAuthorModel;
         }
 
-        [HttpPut("Assign/Book/{bookId}/Genre/{genreId}")]
+        [HttpPut("AssignGenre/Book/{bookId}/Genre/{genreId}")]
         public async Task<AssignedBookGenreModel> AssignGenre(int bookId, int genreId)
         {
             await AssignCurrentUserAsync();
@@ -74,7 +74,7 @@
             return assignedGenreModel;
         }
 
-        [HttpPut("Assign/Book/{bookId}/Publisher/{publisherId}")]
+        [HttpPut("AssignPublisher/Book/{bookId}/Publisher/{publisherId}")]
         public async Task<AssignedPublisherBookModel> AssignPublisher(int bookId, int publisherId)
         {
             await AssignCurrentUserAsync();
@@ -82,7 +82,7 @@
             return assignedPublisherModel;
         }
 
-        [HttpPut("Add-To-Favorites/{bookId}")]
+        [HttpPut("AddFavorite/Book/{bookId}")]
         public async Task<AddedFavoriteBookModel> AddFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
@@ -91,7 +91,7 @@
             return addedFavoriteBook;
         }
 
-        [HttpPut("Remove-From-Favorites/{bookId}")]
+        [HttpPut("RemoveFavorite/Book/{bookId}")]
         public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
@@ -100,7 +100,7 @@
             return removedFavoriteBook;
         }
 
-        [HttpDelete("Delete/{bookId}")]
+        [HttpDelete("Delete/Book/{bookId}")]
         public async Task<DeletedBookModel> Delete(int bookId)
         {
             await AssignCurrentUserAsync();
