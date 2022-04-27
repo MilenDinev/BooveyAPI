@@ -89,16 +89,18 @@
         public async Task<AddedFavoriteBookModel> AddFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var addedFavoriteBook = await this.bookService.AddFavorite(bookId, CurrentUser);
-            addedFavoriteBook.UserId = CurrentUser.Id;
-            return addedFavoriteBook;
+            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            await this.bookService.AddFavorite(book, CurrentUser);
+            return mapper.Map<AddedFavoriteBookModel>(book);
         }
 
         [HttpPut("RemoveFavorite/Book/{bookId}")]
         public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var removedFavoriteBook = await this.bookService.RemoveFavorite(bookId, CurrentUser);
+            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            await this.bookService.RemoveFavorite(book, CurrentUser);
+            var removedFavoriteBook = mapper.Map<RemovedFavoriteBookModel>(book);
             removedFavoriteBook.UserId = CurrentUser.Id;
             return removedFavoriteBook;
         }
