@@ -13,87 +13,45 @@
     using Data;
     using Data.Entities;
     using Models.Requests.BookModels;
-    using Models.Responses.BookModels;
 
     public class BookService : BaseService<Book>, IBookService
     {
         private readonly IMapper mapper;
-
-        public BookService(BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
+        private readonly ICountryManager countryManager;
+        public BookService(BooveyDbContext dbContext, ICountryManager countryManager, IMapper mapper) : base(dbContext)
         {
+            this.countryManager = countryManager;
             this.mapper = mapper;
         }
 
-        public async Task<Book> CreateAsync(CreateBookModel model, int currentUserId)
+        public async Task<Book> CreateAsync(CreateBookModel model, int creatorId)
         {
-
             var isValidDate = DateTime.TryParseExact(model.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
             if (!isValidDate)
                 throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
 
+            await this.countryManager.FindCountryById(model.CountryId);
+
             var book = mapper.Map<Book>(model);
-
-            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == model.CountryId)
-                ?? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(Country), model.CountryId));
-
-            book.CountryId = model.CountryId;
-
-            var authors = await this.dbContext.Authors.ToListAsync();
-            foreach (var authorModel in model.Authors)
-            {
-                var author = authors.FirstOrDefault(a => a.Fullname.ToLower() == authorModel.Fullname.ToLower() && a.CountryId == authorModel.CountryId)
-                    ?? mapper.Map<Author>(authorModel);
-
-                if (book.Authors.Any(a => a.Fullname.ToLower() == author.Fullname.ToLower() && a.CountryId == author.CountryId))
-                    continue;
-
-                book.Authors.Add(author);
-            }
-
-            var genres = await this.dbContext.Genres.ToListAsync();
-            foreach (var genreModel in model.Genres)
-            {
-                var genre = genres.FirstOrDefault(g => g.Title.ToLower() == genreModel.Title.ToLower())
-                    ?? mapper.Map<Genre>(genreModel);
-
-                if (book.Genres.Any(g => g.Title.ToLower() == genre.Title.ToLower()))
-                    continue;
-
-                book.Genres.Add(genre);
-            }
-
-            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Name.ToLower() == model.Publisher.Name.ToLower())
-                ?? mapper.Map<Publisher>(model.Publisher);
-            book.Publisher = publisher;
-            book.CreatorId = currentUserId;
-            book.LastModifierId = currentUserId;
-
-            await this.dbContext.Books.AddAsync(book);
-            await this.dbContext.SaveChangesAsync();
-
+            await CreateEntityAsync(book, creatorId);
             return book;
         }
         public async Task EditAsync(Book book, EditBookModel model, int modifierId)
         {
-
-            var country = await this.dbContext.Countries.FirstOrDefaultAsync(c => c.Id == model.CountryId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Country), model.CountryId));
-            book.Country = country;
-
-            var publisher = await this.dbContext.Publishers.FirstOrDefaultAsync(p => p.Id == model.PublisherId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), model.PublisherId));
-
             var isValidDate = DateTime.TryParseExact(model.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
-
             if (!isValidDate)
                 throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
+            book.PublicationDate = publicationDate;
 
+            await this.countryManager.FindCountryById(model.CountryId);
+
+            book.CountryId= model.CountryId; 
             book.Description = model.Description;
             book.Pages = model.Pages;
-            book.PublicationDate = publicationDate;
-            book.Publisher = publisher;
-            await SetTitleAsync(model.Title, book, modifierId);
 
+            book.Publisher = await GetPublisherById(model.PublisherId);
+            await SetTitleAsync(model.Title, book);
+            await SaveModificationAsync(book, modifierId);
         }
         public async Task DeleteAsync(Book book, int modifierId)
         {
@@ -101,12 +59,9 @@
             await SaveModificationAsync(book, modifierId);
         }
 
-        public async Task<AddedFavoriteBookModel> AddFavorite(int bookId, User currentUser)
+        public async Task AddFavorite(Book book, User currentUser)
         {
-            await AlreadyFavoriteBookChecker(bookId, currentUser);
-
-            var book = await GetByIdAsync(bookId);
-
+            await AlreadyFavoriteBookChecker(book.Id, currentUser);
             currentUser.FavoriteBooks.Add(book);
 
             foreach (var genre in book.Genres)
@@ -117,20 +72,15 @@
                     currentUser.FavoriteGenres.Add(genre);
                 }
             }
-
-            await dbContext.SaveChangesAsync();
-            return mapper.Map<AddedFavoriteBookModel>(book);
+            await SaveModificationAsync(book, currentUser.Id);
         }
-        public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId, User currentUser)
+        public async Task RemoveFavorite(Book book, User currentUser)
         {
-            await NotFavoriteBookChecker(bookId, currentUser);
-
-            var book = await GetByIdAsync(bookId);
+            await NotFavoriteBookChecker(book.Id, currentUser);
 
             currentUser.FavoriteBooks.Remove(book);
 
-            await dbContext.SaveChangesAsync();
-            return mapper.Map<RemovedFavoriteBookModel>(book);
+            await SaveModificationAsync(book, currentUser.Id);
         }
 
         public async Task<Book> GetActiveByIdAsync(int bookId)
@@ -169,21 +119,6 @@
             return await Task.Run(() => contains);
         }
 
-        private async Task AlreadyFavoriteBookChecker(int bookId, User user)
-        {
-            var isAlreadyFavoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId) 
-                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Book), bookId)) : false;
-
-            await Task.Delay(300);
-        }
-        private async Task NotFavoriteBookChecker(int bookId, User user)
-        {
-            var favoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId)
-                ? true : throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Book), bookId));
-
-            await Task.Delay(300);
-        }
-
         public async Task<Book> AssignAuthorAsync(Book book, int authorId, int modifierId)
         {
             var author = await GetAuthorById(authorId);
@@ -209,19 +144,14 @@
             return book;
         }
 
-        private async Task SetTitleAsync(string title, Book book, int modifierId)
+        private async Task SetTitleAsync(string title, Book book)
         {
             if (title != book.Title)
             {
-                book.Title = title;
-                await SaveModificationAsync(book, modifierId);
+               await Task.Run(() => book.Title = title);
             }
         }
-        private async Task<Book> FindByTitleOrDefaultAsync(string title)
-        {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(s => s.Title == title);
-            return book;
-        }
+
         private async Task AlreadyAssignedAuthorChecker(Book book, Author author)
         {
             var IsAuthorAlreadyAssigned = book.Authors.Contains(author)
@@ -240,6 +170,20 @@
         {
             var isPublisherAlreadyAssigned = book.PublisherId == publisherId
                 ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId, nameof(Publisher), publisherId, nameof(Book), book.Id)) : false;
+
+            await Task.Delay(300);
+        }
+        private async Task AlreadyFavoriteBookChecker(int bookId, User user)
+        {
+            var isAlreadyFavoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId)
+                ? throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Book), bookId)) : false;
+
+            await Task.Delay(300);
+        }
+        private async Task NotFavoriteBookChecker(int bookId, User user)
+        {
+            var favoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId)
+                ? true : throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Book), bookId));
 
             await Task.Delay(300);
         }
@@ -264,6 +208,12 @@
                 ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Publisher), publisherId));
 
             return publisher;
+        }
+
+        private async Task<Book> FindByTitleOrDefaultAsync(string title)
+        {
+            var book = await this.dbContext.Books.FirstOrDefaultAsync(s => s.Title == title);
+            return book;
         }
     }
 }
