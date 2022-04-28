@@ -97,7 +97,7 @@
             var authors = await GetAllAsync();
             var contains = authors.Any(a => a.Fullname == name && !a.Deleted);
 
-            return await Task.Run(() => contains);
+            return await Task.FromResult(contains);
         }
         private async Task<Author> FindByNameOrDefaultAsync(string name)
         {
