@@ -16,8 +16,8 @@
         Task<Book> GetActiveByIdAsync(int Id);
         Task<ICollection<Book>> GetAllActiveAsync();
         Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Book> books);
-        Task<Book> AssignAuthorAsync(Book book, int authorId, int modifierId);
-        Task<Book> AssignGenreAsync(Book book, int genreId, int modifierId);
-        Task<Book> AssignPublisherAsync(Book book, int publisherId, int modifierId);
+        Task<Book> AssignAuthorAsync(Book book, Author author, int modifierId);
+        Task<Book> AssignGenreAsync(Book book, Genre genre, int modifierId);
+        Task<Book> AssignPublisherAsync(Book book, Publisher publisher, int modifierId);
     }
 }
