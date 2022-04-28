@@ -1,4 +1,4 @@
-﻿namespace Boovey.Web.Controllers
+﻿namespace Boovey.Web.Controllers.Base
 {
     using System;
     using System.Threading.Tasks;
@@ -11,7 +11,7 @@
     {
         protected readonly IUserService userService;
 
-        public BooveyBaseController(IUserService userService)
+        protected BooveyBaseController(IUserService userService)
         {
             this.userService = userService;
         }
