@@ -1,8 +1,9 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
+    using Interfaces;
 
-    public class Genre : Entity
+    public class Genre : Entity, IAssignable
     {
         public Genre()
         {
