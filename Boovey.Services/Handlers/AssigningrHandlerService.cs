@@ -1,20 +1,25 @@
 ﻿namespace Boovey.Services.Handlers
 {
+    using System.Linq;
     using System.Threading.Tasks;
+    using Castle.DynamicProxy;
+    using Interfaces;
     using Data;
     using Data.Entities;
     using Data.Entities.Interfaces;
-    using System.Linq;
-    using Castle.DynamicProxy;
 
-    public abstract class AssignerHandler<TEntity> : BaseService<TEntity> 
+    public abstract class AssigningrHandlerService<TEntity> : BaseService<TEntity> 
         where TEntity : class, IBook, IAssignable
     {
+        private readonly IAuthorService authorService;
+        private readonly IGenreService genreService;
+        private readonly IPublisherService publisherService;
 
-
-        protected AssignerHandler(BooveyDbContext dbContext) : base(dbContext)
+        protected AssigningrHandlerService(IAuthorService authorService, IGenreService genreService, IPublisherService publisherService, BooveyDbContext dbContext) : base(dbContext)
         {
-
+            this.authorService = authorService;
+            this.genreService = genreService;
+            this.publisherService = publisherService;
         }
 
         protected async Task AssignAsync(TEntity entity, IAssignable assignee)
@@ -58,6 +63,21 @@
                 isAlreadyAssigned = entity.PublisherId == assignee.Id;
             }
             return await Task.Run(() => isAlreadyAssigned);
+        }
+
+        public async Task<Author> GetAuthorByIdAsync(int authorId)
+        {
+            return await this.authorService.GetActiveByIdAsync(authorId);
+        }
+
+        public async Task<Genre> GetGenreByIdAsync(int genreId)
+        {
+            return await this.genreService.GetActiveByIdAsync(genreId);
+        }
+
+        public async Task<Publisher> GetPublisherByIdAsync(int publisherId)
+        {
+            return await this.publisherService.GetActiveByIdAsync(publisherId);
         }
 
     }
