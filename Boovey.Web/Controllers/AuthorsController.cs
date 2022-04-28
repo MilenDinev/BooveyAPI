@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
+    using Base;
     using Services.Constants;
     using Services.Exceptions;
     using Services.Interfaces;
@@ -18,7 +19,6 @@
     {
         private readonly IAuthorService authorService;
         private readonly IMapper mapper;
-
         public AuthorsController(IUserService userService, IAuthorService authorService, IMapper mapper) : base(userService)
         {
             this.authorService = authorService;

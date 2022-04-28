@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Extensions.Authentication;
+    using Base;
     using Services.Interfaces;
     using Models.Requests;
     using Models.Responses;

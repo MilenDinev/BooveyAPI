@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
+    using Base;
     using Services.Interfaces;
     using Models.Requests;
     using Models.Responses.UserModels;

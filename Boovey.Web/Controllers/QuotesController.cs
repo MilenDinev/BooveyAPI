@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using AutoMapper;
+    using Base;
     using Microsoft.AspNetCore.Mvc;
     using Models.Requests.QuoteModels;
     using Models.Responses.QuoteModels;

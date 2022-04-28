@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
+    using Base;
     using Services.Interfaces;
     using Services.Exceptions;
     using Services.Constants;
