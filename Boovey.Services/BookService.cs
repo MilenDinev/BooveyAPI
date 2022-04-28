@@ -15,11 +15,12 @@
     using Data.Entities;
     using Models.Requests.BookModels;
 
-    public class BookService : AssignerHandler<Book>, IBookService
+    public class BookService : AssigningrHandlerService<Book>, IBookService
     {
         private readonly IMapper mapper;
         private readonly ICountryManager countryManager;
-        public BookService(BooveyDbContext dbContext, ICountryManager countryManager, IMapper mapper) : base(dbContext)
+        public BookService(ICountryManager countryManager, IMapper mapper, IAuthorService authorService, IGenreService genreService, IPublisherService publisherService, BooveyDbContext dbContext) 
+            : base(authorService, genreService, publisherService, dbContext)
         {
             this.countryManager = countryManager;
             this.mapper = mapper;
