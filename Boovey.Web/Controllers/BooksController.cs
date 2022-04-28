@@ -6,6 +6,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Authorization;
     using AutoMapper;
+    using Helpers;
     using Services.Interfaces;
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
@@ -17,12 +18,13 @@
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class BooksController : BooveyBaseController
+    public class BooksController : AssigningController
     {
-        private readonly IBookService bookService;
         private readonly IMapper mapper;
+        private readonly IBookService bookService;
 
-        public BooksController(IUserService userService, IBookService bookService, IMapper mapper) : base(userService)
+        public BooksController(IMapper mapper, IUserService userService, IBookService bookService, IAuthorService authorService, IGenreService genreService, IPublisherService publisherService) 
+            : base(userService, authorService, genreService, publisherService)
         {
             this.bookService = bookService;
             this.mapper = mapper;
@@ -63,7 +65,9 @@
         {
             await AssignCurrentUserAsync();
             var book = await this.bookService.GetActiveByIdAsync(bookId);
-            var updatedBook = await this.bookService.AssignAuthorAsync(book, authorId, CurrentUser.Id);
+            var author = await GetAuthorByIdAsync(authorId);
+
+            var updatedBook = await this.bookService.AssignAuthorAsync(book, author, CurrentUser.Id);
             return mapper.Map<AssignedBookAuthorModel>(updatedBook);
         }
 
@@ -72,7 +76,9 @@
         {
             await AssignCurrentUserAsync();
             var book = await this.bookService.GetActiveByIdAsync(bookId);
-            var updatedBook = await this.bookService.AssignGenreAsync(book, genreId, CurrentUser.Id);
+            var genre = await GetGenreByIdAsync(genreId);
+
+            var updatedBook = await this.bookService.AssignGenreAsync(book, genre, CurrentUser.Id);
             return mapper.Map<AssignedBookGenreModel>(updatedBook);
         }
 
@@ -81,7 +87,9 @@
         {
             await AssignCurrentUserAsync();
             var book = await this.bookService.GetActiveByIdAsync(bookId);
-            var updatedBook = await this.bookService.AssignPublisherAsync(book, publisherId, CurrentUser.Id);
+            var publisher = await GetPublisherByIdAsync(publisherId);
+
+            var updatedBook = await this.bookService.AssignPublisherAsync(book, publisher, CurrentUser.Id);
             return mapper.Map<AssignedBookPublisherModel>(updatedBook);
         }
 
