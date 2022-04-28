@@ -100,7 +100,7 @@
         {
             var contains = shelves.Any(s => s.Title == title && !s.Deleted);
 
-            return await Task.Run(() => contains);
+            return await Task.FromResult(contains);
         }
 
         private async Task SetTitleAsync(string title, Shelve shelve, int modifierId)

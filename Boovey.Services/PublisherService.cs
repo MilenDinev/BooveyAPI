@@ -71,7 +71,7 @@
             var publishers = await GetAllAsync();
             var contains = publishers.Any(p => p.Name == name && !p.Deleted);
 
-            return await Task.Run(() => contains);
+            return await Task.FromResult(contains);
         }
         private async Task<Publisher> FindByNameOrDefaultAsync(string name)
         {

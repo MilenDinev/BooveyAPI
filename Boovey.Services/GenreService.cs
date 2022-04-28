@@ -89,7 +89,7 @@
             var genres = await GetAllAsync();
             var contains = genres.Any(s => s.Title == title && !s.Deleted);
 
-            return await Task.Run(() => contains);
+            return await Task.FromResult(contains);
         }
 
         private async Task SetTitleAsync(string title, Genre genre, int modifierId)
