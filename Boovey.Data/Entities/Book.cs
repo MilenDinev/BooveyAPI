@@ -2,8 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using Interfaces;
 
-    public class Book : Entity
+    public class Book : Entity, IBook, IAssignable
     {
         public Book()
         {
