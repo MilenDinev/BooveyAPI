@@ -19,5 +19,9 @@
         Task<Book> AssignAuthorAsync(Book book, Author author, int modifierId);
         Task<Book> AssignGenreAsync(Book book, Genre genre, int modifierId);
         Task<Book> AssignPublisherAsync(Book book, Publisher publisher, int modifierId);
+
+        Task<Author> GetAuthorByIdAsync(int authorId);
+        Task<Genre> GetGenreByIdAsync(int genreId);
+        Task<Publisher> GetPublisherByIdAsync(int publisherId);
     }
 }
