@@ -45,7 +45,7 @@
             return CreatedAtAction(nameof(Get), "Publishers", new { id = addedPublisher.Id }, addedPublisher);
         }
 
-        [HttpPut("Edit/{publisherId}")]
+        [HttpPut("Edit/Publisher/{publisherId}")]
         public async Task<ActionResult<EditedPublisherModel>> Edit(EditPublisherModel publisherInput, int publisherId)
         {
             await AssignCurrentUserAsync();
@@ -55,7 +55,7 @@
             return mapper.Map<EditedPublisherModel>(publisher);
         }
 
-        [HttpDelete("Delete/{publisherId}")]
+        [HttpDelete("Delete/Publisher/{publisherId}")]
         public async Task<DeletedPublisherModel> Delete(int publisherId)
         {
             await AssignCurrentUserAsync();

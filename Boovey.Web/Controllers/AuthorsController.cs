@@ -32,7 +32,7 @@
             return mapper.Map<ICollection<AuthorListingModel>>(allGenres).ToList();
         }
 
-        [HttpGet("Get/{authorId}")]
+        [HttpGet("Get/Author/{authorId}")]
         public async Task<ActionResult<AuthorListingModel>> GetById(int authorId)
         {
             var author = await this.authorService.GetActiveByIdAsync(authorId);
@@ -54,7 +54,7 @@
             return CreatedAtAction(nameof(Get), "Authors", new { id = createdAuthor.Id }, createdAuthor);
         }
 
-        [HttpPut("Edit/{authorId}")]
+        [HttpPut("Edit/Author/{authorId}")]
         public async Task<ActionResult<EditedAuthorModel>> Edit(EditAuthorModel authorInput, int authorId)
         {
             await AssignCurrentUserAsync();
@@ -65,7 +65,7 @@
             return mapper.Map<EditedAuthorModel>(author);
         }
 
-        [HttpPut("Add-To-Favorites/{authorId}")]
+        [HttpPut("Favorites/Add/Author/{authorId}")]
         public async Task<AddedFavoriteAuthorModel> AddFavorite(int authorId)
         {
             await AssignCurrentUserAsync();
@@ -74,7 +74,7 @@
             return mapper.Map<AddedFavoriteAuthorModel>(author);
         }
 
-        [HttpPut("Remove-From-Favorites/{authorId}")]
+        [HttpPut("Favorites/Remove/Author/{authorId}")]
         public async Task<RemovedFavoriteAuthorModel> RemoveFavorite(int authorId)
         {
             await AssignCurrentUserAsync();
@@ -85,7 +85,7 @@
             return removedFavoriteAuthor;
         }
 
-        [HttpDelete("Delete/{authorId}")]
+        [HttpDelete("Delete/Author/{authorId}")]
         public async Task<DeletedAuthorModel> Delete(int authorId)
         {
             await AssignCurrentUserAsync();

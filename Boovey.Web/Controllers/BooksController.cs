@@ -60,7 +60,7 @@
             return mapper.Map<EditedBookModel>(book);
         }
 
-        [HttpPut("AssignAuthor/Book/{bookId}/Author/{authorId}")]
+        [HttpPut("Assign/Book/{bookId}/Author/{authorId}")]
         public async Task<AssignedBookAuthorModel> AssignAuthor(int bookId, int authorId)
         {
             await AssignCurrentUserAsync();
@@ -71,7 +71,7 @@
             return mapper.Map<AssignedBookAuthorModel>(updatedBook);
         }
 
-        [HttpPut("AssignGenre/Book/{bookId}/Genre/{genreId}")]
+        [HttpPut("Assign/Book/{bookId}/Genre/{genreId}")]
         public async Task<AssignedBookGenreModel> AssignGenre(int bookId, int genreId)
         {
             await AssignCurrentUserAsync();
@@ -82,7 +82,7 @@
             return mapper.Map<AssignedBookGenreModel>(updatedBook);
         }
 
-        [HttpPut("AssignPublisher/Book/{bookId}/Publisher/{publisherId}")]
+        [HttpPut("Assign/Book/{bookId}/Publisher/{publisherId}")]
         public async Task<AssignedBookPublisherModel> AssignPublisher(int bookId, int publisherId)
         {
             await AssignCurrentUserAsync();
@@ -93,7 +93,7 @@
             return mapper.Map<AssignedBookPublisherModel>(updatedBook);
         }
 
-        [HttpPut("AddFavorite/Book/{bookId}")]
+        [HttpPut("Favorites/Add/Book/{bookId}")]
         public async Task<AddedFavoriteBookModel> AddFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
@@ -102,7 +102,7 @@
             return mapper.Map<AddedFavoriteBookModel>(book);
         }
 
-        [HttpPut("RemoveFavorite/Book/{bookId}")]
+        [HttpPut("Favorites/Remove/Book/{bookId}")]
         public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId)
         {
             await AssignCurrentUserAsync();

@@ -32,7 +32,7 @@
             return CreatedAtAction(nameof(Get), "Users", new { username = registeredUser.Username }, registeredUser);
         }
 
-        [HttpPut("Follow/{followedId}")]
+        [HttpPut("Follow/User/{followedId}")]
         public async Task<ActionResult<FollowerModel>> Follow(int followedId)
         {
             await AssignCurrentUserAsync();

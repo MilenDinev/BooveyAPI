@@ -20,7 +20,7 @@
             this.mapper = mapper;
         }
 
-        [HttpPost("Add/")]
+        [HttpPost("Create/")]
         public async Task<ActionResult> Add(CreateReviewModel reviewInput)
         {
             await AssignCurrentUserAsync();
@@ -28,7 +28,7 @@
             return CreatedAtAction(nameof(Add), "Reviews", new { id = addedReview.Id }, addedReview);
         }
 
-        [HttpPut("Edit/{reviewId}")]
+        [HttpPut("Edit/Review/{reviewId}")]
         public async Task<ActionResult<EditedReviewModel>> Edit(EditReviewModel reviewInput, int reviewId)
         {
             await AssignCurrentUserAsync();
@@ -37,7 +37,7 @@
             return mapper.Map<EditedReviewModel>(review);
         }
 
-        [HttpDelete("Delete/{genreId}")]
+        [HttpDelete("Delete/Review/{reviewId}")]
         public async Task<DeletedReviewModel> Delete(int reviewId)
         {
             await AssignCurrentUserAsync();

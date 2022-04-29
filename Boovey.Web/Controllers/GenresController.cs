@@ -47,7 +47,7 @@
             return CreatedAtAction(nameof(Get), "Genres", new { id = createdGenre.Id }, createdGenre);
         }
 
-        [HttpPut("Edit/{genreId}")]
+        [HttpPut("Edit/Genre/{genreId}")]
         public async Task<ActionResult<EditedGenreModel>> Edit(EditGenreModel genreInput, int genreId)
         {
             await AssignCurrentUserAsync();
@@ -57,7 +57,7 @@
             return mapper.Map<EditedGenreModel>(genre);
         }
 
-        [HttpPut("Add-To-Favorites/{genreId}")]
+        [HttpPut("Favorites/Add/Genre/{genreId}")]
         public async Task<AddedFavoriteGenreModel> AddFavorite(int genreId)
         {
             await AssignCurrentUserAsync();
@@ -66,7 +66,7 @@
             return mapper.Map<AddedFavoriteGenreModel>(genre);
         }
 
-        [HttpPut("Remove-From-Favorites/{genreId}")]
+        [HttpPut("Favorites/Remove/Genre/{genreId}")]
         public async Task<RemovedFavoriteGenreModel> RemoveFavorite(int genreId)
         {
             await AssignCurrentUserAsync();
@@ -77,7 +77,7 @@
             return removedFavoriteGenre;
         }
 
-        [HttpDelete("Delete/{genreId}")]
+        [HttpDelete("Delete/Genre/{genreId}")]
         public async Task<DeletedGenreModel> Delete(int genreId)
         {
             await AssignCurrentUserAsync();

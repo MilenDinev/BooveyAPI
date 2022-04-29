@@ -47,7 +47,7 @@
             return CreatedAtAction(nameof(Get), "Shelves", new {id = createdShelve.Id}, createdShelve);
         }
 
-        [HttpPut("Edit/{shelveId}")]
+        [HttpPut("Edit/Shelve/{shelveId}")]
         public async Task<ActionResult<EditedShelveModel>> Edit(EditShelveModel shelveInput, int shelveId)
         {
             await AssignCurrentUserAsync();
@@ -57,7 +57,7 @@
             return mapper.Map<EditedShelveModel>(shelve);
         }
 
-        [HttpPut("Add-To-Favorites/{shelveId}")]
+        [HttpPut("Favorites/Add/Shelve/{shelveId}")]
         public async Task<AddedFavoriteShelveModel> AddFavorite(int shelveId)
         {
             await AssignCurrentUserAsync();
@@ -69,7 +69,7 @@
             return addedFavoriteShelve;
         }
 
-        [HttpPut("Remove-From-Favorites/{shelveId}")]
+        [HttpPut("Favorites/Remove/Shelve/{shelveId}")]
         public async Task<RemovedFavoriteShelveModel> RemoveFavorite(int shelveId)
         {
             await AssignCurrentUserAsync();
@@ -81,7 +81,7 @@
             return removedFavoriteShelve;
         }
 
-        [HttpDelete("Delete/{shelveId}")]
+        [HttpDelete("Delete/Shelve/{shelveId}")]
         public async Task<DeletedShelveModel> Delete(int shelveId)
         {
             await AssignCurrentUserAsync(); 

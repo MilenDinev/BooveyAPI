@@ -20,7 +20,7 @@
             this.mapper = mapper;
         }
 
-        [HttpPost("Add/")]
+        [HttpPost("Create/")]
         public async Task<ActionResult> Add(CreateQuoteModel quoteInput)
         {
             await AssignCurrentUserAsync();
@@ -28,7 +28,7 @@
             return CreatedAtAction(nameof(Add), "Quotes", new { id = createdQuote.Id }, createdQuote);
         }
 
-        [HttpPut("Edit/{quoteId}")]
+        [HttpPut("Edit/Quote/{quoteId}")]
         public async Task<ActionResult<EditedQuoteModel>> Edit(EditQuoteModel quoteInput, int quoteId)
         {
             await AssignCurrentUserAsync();
@@ -39,7 +39,7 @@
             return mapper.Map<EditedQuoteModel>(quote); ;
         }
 
-        [HttpPut("Add-To-Favorites/{quoteId}")]
+        [HttpPut("Favorites/Add/Quote/{quoteId}")]
         public async Task<AddedFavoriteQuoteModel> AddFavorite(int quoteId)
         {
             await AssignCurrentUserAsync();
@@ -50,7 +50,7 @@
             return addedFavoriteQuote;
         }
 
-        [HttpPut("Remove-From-Favorites/{quoteId}")]
+        [HttpPut("Favorites/Remove/Quote/{quoteId}")]
         public async Task<RemovedFavoriteQuoteModel> RemoveFavorite(int quoteId)
         {
             await AssignCurrentUserAsync();
@@ -61,7 +61,7 @@
             return removedFavoriteQuote;
         }
 
-        [HttpDelete("Delete/{quoteId}")]
+        [HttpDelete("Delete/Quote/{quoteId}")]
         public async Task<DeletedQuoteModel> Delete(int quoteId)
         {
             await AssignCurrentUserAsync();
