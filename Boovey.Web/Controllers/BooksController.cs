@@ -21,25 +21,25 @@
     [Authorize]
     public class BooksController : BooveyBaseController
     {
-        private readonly IMapper mapper;
         private readonly IBookService bookService;
         private readonly IContextAccessorServices<Book> booksAccessorService;
         private readonly IContextAccessorServices<Author> authorsAccessorService;
         private readonly IContextAccessorServices<Genre> genresAccessorService;
         private readonly IContextAccessorServices<Publisher> publishersAccessorService;
+        private readonly IMapper mapper;
 
-        public BooksController(IMapper mapper, IBookService bookService, 
+        public BooksController(IBookService bookService, 
             IContextAccessorServices<Book> booksAccessorService, IContextAccessorServices<Author> authorsAccessorService, 
-            IContextAccessorServices<Genre> genresAccessorService, IContextAccessorServices<Publisher> publishersAccessorService, 
-            IUserService userService) 
+            IContextAccessorServices<Genre> genresAccessorService, IContextAccessorServices<Publisher> publishersAccessorService,
+           IMapper mapper, IUserService userService) 
             : base(userService)
         {
-            this.mapper = mapper;
             this.bookService = bookService;
             this.booksAccessorService = booksAccessorService;
             this.authorsAccessorService = authorsAccessorService;
             this.genresAccessorService = genresAccessorService;
             this.publishersAccessorService = publishersAccessorService;
+            this.mapper = mapper;
         }
 
         [HttpGet("List/")]

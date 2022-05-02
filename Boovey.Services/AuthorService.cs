@@ -62,26 +62,6 @@
             currentUser.FavoriteAuthors.Remove(author);
             await SaveModificationAsync(author, currentUser.Id);
         }
-
-        public async Task<Author> GetByNameAsync(string name)
-        {
-            var author = await FindByNameOrDefaultAsync(name)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), name));
-
-            return author;
-        }
-
-        //public async Task<bool> ContainsActiveByNameAsync(string name)
-        //{
-        //    var contains = authors.Any(a => a.Fullname == name && !a.Deleted);
-
-        //    return await Task.FromResult(contains);
-        //}
-        private async Task<Author> FindByNameOrDefaultAsync(string name)
-        {
-            var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Fullname == name);
-            return author;
-        }
     }
 }
 

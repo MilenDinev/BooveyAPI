@@ -11,6 +11,5 @@
         Task DeleteAsync(Author author, int modifierId);
         Task AddFavoriteAuthorAsync(Author author, User user);
         Task RemoveFavoriteAuthorAsync(Author author, User user);
-        Task<Author> GetByNameAsync(string name);
     }
 }

@@ -53,12 +53,25 @@
             return entity;
         }
 
-        //public async Task<Book> GetByTitleAsync(string title)
+        //public async Task<TEntity> GetByStringAsync(string _string)
         //{
-        //    var book = await FindByTitleOrDefaultAsync(title)
-        //    ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), title));
+        //    var entity = await FindByNameOrDefaultAsync(_string)
+        //    ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(TEntity).GetType().Name));
 
-        //    return book;
+        //    return entity;
+        //}
+
+        //public async Task<bool> ContainsActiveByStringAsync(string _string)
+        //{
+        //    var contains = entities.Any(a => a._String == name && !a.Deleted);
+
+        //    return await Task.FromResult(contains);
+        //}
+
+        //private async Task<TEntity> FindByStringOrDefaultAsync(string _string)
+        //{
+        //    var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e._String == name);
+        //    return entity;
         //}
 
     }
