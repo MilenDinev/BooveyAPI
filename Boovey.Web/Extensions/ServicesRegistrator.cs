@@ -30,6 +30,9 @@
             services.AddTransient(typeof(IContextAccessorServices<Author>), typeof(ContextAccessorService<Author>));
             services.AddTransient(typeof(IContextAccessorServices<Genre>), typeof(ContextAccessorService<Genre>));
             services.AddTransient(typeof(IContextAccessorServices<Publisher>), typeof(ContextAccessorService<Publisher>));
+            services.AddTransient(typeof(IContextAccessorServices<Shelve>), typeof(ContextAccessorService<Shelve>));
+            services.AddTransient(typeof(IContextAccessorServices<Quote>), typeof(ContextAccessorService<Quote>));
+            services.AddTransient(typeof(IContextAccessorServices<Review>), typeof(ContextAccessorService<Review>));
             services.AddHttpContextAccessor();
         }
     }
