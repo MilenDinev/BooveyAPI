@@ -9,10 +9,12 @@
     using Interfaces.IHandlers;
     using Data;
     using Data.Entities.Interfaces;
+    using Castle.DynamicProxy;
 
     public class ContextAccessorService<TEntity> : IContextAccessorServices<TEntity>
         where TEntity : class, IAccessible
     {
+        private const int BUFFER_LENGHT = 5;
         private readonly BooveyDbContext dbContext;
 
         public ContextAccessorService(BooveyDbContext dbContext)
@@ -22,8 +24,9 @@
 
         public async Task<TEntity> GetByIdAsync(int id)
         {
-            var entity = await FindByIdOrDefaultAsync(id)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(TEntity).GetType().Name, id));
+            var entity = await FindByIdOrDefaultAsync(id);
+            if (entity == null)
+                await NotExistErrorMessageThrower(entity, id);
 
             return entity;
         }
@@ -31,7 +34,7 @@
         {
             var entity = await GetByIdAsync(id);
             if (entity.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(TEntity).GetType().Name));
+                await DeletedErrorMessageThrower(entity, id);
 
             return entity;
         }
@@ -51,6 +54,20 @@
         {
             var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
             return entity;
+        }
+
+        private async Task NotExistErrorMessageThrower(TEntity entity, int id)
+        {
+            var entityProxyType = (entity as IProxyTargetAccessor).DynProxyGetTarget().GetType().Name;
+            var entityType = await Task.Run(() => entityProxyType.Remove(entityProxyType.Length - BUFFER_LENGHT));
+            if (entity == null)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, entityType, id)); // - should be moved out of here
+        }
+        private async Task DeletedErrorMessageThrower(TEntity entity, int id)
+        {
+            var entityProxyType = (entity as IProxyTargetAccessor).DynProxyGetTarget().GetType().Name;
+            var entityType = await Task.Run(() => entityProxyType.Remove(entityProxyType.Length - BUFFER_LENGHT));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, entityType, id));
         }
 
         //public async Task<TEntity> GetByStringAsync(string _string)
