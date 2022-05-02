@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    public interface IBook : IEntity, IAccessible
+    public interface IBook : IAssignable, IAccessible
     {
         public string CoverUrl { get; set; }
         public string Title { get; set; }
