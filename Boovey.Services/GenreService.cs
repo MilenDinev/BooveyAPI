@@ -55,14 +55,6 @@
             currentUser.FavoriteGenres.Remove(genre);
             await SaveModificationAsync(genre, currentUser.Id);
         }
-
-        public async Task<Genre> GetByIdAsync(int genreId)
-        {
-            var genre = await FindByIdOrDefaultAsync(genreId)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), genreId));
-
-            return genre;
-        }
         public async Task<Genre> GetByTitleAsync(string title)
         {
             var genre = await FindByTitleOrDefaultAsync(title)
@@ -70,27 +62,14 @@
 
             return genre;
         }
-        public async Task<Genre> GetActiveByIdAsync(int genreId)
-        {
-            var genre = await GetByIdAsync(genreId);
-            if (genre.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Genre)));
 
-            return genre;
-        }
-        public async Task<ICollection<Genre>> GetAllActiveAsync()
-        {
-            var genres = await GetAllAsync();
+        //public async Task<bool> ContainsActiveByTitleAsync(string title)
+        //{
+        //    var genres = await GetAllAsync();
+        //    var contains = genres.Any(s => s.Title == title && !s.Deleted);
 
-            return genres.Where(s => !s.Deleted).ToList();
-        }
-        public async Task<bool> ContainsActiveByTitleAsync(string title)
-        {
-            var genres = await GetAllAsync();
-            var contains = genres.Any(s => s.Title == title && !s.Deleted);
-
-            return await Task.FromResult(contains);
-        }
+        //    return await Task.FromResult(contains);
+        //}
 
         private async Task SetTitleAsync(string title, Genre genre, int modifierId)
         {

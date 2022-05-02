@@ -9,7 +9,5 @@
         Task<Review> CreateAsync(CreateReviewModel model, int creatorId);
         Task EditAsync(Review review, EditReviewModel model, int modifierId);
         Task DeleteAsync(Review review, int modifierId);
-        Task<Review> GetByIdAsync(int reviewId);
-        Task<Review> GetActiveByIdAsync(int reviewId);
     }
 }
