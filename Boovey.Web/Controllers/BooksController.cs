@@ -7,12 +7,13 @@
     using Microsoft.AspNetCore.Authorization;
     using AutoMapper;
     using Base;
+    using Services.Constants;
     using Services.Interfaces;
+    using Services.Exceptions;
+    using Services.Interfaces.IHandlers;
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
-    using Services.Exceptions;
-    using Services.Constants;
     using Data.Entities;
 
     [Route("api/[controller]")]
@@ -22,18 +23,29 @@
     {
         private readonly IMapper mapper;
         private readonly IBookService bookService;
+        private readonly IContextAccessorServices<Book> booksAccessorService;
+        private readonly IContextAccessorServices<Author> authorsAccessorService;
+        private readonly IContextAccessorServices<Genre> genresAccessorService;
+        private readonly IContextAccessorServices<Publisher> publishersAccessorService;
 
-        public BooksController(IMapper mapper, IBookService bookService, IUserService userService) 
+        public BooksController(IMapper mapper, IBookService bookService, 
+            IContextAccessorServices<Book> booksAccessorService, IContextAccessorServices<Author> authorsAccessorService, 
+            IContextAccessorServices<Genre> genresAccessorService, IContextAccessorServices<Publisher> publishersAccessorService, 
+            IUserService userService) 
             : base(userService)
         {
-            this.bookService = bookService;
             this.mapper = mapper;
+            this.bookService = bookService;
+            this.booksAccessorService = booksAccessorService;
+            this.authorsAccessorService = authorsAccessorService;
+            this.genresAccessorService = genresAccessorService;
+            this.publishersAccessorService = publishersAccessorService;
         }
 
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<BookListingModel>>> Get()
         {
-            var allBooks = await this.bookService.GetAllActiveAsync();
+            var allBooks = await this.booksAccessorService.GetAllActiveAsync();
             return mapper.Map<ICollection<BookListingModel>>(allBooks).ToList();
         }
 
@@ -41,7 +53,7 @@
         public async Task<ActionResult> Add(CreateBookModel bookInput)
         {
             await AssignCurrentUserAsync();
-            var allBooks = await this.bookService.GetAllActiveAsync();
+            var allBooks = await this.booksAccessorService.GetAllActiveAsync();
             var alreadyExists = await this.bookService.ContainsActiveByTitleAsync(bookInput.Title, allBooks);
             if (alreadyExists)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Book)));
@@ -54,9 +66,8 @@
         public async Task<ActionResult<EditedBookModel>> Edit(EditBookModel bookInput, int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            var book = await this.booksAccessorService.GetActiveByIdAsync(bookId);
             await this.bookService.EditAsync(book, bookInput, CurrentUser.Id);
-
             return mapper.Map<EditedBookModel>(book);
         }
 
@@ -64,9 +75,8 @@
         public async Task<AssignedBookAuthorModel> AssignAuthor(int bookId, int authorId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookService.GetActiveByIdAsync(bookId);
-            var author = await this.bookService.GetAuthorByIdAsync(authorId);
-
+            var book = await this.booksAccessorService.GetActiveByIdAsync(bookId);
+            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId);
             var updatedBook = await this.bookService.AssignAuthorAsync(book, author, CurrentUser.Id);
             return mapper.Map<AssignedBookAuthorModel>(updatedBook);
         }
@@ -75,9 +85,8 @@
         public async Task<AssignedBookGenreModel> AssignGenre(int bookId, int genreId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookService.GetActiveByIdAsync(bookId);
-            var genre = await this.bookService.GetGenreByIdAsync(genreId);
-
+            var book = await this.booksAccessorService.GetActiveByIdAsync(bookId);
+            var genre = await this.genresAccessorService.GetActiveByIdAsync(genreId);
             var updatedBook = await this.bookService.AssignGenreAsync(book, genre, CurrentUser.Id);
             return mapper.Map<AssignedBookGenreModel>(updatedBook);
         }
@@ -86,9 +95,8 @@
         public async Task<AssignedBookPublisherModel> AssignPublisher(int bookId, int publisherId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookService.GetActiveByIdAsync(bookId);
-            var publisher = await this.bookService.GetPublisherByIdAsync(publisherId);
-
+            var book = await this.booksAccessorService.GetActiveByIdAsync(bookId);
+            var publisher = await this.publishersAccessorService.GetActiveByIdAsync(publisherId);
             var updatedBook = await this.bookService.AssignPublisherAsync(book, publisher, CurrentUser.Id);
             return mapper.Map<AssignedBookPublisherModel>(updatedBook);
         }
@@ -97,7 +105,7 @@
         public async Task<AddedFavoriteBookModel> AddFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            var book = await this.booksAccessorService.GetActiveByIdAsync(bookId);
             await this.bookService.AddFavoriteAsync(book, CurrentUser);
             return mapper.Map<AddedFavoriteBookModel>(book);
         }
@@ -106,7 +114,7 @@
         public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            var book = await this.booksAccessorService.GetActiveByIdAsync(bookId);
             await this.bookService.RemoveFavoriteAsync(book, CurrentUser);
             var removedFavoriteBook = mapper.Map<RemovedFavoriteBookModel>(book);
             removedFavoriteBook.UserId = CurrentUser.Id;
@@ -117,7 +125,7 @@
         public async Task<DeletedBookModel> Delete(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookService.GetActiveByIdAsync(bookId);
+            var book = await this.booksAccessorService.GetActiveByIdAsync(bookId);
             await this.bookService.DeleteAsync(book, CurrentUser.Id);
             return mapper.Map<DeletedBookModel>(book);
         }
