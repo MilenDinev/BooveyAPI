@@ -1,8 +1,9 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
+    using Interfaces;
 
-    public class Quote : Entity
+    public class Quote : Entity, IAccessible
     {
         public Quote()
         {
