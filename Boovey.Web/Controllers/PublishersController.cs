@@ -19,9 +19,9 @@
     public class PublishersController : BooveyBaseController
     {
         private readonly IPublisherService publisherService;
-        private readonly IContextAccessorServices<Publisher> publishersAccessorService;
+        private readonly IContextAccessorService<Publisher> publishersAccessorService;
         private readonly IMapper mapper;
-        public PublishersController(IPublisherService publisherService, IContextAccessorServices<Publisher> publishersAccessorService, IMapper mapper, IUserService userService) : base(userService)
+        public PublishersController(IPublisherService publisherService, IContextAccessorService<Publisher> publishersAccessorService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.publisherService = publisherService;
             this.publishersAccessorService = publishersAccessorService;

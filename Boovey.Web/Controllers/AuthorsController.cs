@@ -19,12 +19,12 @@
     public class AuthorsController : BooveyBaseController
     {
         private readonly IAuthorService authorService;
-        private readonly IContextAccessorServices<Author> authorsAccessorService;
+        private readonly IContextAccessorService<Author> authorsAccessorService;
         //private readonly IContextAccessorServices<Book> booksAccessorService;
         //private readonly IContextAccessorServices<Genre> genresAccessorService;
         //private readonly IContextAccessorServices<Publisher> publishersAccessorService;
         private readonly IMapper mapper;
-        public AuthorsController(IContextAccessorServices<Author> authorsAccessorService, IAuthorService authorService, IMapper mapper, IUserService userService) : base(userService)
+        public AuthorsController(IContextAccessorService<Author> authorsAccessorService, IAuthorService authorService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.authorService = authorService;
             this.authorsAccessorService = authorsAccessorService;

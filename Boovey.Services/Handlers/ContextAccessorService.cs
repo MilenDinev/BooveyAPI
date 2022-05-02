@@ -11,7 +11,7 @@
     using Data.Entities.Interfaces;
     using Castle.DynamicProxy;
 
-    public class ContextAccessorService<TEntity> : IContextAccessorServices<TEntity>
+    public class ContextAccessorService<TEntity> : IContextAccessorService<TEntity>
         where TEntity : class, IAccessible
     {
         private const int BUFFER_LENGHT = 5;
@@ -22,7 +22,7 @@
             this.dbContext = dbContext;
         }
 
-        public async Task<TEntity> GetByIdAsync(int id)
+        public async Task<TEntity> GetByIdAsync(int id) // this method should be removed
         {
             var entity = await FindByIdOrDefaultAsync(id);
             if (entity == null)
@@ -52,7 +52,7 @@
         }
         public async Task<TEntity> FindByIdOrDefaultAsync(int id)
         {
-            var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
+            var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id); //--- only this method should stay
             return entity;
         }
 
