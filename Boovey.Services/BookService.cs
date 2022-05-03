@@ -18,13 +18,11 @@
     public class BookService : BaseService<Book>, IBookService
     {
         private readonly IAssigningService<Book> assigningService;
-        private readonly ICountryManager countryManager;
         private readonly IMapper mapper;
-        public BookService(IAssigningService<Book> assigningHandler, ICountryManager countryManager, IMapper mapper, BooveyDbContext dbContext) 
+        public BookService(IAssigningService<Book> assigningHandler, IMapper mapper, BooveyDbContext dbContext) 
             : base(dbContext)
         {
             this.assigningService = assigningHandler;
-            this.countryManager = countryManager;
             this.mapper = mapper;
         }
 
@@ -33,8 +31,6 @@
             var isValidDate = DateTime.TryParseExact(model.PublicationDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime publicationDate);
             if (!isValidDate)
                 throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
-
-            await this.countryManager.FindCountryById(model.CountryId);
 
             var book = mapper.Map<Book>(model);
             await CreateEntityAsync(book, creatorId);
@@ -46,8 +42,6 @@
             if (!isValidDate)
                 throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
             book.PublicationDate = publicationDate;
-
-            await this.countryManager.FindCountryById(model.CountryId);
 
             book.CountryId= model.CountryId; 
             book.Description = model.Description;
