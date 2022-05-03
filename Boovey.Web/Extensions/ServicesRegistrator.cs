@@ -33,6 +33,7 @@
             services.AddTransient(typeof(IContextAccessorService<Shelve>), typeof(ContextAccessorService<Shelve>));
             services.AddTransient(typeof(IContextAccessorService<Quote>), typeof(ContextAccessorService<Quote>));
             services.AddTransient(typeof(IContextAccessorService<Review>), typeof(ContextAccessorService<Review>));
+            services.AddTransient(typeof(IContextAccessorService<Country>), typeof(ContextAccessorService<Country>));
             services.AddHttpContextAccessor();
         }
     }
