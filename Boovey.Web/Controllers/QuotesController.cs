@@ -15,9 +15,9 @@
     public class QuotesController : BooveyBaseController
     {
         private readonly IQuoteService quoteService;
-        private readonly IContextAccessorService<Quote> quotesAccessorService;
+        private readonly IAccessorService<Quote> quotesAccessorService;
         private readonly IMapper mapper;
-        public QuotesController(IQuoteService quoteService, IContextAccessorService<Quote> quotesAccessorService, IMapper mapper, IUserService userService) : base(userService)
+        public QuotesController(IQuoteService quoteService, IAccessorService<Quote> quotesAccessorService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.quoteService = quoteService;
             this.quotesAccessorService = quotesAccessorService;

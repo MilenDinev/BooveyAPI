@@ -19,9 +19,9 @@
     public class ShelvesController : BooveyBaseController
     {
         private readonly IShelveService shelveService;
-        private readonly IContextAccessorService<Shelve> shelvesAccessorService;
+        private readonly IAccessorService<Shelve> shelvesAccessorService;
         private readonly IMapper mapper;
-        public ShelvesController(IShelveService shelveService, IContextAccessorService<Shelve> shelvesAccessorService, IMapper mapper, IUserService userService) : base(userService)
+        public ShelvesController(IShelveService shelveService, IAccessorService<Shelve> shelvesAccessorService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.shelveService = shelveService;
             this.shelvesAccessorService = shelvesAccessorService;

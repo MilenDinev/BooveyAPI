@@ -24,16 +24,15 @@
             services.AddTransient<IQuoteService, QuoteService>();
             services.AddTransient<IReviewService, ReviewService>();
             services.AddTransient<IShelveService, ShelveService>();
-            services.AddTransient<ICountryManager, CountryManager>();
             services.AddTransient(typeof(IAssigningService<Book>), typeof(AssigningService<Book>));
-            services.AddTransient(typeof(IContextAccessorService<Book>), typeof(ContextAccessorService<Book>));
-            services.AddTransient(typeof(IContextAccessorService<Author>), typeof(ContextAccessorService<Author>));
-            services.AddTransient(typeof(IContextAccessorService<Genre>), typeof(ContextAccessorService<Genre>));
-            services.AddTransient(typeof(IContextAccessorService<Publisher>), typeof(ContextAccessorService<Publisher>));
-            services.AddTransient(typeof(IContextAccessorService<Shelve>), typeof(ContextAccessorService<Shelve>));
-            services.AddTransient(typeof(IContextAccessorService<Quote>), typeof(ContextAccessorService<Quote>));
-            services.AddTransient(typeof(IContextAccessorService<Review>), typeof(ContextAccessorService<Review>));
-            services.AddTransient(typeof(IContextAccessorService<Country>), typeof(ContextAccessorService<Country>));
+            services.AddTransient(typeof(IAccessorService<Book>), typeof(AccessorService<Book>));
+            services.AddTransient(typeof(IAccessorService<Author>), typeof(AccessorService<Author>));
+            services.AddTransient(typeof(IAccessorService<Genre>), typeof(AccessorService<Genre>));
+            services.AddTransient(typeof(IAccessorService<Publisher>), typeof(AccessorService<Publisher>));
+            services.AddTransient(typeof(IAccessorService<Shelve>), typeof(AccessorService<Shelve>));
+            services.AddTransient(typeof(IAccessorService<Quote>), typeof(AccessorService<Quote>));
+            services.AddTransient(typeof(IAccessorService<Review>), typeof(AccessorService<Review>));
+            services.AddTransient(typeof(IAccessorService<Country>), typeof(AccessorService<Country>));
             services.AddHttpContextAccessor();
         }
     }

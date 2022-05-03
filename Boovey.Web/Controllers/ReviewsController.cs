@@ -15,9 +15,9 @@
     public class ReviewsController : BooveyBaseController
     {
         private readonly IReviewService reviewService;
-        private readonly IContextAccessorService<Review> reviewsAccessorService;
+        private readonly IAccessorService<Review> reviewsAccessorService;
         private readonly IMapper mapper;
-        public ReviewsController(IReviewService reviewService, IContextAccessorService<Review> reviewsAccessorService, IMapper mapper, IUserService userService) : base(userService)
+        public ReviewsController(IReviewService reviewService, IAccessorService<Review> reviewsAccessorService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.reviewService = reviewService;
             this.reviewsAccessorService = reviewsAccessorService;

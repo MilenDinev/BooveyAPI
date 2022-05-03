@@ -17,10 +17,10 @@
     public class AuthorsController : BooveyBaseController
     {
         private readonly IAuthorService authorService;
-        private readonly IContextAccessorService<Author> authorAccessorService;
-        private readonly IContextAccessorService<Country> countyAccessorService;
+        private readonly IAccessorService<Author> authorAccessorService;
+        private readonly IAccessorService<Country> countyAccessorService;
         private readonly IMapper mapper;
-        public AuthorsController(IAuthorService authorService, IContextAccessorService<Author> authorsAccessorService, IContextAccessorService<Country> countyAccessorService, IMapper mapper, IUserService userService) : base(userService)
+        public AuthorsController(IAuthorService authorService, IAccessorService<Author> authorsAccessorService, IAccessorService<Country> countyAccessorService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.authorService = authorService;
             this.authorAccessorService = authorsAccessorService;

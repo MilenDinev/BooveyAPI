@@ -11,12 +11,12 @@
     using Data.Entities.Interfaces;
     using Castle.DynamicProxy;
 
-    public class ContextAccessorService<TEntity> : IContextAccessorService<TEntity>
+    public class AccessorService<TEntity> : IAccessorService<TEntity>
         where TEntity : class, IAccessible
     {
         private readonly BooveyDbContext dbContext;
 
-        public ContextAccessorService(BooveyDbContext dbContext)
+        public AccessorService(BooveyDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
