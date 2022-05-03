@@ -2,10 +2,8 @@
 {
     using System;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
     using Data;
     using Data.Entities.Interfaces;
-    using System.Collections.Generic;
 
     public abstract class BaseService<TEntity> where TEntity : class, IEntity
     {
