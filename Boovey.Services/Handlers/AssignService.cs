@@ -2,40 +2,33 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using Castle.DynamicProxy;
     using Interfaces.IHandlers;
     using Data.Entities;
     using Data.Entities.Interfaces;
 
-    public class AssigningService<TEntity> : IAssigningService<TEntity>
+    public class AssignService<TEntity> : IAssignService<TEntity>
         where TEntity : class, IBook
     {
-        private const int BUFFER_LENGHT = 5;
-
-        public async Task AssignAsync(TEntity entity, IAssignable assignee)
+        public async Task AssignAsync(TEntity entity, IAssignable assignee, string assigneeType)
         {
-            var assigneeProxyType = (assignee as IProxyTargetAccessor).DynProxyGetTarget().GetType().Name;
-            var assigneeType = await Task.Run(() => assigneeProxyType.Remove(assigneeProxyType.Length - BUFFER_LENGHT));
 
             if (assigneeType == "Author")
             {
-                entity.Authors.Add(assignee as Author);
+                await Task.Run(() => entity.Authors.Add(assignee as Author));
             }
             else if (assigneeType == "Genre")
             {
-                entity.Genres.Add(assignee as Genre);
+                await Task.Run(() => entity.Genres.Add(assignee as Genre));
             }
             else if (assigneeType == "Publisher")
             {
-                entity.Publisher = assignee as Publisher;
+                await Task.Run(() => entity.Publisher = assignee as Publisher);
             }
         }
 
-        public async Task<bool> IsAlreadyAssigned(TEntity entity, IAssignable assignee)
+        public async Task<bool> IsAlreadyAssigned(TEntity entity, IAssignable assignee, string assigneeType)
         {
             var isAlreadyAssigned = false;
-            var assigneeProxyType = (assignee as IProxyTargetAccessor).DynProxyGetTarget().GetType().Name;
-            var assigneeType = await Task.Run(() => assigneeProxyType.Remove(assigneeProxyType.Length - BUFFER_LENGHT));
 
             if (assigneeType == "Author")
             {
