@@ -13,8 +13,8 @@
         Task AddFavoriteAsync(Book book, User user);
         Task RemoveFavoriteAsync(Book book, User user);
         Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Book> books);
-        Task<Book> AssignAuthorAsync(Book book, Author author, int modifierId);
-        Task<Book> AssignGenreAsync(Book book, Genre genre, int modifierId);
-        Task<Book> AssignPublisherAsync(Book book, Publisher publisher, int modifierId);
+        Task<Book> AssignAuthorAsync(Book book, Author author, string assigneeType, int modifierId);
+        Task<Book> AssignGenreAsync(Book book, Genre genre, string assigneeType, int modifierId);
+        Task<Book> AssignPublisherAsync(Book book, Publisher publisher, string assigneeType, int modifierId);
     }
 }
