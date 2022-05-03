@@ -14,7 +14,6 @@
     public class ContextAccessorService<TEntity> : IContextAccessorService<TEntity>
         where TEntity : class, IAccessible
     {
-        private const int BUFFER_LENGHT = 5;
         private readonly BooveyDbContext dbContext;
 
         public ContextAccessorService(BooveyDbContext dbContext)
@@ -22,19 +21,22 @@
             this.dbContext = dbContext;
         }
 
-        public async Task<TEntity> GetByIdAsync(int id) // this method should be removed
+        public async Task<TEntity> FindByIdOrDefaultAsync(int id)
+        {
+            var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
+            return entity;
+        }
+        public async Task<TEntity> GetByIdAsync(int id, string type)
         {
             var entity = await FindByIdOrDefaultAsync(id);
-            if (entity == null)
-                await NotExistErrorMessageThrower(entity, id);
+            await ExistenceChecker(entity, id, type);
 
             return entity;
         }
-        public async Task<TEntity> GetActiveByIdAsync(int id)
+        public async Task<TEntity> GetActiveByIdAsync(int id, string type)
         {
-            var entity = await GetByIdAsync(id);
-            if (entity.Deleted)
-                await DeletedErrorMessageThrower(entity, id);
+            var entity = await GetByIdAsync(id, type);
+            await DeletedChecker(entity, id, type);
 
             return entity;
         }
@@ -50,24 +52,17 @@
 
             return entities.Where(s => !s.Deleted).ToList();
         }
-        public async Task<TEntity> FindByIdOrDefaultAsync(int id)
-        {
-            var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id); //--- only this method should stay
-            return entity;
-        }
 
-        private async Task NotExistErrorMessageThrower(TEntity entity, int id)
+        private async Task ExistenceChecker(TEntity entity, int id, string type)
         {
-            var entityProxyType = (entity as IProxyTargetAccessor).DynProxyGetTarget().GetType().Name;
-            var entityType = await Task.Run(() => entityProxyType.Remove(entityProxyType.Length - BUFFER_LENGHT));
-            if (entity == null)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, entityType, id)); // - should be moved out of here
+            if (await Task.Run(() => entity == null))
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, type, id));
         }
-        private async Task DeletedErrorMessageThrower(TEntity entity, int id)
+        private async Task DeletedChecker(TEntity entity, int id, string type)
         {
-            var entityProxyType = (entity as IProxyTargetAccessor).DynProxyGetTarget().GetType().Name;
-            var entityType = await Task.Run(() => entityProxyType.Remove(entityProxyType.Length - BUFFER_LENGHT));
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, entityType, id));
+            if (await Task.Run(() =>entity.Deleted))
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, type, id));
+
         }
 
         //public async Task<TEntity> GetByStringAsync(string _string)
