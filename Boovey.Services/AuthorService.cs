@@ -13,25 +13,20 @@
     public class AuthorService : BaseService<Author>, IAuthorService
     {
         private readonly IMapper mapper;
-        private readonly ICountryManager countryManager;
 
-        public AuthorService(BooveyDbContext dbContext, ICountryManager countryService, IMapper mapper) : base(dbContext)
+        public AuthorService(BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
         {
-            this.countryManager = countryService;
             this.mapper = mapper;
         }
 
         public async Task<Author> CreateAsync(CreateAuthorModel authorModel, int creatorId)
         {
-            await this.countryManager.FindCountryById(authorModel.CountryId);
             var author = mapper.Map<Author>(authorModel);
             await CreateEntityAsync(author, creatorId);
             return author;
         }
         public async Task EditAsync(Author author, EditAuthorModel authorModel, int modifierId)
         {
-            await this.countryManager.FindCountryById(authorModel.CountryId);
-
             author.CountryId = authorModel.CountryId;
             author.Fullname = authorModel.Fullname;
             author.Summary = authorModel.Summary;
