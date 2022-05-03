@@ -9,7 +9,6 @@
     using Interfaces.IHandlers;
     using Data;
     using Data.Entities.Interfaces;
-    using Castle.DynamicProxy;
 
     public class AccessorService<TEntity> : IAccessorService<TEntity>
         where TEntity : class, IAccessible
