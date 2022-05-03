@@ -1,9 +1,8 @@
 ﻿namespace Boovey.Services.Interfaces
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Data.Entities;
     using Models.Requests.PublisherModels;
+    using System.Threading.Tasks;
 
     public interface IPublisherService
     {

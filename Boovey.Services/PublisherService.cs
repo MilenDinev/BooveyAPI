@@ -1,7 +1,5 @@
 ﻿namespace Boovey.Services
 {
-    using System.Linq;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;

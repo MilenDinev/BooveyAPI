@@ -1,9 +1,8 @@
 ﻿namespace Boovey.Services.Interfaces
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Data.Entities;
     using Models.Requests.GenreModels;
+    using System.Threading.Tasks;
 
     public interface IGenreService
     {

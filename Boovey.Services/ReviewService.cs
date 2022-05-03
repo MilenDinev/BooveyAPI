@@ -3,8 +3,6 @@
     using System.Threading.Tasks;
     using AutoMapper;
     using Interfaces;
-    using Exceptions;
-    using Constants;
     using Data;
     using Data.Entities;
     using Models.Requests.ReviewModels;
