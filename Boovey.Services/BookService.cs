@@ -17,9 +17,9 @@
 
     public class BookService : BaseService<Book>, IBookService
     {
-        private readonly IAssigningService<Book> assigningService;
+        private readonly IAssignService<Book> assigningService;
         private readonly IMapper mapper;
-        public BookService(IAssigningService<Book> assigningHandler, IMapper mapper, BooveyDbContext dbContext) 
+        public BookService(IAssignService<Book> assigningHandler, IMapper mapper, BooveyDbContext dbContext) 
             : base(dbContext)
         {
             this.assigningService = assigningHandler;
@@ -81,41 +81,41 @@
             await SaveModificationAsync(book, currentUser.Id);
         }
 
-        public async Task<Book> AssignAuthorAsync(Book book, Author author, int modifierId)
+        public async Task<Book> AssignAuthorAsync(Book book, Author author, string assigneeType, int modifierId)
         {
-            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, author);
+            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, author, assigneeType);
 
             if (isAlreadyAssigned)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId,
                     nameof(Author), author.Id, nameof(Book), book.Id));
 
-            await this.assigningService.AssignAsync(book, author);
+            await this.assigningService.AssignAsync(book, author, assigneeType);
             await SaveModificationAsync(book, modifierId);
             return book;
         }
-        public async Task<Book> AssignGenreAsync(Book book, Genre genre, int modifierId)
+        public async Task<Book> AssignGenreAsync(Book book, Genre genre, string assigneeType, int modifierId)
         {
-            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, genre);
+            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, genre, assigneeType);
 
             if (isAlreadyAssigned)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId,
                     nameof(Genre), genre.Id, nameof(Book), book.Id));
 
-            await this.assigningService.AssignAsync(book, genre);
+            await this.assigningService.AssignAsync(book, genre, assigneeType);
             await SaveModificationAsync(book, modifierId);
             return book;
 
             
         }
-        public async Task<Book> AssignPublisherAsync(Book book, Publisher publisher, int modifierId)
+        public async Task<Book> AssignPublisherAsync(Book book, Publisher publisher, string assigneeType, int modifierId)
         {
-            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, publisher);
+            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, publisher, assigneeType);
 
             if (isAlreadyAssigned)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId,
                     nameof(Publisher), publisher.Id, nameof(Book), book.Id));
 
-            await this.assigningService.AssignAsync(book, publisher);
+            await this.assigningService.AssignAsync(book, publisher, assigneeType);
             await SaveModificationAsync(book, modifierId);
             return book;
         }
