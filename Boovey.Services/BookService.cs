@@ -119,8 +119,6 @@
             await SaveModificationAsync(book, modifierId);
             return book;
         }
-
-
         public async Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Book> books)
         {
             var contains = await Task.Run(() => books.Any(s => s.Title == title && !s.Deleted));
@@ -135,7 +133,6 @@
                 await Task.Run(() => book.Title = title);
             }
         }
-
         private async Task AlreadyFavoriteBookChecker(int bookId, User user)
         {
             var isAlreadyFavoriteBook = user.FavoriteBooks.Any(b => b.Id == bookId)
@@ -150,7 +147,6 @@
 
             await Task.Delay(300);
         }
-
         private async Task<Book> FindByTitleOrDefaultAsync(string title)
         {
             var book = await this.dbContext.Books.FirstOrDefaultAsync(s => s.Title == title);
