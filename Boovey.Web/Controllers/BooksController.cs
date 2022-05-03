@@ -22,15 +22,17 @@
     public class BooksController : BooveyBaseController
     {
         private readonly IBookService bookService;
-        private readonly IContextAccessorService<Book> booksAccessorService;
-        private readonly IContextAccessorService<Author> authorsAccessorService;
-        private readonly IContextAccessorService<Genre> genresAccessorService;
-        private readonly IContextAccessorService<Publisher> publishersAccessorService;
+        private readonly IAccessorService<Book> booksAccessorService;
+        private readonly IAccessorService<Author> authorsAccessorService;
+        private readonly IAccessorService<Genre> genresAccessorService;
+        private readonly IAccessorService<Publisher> publishersAccessorService;
+        private readonly IAccessorService<Country> countyAccessorService;
         private readonly IMapper mapper;
 
         public BooksController(IBookService bookService, 
-            IContextAccessorService<Book> booksAccessorService, IContextAccessorService<Author> authorsAccessorService, 
-            IContextAccessorService<Genre> genresAccessorService, IContextAccessorService<Publisher> publishersAccessorService,
+            IAccessorService<Book> booksAccessorService, IAccessorService<Author> authorsAccessorService, 
+            IAccessorService<Genre> genresAccessorService, IAccessorService<Publisher> publishersAccessorService,
+            IAccessorService<Country> countyAccessorService,
            IMapper mapper, IUserService userService) 
             : base(userService)
         {
@@ -39,6 +41,7 @@
             this.authorsAccessorService = authorsAccessorService;
             this.genresAccessorService = genresAccessorService;
             this.publishersAccessorService = publishersAccessorService;
+            this.countyAccessorService = countyAccessorService;
             this.mapper = mapper;
         }
 
@@ -53,6 +56,7 @@
         public async Task<ActionResult> Add(CreateBookModel bookInput)
         {
             await AssignCurrentUserAsync();
+            await this.countyAccessorService.GetActiveByIdAsync(bookInput.CountryId, nameof(Country));
             var allBooks = await this.booksAccessorService.GetAllActiveAsync();
             var alreadyExists = await this.bookService.ContainsActiveByTitleAsync(bookInput.Title, allBooks);
             if (alreadyExists)
@@ -66,6 +70,7 @@
         public async Task<ActionResult<EditedBookModel>> Edit(EditBookModel bookInput, int bookId)
         {
             await AssignCurrentUserAsync();
+            await this.countyAccessorService.GetActiveByIdAsync(bookInput.CountryId, nameof(Country));
             var book = await this.booksAccessorService.GetActiveByIdAsync(bookId, nameof(Book));
             await this.bookService.EditAsync(book, bookInput, CurrentUser.Id);
             return mapper.Map<EditedBookModel>(book);
