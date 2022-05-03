@@ -24,7 +24,7 @@
             services.AddTransient<IQuoteService, QuoteService>();
             services.AddTransient<IReviewService, ReviewService>();
             services.AddTransient<IShelveService, ShelveService>();
-            services.AddTransient(typeof(IAssigningService<Book>), typeof(AssigningService<Book>));
+            services.AddTransient(typeof(IAssignService<Book>), typeof(AssignService<Book>));
             services.AddTransient(typeof(IAccessorService<Book>), typeof(AccessorService<Book>));
             services.AddTransient(typeof(IAccessorService<Author>), typeof(AccessorService<Author>));
             services.AddTransient(typeof(IAccessorService<Genre>), typeof(AccessorService<Genre>));
