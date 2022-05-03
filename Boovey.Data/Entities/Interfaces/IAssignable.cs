@@ -1,6 +1,8 @@
 ﻿namespace Boovey.Data.Entities.Interfaces
 {
-    public interface IAssignable : IEntity
+    public interface IAssignable
     {
+        public int Id { get; set; }
+        public bool Deleted { get; set; }
     }
 }
