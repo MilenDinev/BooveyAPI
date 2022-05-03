@@ -39,22 +39,5 @@
         {
             await DeleteEntityAsync(review, modifierId);
         }
-
-        public async Task<Review> GetByIdAsync(int reviewId)
-        {
-            var review = await FindByIdOrDefaultAsync(reviewId)
-                ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Review), reviewId));
-
-            return review;
-        }
-
-        public async Task<Review> GetActiveByIdAsync(int reviewId)
-        {
-            var review = await GetByIdAsync(reviewId);
-            if (review.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Review)));
-
-            return review;
-        }
     }
 }

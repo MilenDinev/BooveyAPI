@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using Interfaces;
 
-    public class Genre : Entity, IAssignable
+    public class Genre : Entity, IAssignable, IAccessible
     {
         public Genre()
         {

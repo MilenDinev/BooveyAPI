@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Boovey.Data.Entities.Interfaces
+﻿namespace Boovey.Data.Entities.Interfaces
 {
-    public interface IBook : IEntity
+    using System;
+    using System.Collections.Generic;
+
+    public interface IBook : IAssignable, IAccessible
     {
         public string CoverUrl { get; set; }
         public string Title { get; set; }

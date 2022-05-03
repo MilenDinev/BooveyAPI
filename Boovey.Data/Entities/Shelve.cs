@@ -1,8 +1,9 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
+    using Interfaces;
 
-    public class Shelve : Entity
+    public class Shelve : Entity, IAccessible
     {
         public Shelve()
         {

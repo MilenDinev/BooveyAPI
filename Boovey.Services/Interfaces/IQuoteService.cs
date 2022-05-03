@@ -12,7 +12,5 @@
         Task DeleteAsync(Quote quote, int modifierId);
         Task<AddedFavoriteQuoteModel> AddFavoriteAsync(Quote quote, User user);
         Task<RemovedFavoriteQuoteModel> RemoveFavoriteAsync(Quote quote, User user);
-        Task<Quote> GetActiveByIdAsync(int id);
-        Task<Quote> GetByIdAsync(int id);
     }
 }

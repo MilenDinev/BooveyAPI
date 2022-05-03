@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Data.Entities.Interfaces
 {
-    public interface IAssignable : IEntity
+    public interface IAccessible : IEntity
     {
     }
 }

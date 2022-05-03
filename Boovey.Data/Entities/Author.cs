@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using Interfaces;
 
-    public class Author : Entity, IAssignable
+    public class Author : Entity, IAssignable, IAccessible
     {
         public Author()
         {

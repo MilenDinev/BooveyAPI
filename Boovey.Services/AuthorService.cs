@@ -1,7 +1,6 @@
 ﻿namespace Boovey.Services
 {
     using System.Linq;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
@@ -62,47 +61,6 @@
 
             currentUser.FavoriteAuthors.Remove(author);
             await SaveModificationAsync(author, currentUser.Id);
-        }
-
-        public async Task<Author> GetByIdAsync(int authorId)
-        {
-            var author = await FindByIdOrDefaultAsync(authorId)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), authorId));
-
-            return author;
-        }
-        public async Task<Author> GetByNameAsync(string name)
-        {
-            var author = await FindByNameOrDefaultAsync(name)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Author), name));
-
-            return author;
-        }
-        public async Task<Author> GetActiveByIdAsync(int authorId)
-        {
-            var author = await GetByIdAsync(authorId);
-            if (author.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Author)));
-
-            return author;
-        }
-        public async Task<ICollection<Author>> GetAllActiveAsync()
-        {
-            var authors = await GetAllAsync();
-
-            return authors.Where(s => !s.Deleted).ToList();
-        }
-        public async Task<bool> ContainsActiveByNameAsync(string name)
-        {
-            var authors = await GetAllAsync();
-            var contains = authors.Any(a => a.Fullname == name && !a.Deleted);
-
-            return await Task.FromResult(contains);
-        }
-        private async Task<Author> FindByNameOrDefaultAsync(string name)
-        {
-            var author = await this.dbContext.Authors.FirstOrDefaultAsync(a => a.Fullname == name);
-            return author;
         }
     }
 }

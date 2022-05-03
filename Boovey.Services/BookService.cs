@@ -7,21 +7,23 @@
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
-    using Handlers;
     using Interfaces;
     using Exceptions;
     using Constants;
     using Data;
     using Data.Entities;
     using Models.Requests.BookModels;
+    using Services.Interfaces.IHandlers;
 
-    public class BookService : AssigningrHandlerService<Book>, IBookService
+    public class BookService : BaseService<Book>, IBookService
     {
-        private readonly IMapper mapper;
+        private readonly IAssigningService<Book> assigningService;
         private readonly ICountryManager countryManager;
-        public BookService(ICountryManager countryManager, IMapper mapper, IAuthorService authorService, IGenreService genreService, IPublisherService publisherService, BooveyDbContext dbContext) 
-            : base(authorService, genreService, publisherService, dbContext)
+        private readonly IMapper mapper;
+        public BookService(IAssigningService<Book> assigningHandler, ICountryManager countryManager, IMapper mapper, BooveyDbContext dbContext) 
+            : base(dbContext)
         {
+            this.assigningService = assigningHandler;
             this.countryManager = countryManager;
             this.mapper = mapper;
         }
@@ -87,25 +89,25 @@
 
         public async Task<Book> AssignAuthorAsync(Book book, Author author, int modifierId)
         {
-            var isAlreadyAssigned = await IsAlreadyAssigned(book, author);
+            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, author);
 
             if (isAlreadyAssigned)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId,
                     nameof(Author), author.Id, nameof(Book), book.Id));
 
-            await AssignAsync(book, author);
+            await this.assigningService.AssignAsync(book, author);
             await SaveModificationAsync(book, modifierId);
             return book;
         }
         public async Task<Book> AssignGenreAsync(Book book, Genre genre, int modifierId)
         {
-            var isAlreadyAssigned = await IsAlreadyAssigned(book, genre);
+            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, genre);
 
             if (isAlreadyAssigned)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId,
                     nameof(Genre), genre.Id, nameof(Book), book.Id));
 
-            await AssignAsync(book, genre);
+            await this.assigningService.AssignAsync(book, genre);
             await SaveModificationAsync(book, modifierId);
             return book;
 
@@ -113,47 +115,18 @@
         }
         public async Task<Book> AssignPublisherAsync(Book book, Publisher publisher, int modifierId)
         {
-            var isAlreadyAssigned = await IsAlreadyAssigned(book, publisher);
+            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, publisher);
 
             if (isAlreadyAssigned)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId,
                     nameof(Publisher), publisher.Id, nameof(Book), book.Id));
 
-            await AssignAsync(book, publisher);
+            await this.assigningService.AssignAsync(book, publisher);
             await SaveModificationAsync(book, modifierId);
             return book;
         }
 
 
-        public async Task<Book> GetActiveByIdAsync(int bookId)
-        {
-            var book = await GetByIdAsync(bookId);
-            if (book.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Book)));
-
-            return book;
-        }
-        public async Task<Book> GetByIdAsync(int bookId)
-        {
-            var book = await FindByIdOrDefaultAsync(bookId)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), bookId));
-
-            return book;
-        }
-        public async Task<Book> GetByTitleAsync(string title)
-        {
-            var book = await FindByTitleOrDefaultAsync(title)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Book), title));
-
-            return book;
-        }
-
-        public async Task<ICollection<Book>> GetAllActiveAsync()
-        {
-            var books = await GetAllAsync();
-
-            return books.Where(s => !s.Deleted).ToList();
-        }
         public async Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Book> books)
         {
             var contains = await Task.Run(() => books.Any(s => s.Title == title && !s.Deleted));
@@ -183,7 +156,6 @@
 
             await Task.Delay(300);
         }
-
 
         private async Task<Book> FindByTitleOrDefaultAsync(string title)
         {

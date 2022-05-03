@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using Interfaces;
 
-    public class Book : Entity, IBook, IAssignable
+    public class Book : Entity, IBook
     {
         public Book()
         {

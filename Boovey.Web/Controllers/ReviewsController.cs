@@ -5,6 +5,8 @@
     using AutoMapper;
     using Base;
     using Services.Interfaces;
+    using Services.Interfaces.IHandlers;
+    using Data.Entities;
     using Models.Requests.ReviewModels;
     using Models.Responses.ReviewModels;
 
@@ -13,10 +15,12 @@
     public class ReviewsController : BooveyBaseController
     {
         private readonly IReviewService reviewService;
+        private readonly IContextAccessorService<Review> reviewsAccessorService;
         private readonly IMapper mapper;
-        public ReviewsController(IUserService userService, IReviewService reviewService, IMapper mapper) : base(userService)
+        public ReviewsController(IReviewService reviewService, IContextAccessorService<Review> reviewsAccessorService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.reviewService = reviewService;
+            this.reviewsAccessorService = reviewsAccessorService;
             this.mapper = mapper;
         }
 
@@ -32,7 +36,7 @@
         public async Task<ActionResult<EditedReviewModel>> Edit(EditReviewModel reviewInput, int reviewId)
         {
             await AssignCurrentUserAsync();
-            var review = await this.reviewService.GetByIdAsync(reviewId);
+            var review = await this.reviewsAccessorService.GetActiveByIdAsync(reviewId, nameof(Review));
             await this.reviewService.EditAsync(review, reviewInput, CurrentUser.Id);
             return mapper.Map<EditedReviewModel>(review);
         }
@@ -41,7 +45,7 @@
         public async Task<DeletedReviewModel> Delete(int reviewId)
         {
             await AssignCurrentUserAsync();
-            var review = await this.reviewService.GetActiveByIdAsync(reviewId);
+            var review = await this.reviewsAccessorService.GetActiveByIdAsync(reviewId, nameof(Review));
             await this.reviewService.DeleteAsync(review, CurrentUser.Id);
             return mapper.Map<DeletedReviewModel>(review);
         }

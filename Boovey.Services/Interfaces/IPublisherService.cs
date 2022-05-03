@@ -11,10 +11,7 @@
         Task EditAsync(Publisher publisher, EditPublisherModel model, int modifierId);
         Task DeleteAsync(Publisher publisher, int modifierId);
 
-        Task<Publisher> GetByIdAsync(int Id);
         Task<Publisher> GetByNameAsync(string name);
-        Task<Publisher> GetActiveByIdAsync(int Id);
-        Task<ICollection<Publisher>> GetAllActiveAsync();
-        Task<bool> ContainsActiveByNameAsync(string name);
+        //Task<bool> ContainsActiveByNameAsync(string name);
     }
 }

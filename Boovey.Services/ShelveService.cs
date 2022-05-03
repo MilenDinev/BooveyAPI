@@ -66,21 +66,7 @@
             return mapper.Map<RemovedFavoriteShelveModel>(shelve);
         }
 
-        public async Task<Shelve> GetActiveByIdAsync(int shelveId)
-        {
-            var shelve = await GetByIdAsync(shelveId);
-            if (shelve.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Shelve)));
 
-            return shelve;
-        }
-        public async Task<Shelve> GetByIdAsync(int shelveId)
-        {
-            var shelve = await FindByIdOrDefaultAsync(shelveId)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Shelve), shelveId));
-
-            return shelve;
-        }
         public async Task<Shelve> GetByTitleAsync(string title)
         {
             var shelve = await FindByTitleOrDefaultAsync(title)
@@ -89,12 +75,6 @@
             return shelve;
         }
 
-        public async Task<ICollection<Shelve>> GetAllActiveAsync()
-        {
-            var shelves = await GetAllAsync();
-
-            return shelves.Where(s => !s.Deleted).ToList();
-        }
 
         public async Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Shelve> shelves)
         {

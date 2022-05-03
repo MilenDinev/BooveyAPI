@@ -73,22 +73,5 @@
             await SaveModificationAsync(quote, currentUser.Id);
             return mapper.Map<RemovedFavoriteQuoteModel>(quote);
         }
-
-        public async Task<Quote> GetActiveByIdAsync(int quoteId)
-        {
-            var quote = await GetByIdAsync(quoteId);
-
-            if (quote.Deleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(Quote)));
-
-            return quote;
-        }
-        public async Task<Quote> GetByIdAsync(int quoteId)
-        {
-            var quote = await FindByIdOrDefaultAsync(quoteId)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Quote), quoteId));
-
-            return quote;
-        }
     }
 }

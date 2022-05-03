@@ -26,10 +26,13 @@
             services.AddTransient<IShelveService, ShelveService>();
             services.AddTransient<ICountryManager, CountryManager>();
             services.AddTransient(typeof(IAssigningService<Book>), typeof(AssigningService<Book>));
-            services.AddTransient(typeof(IContextAccessorServices<Book>), typeof(ContextAccessorService<Book>));
-            services.AddTransient(typeof(IContextAccessorServices<Author>), typeof(ContextAccessorService<Author>));
-            services.AddTransient(typeof(IContextAccessorServices<Genre>), typeof(ContextAccessorService<Genre>));
-            services.AddTransient(typeof(IContextAccessorServices<Publisher>), typeof(ContextAccessorService<Publisher>));
+            services.AddTransient(typeof(IContextAccessorService<Book>), typeof(ContextAccessorService<Book>));
+            services.AddTransient(typeof(IContextAccessorService<Author>), typeof(ContextAccessorService<Author>));
+            services.AddTransient(typeof(IContextAccessorService<Genre>), typeof(ContextAccessorService<Genre>));
+            services.AddTransient(typeof(IContextAccessorService<Publisher>), typeof(ContextAccessorService<Publisher>));
+            services.AddTransient(typeof(IContextAccessorService<Shelve>), typeof(ContextAccessorService<Shelve>));
+            services.AddTransient(typeof(IContextAccessorService<Quote>), typeof(ContextAccessorService<Quote>));
+            services.AddTransient(typeof(IContextAccessorService<Review>), typeof(ContextAccessorService<Review>));
             services.AddHttpContextAccessor();
         }
     }

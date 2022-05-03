@@ -2,10 +2,8 @@
 {
     using System;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
     using Data;
     using Data.Entities.Interfaces;
-    using System.Collections.Generic;
 
     public abstract class BaseService<TEntity> where TEntity : class, IEntity
     {
@@ -26,17 +24,7 @@
             entity.Deleted = true;
             await SaveModificationAsync(entity, modifierId);
         }
-        protected  async Task<IEnumerable<TEntity>> GetAllAsync()
-        {
-            var entities = await this.dbContext.Set<TEntity>().ToArrayAsync();
 
-            return entities;
-        }
-        protected async Task<TEntity> FindByIdOrDefaultAsync(int id)
-        {
-            var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(b => b.Id == id);
-            return entity;
-        }
         
         protected async Task SaveModificationAsync(TEntity entity, int modifierId)
         {

@@ -1,22 +1,26 @@
 ﻿namespace Boovey.Web.Controllers
 {
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
     using Base;
-    using Microsoft.AspNetCore.Mvc;
+    using Services.Interfaces;
+    using Services.Interfaces.IHandlers;
+    using Data.Entities;
     using Models.Requests.QuoteModels;
     using Models.Responses.QuoteModels;
-    using Services.Interfaces;
 
     [Route("api/[controller]")]
     [ApiController]
     public class QuotesController : BooveyBaseController
     {
         private readonly IQuoteService quoteService;
+        private readonly IContextAccessorService<Quote> quotesAccessorService;
         private readonly IMapper mapper;
-        public QuotesController(IUserService userService, IQuoteService quoteService, IMapper mapper) : base(userService)
+        public QuotesController(IQuoteService quoteService, IContextAccessorService<Quote> quotesAccessorService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.quoteService = quoteService;
+            this.quotesAccessorService = quotesAccessorService;
             this.mapper = mapper;
         }
 
@@ -33,7 +37,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quoteService.GetActiveByIdAsync(quoteId);
+            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId, nameof(Quote));
             await this.quoteService.EditAsync(quote, quoteInput, CurrentUser.Id);
 
             return mapper.Map<EditedQuoteModel>(quote); ;
@@ -44,7 +48,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quoteService.GetActiveByIdAsync(quoteId);
+            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId, nameof(Quote));
             var addedFavoriteQuote = await this.quoteService.AddFavoriteAsync(quote, CurrentUser);
 
             return addedFavoriteQuote;
@@ -55,7 +59,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quoteService.GetActiveByIdAsync(quoteId);
+            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId, nameof(Quote));
             var removedFavoriteQuote = await this.quoteService.RemoveFavoriteAsync(quote, CurrentUser);
 
             return removedFavoriteQuote;
@@ -65,7 +69,7 @@
         public async Task<DeletedQuoteModel> Delete(int quoteId)
         {
             await AssignCurrentUserAsync();
-            var quote = await this.quoteService.GetActiveByIdAsync(quoteId);
+            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId, nameof(Quote));
             await this.quoteService.DeleteAsync(quote, CurrentUser.Id);
             return mapper.Map<DeletedQuoteModel>(quote);
         }

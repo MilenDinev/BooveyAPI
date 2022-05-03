@@ -1,7 +1,8 @@
 ﻿namespace Boovey.Data.Entities
 {
+    using Interfaces;
 
-    public class Review : Entity
+    public class Review : Entity, IAccessible
     {
         public double Rating { get; set; }
         public string Comment { get; set; }

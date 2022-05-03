@@ -14,10 +14,7 @@
         Task AddFavoriteAsync(Genre genre, User currentUser);
         Task RemoveFavoriteAsync(Genre genre, User currentUser);
 
-        Task<Genre> GetActiveByIdAsync(int Id);
-        Task<Genre> GetByIdAsync(int Id);
         Task<Genre> GetByTitleAsync(string title);
-        Task<ICollection<Genre>> GetAllActiveAsync();
-        Task<bool> ContainsActiveByTitleAsync(string title);
+        //Task<bool> ContainsActiveByTitleAsync(string title);
     }
 }
