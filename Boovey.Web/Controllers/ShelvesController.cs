@@ -53,7 +53,7 @@
         public async Task<ActionResult<EditedShelveModel>> Edit(EditShelveModel shelveInput, int shelveId)
         {
             await AssignCurrentUserAsync();
-            var shelve = await this.shelvesAccessorService.GetActiveByIdAsync(shelveId);
+            var shelve = await this.shelvesAccessorService.GetActiveByIdAsync(shelveId, nameof(Shelve));
             await this.shelveService.EditAsync(shelve, shelveInput, CurrentUser.Id);
 
             return mapper.Map<EditedShelveModel>(shelve);
@@ -64,7 +64,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var shelve = await this.shelvesAccessorService.GetActiveByIdAsync(shelveId);
+            var shelve = await this.shelvesAccessorService.GetActiveByIdAsync(shelveId, nameof(Shelve));
             var addedFavoriteShelve = await this.shelveService.AddFavoriteAsync(shelve, CurrentUser);
 
             addedFavoriteShelve.UserId = CurrentUser.Id;
@@ -76,7 +76,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var shelve = await this.shelvesAccessorService.GetActiveByIdAsync(shelveId);
+            var shelve = await this.shelvesAccessorService.GetActiveByIdAsync(shelveId, nameof(Shelve));
             var removedFavoriteShelve = await this.shelveService.RemoveFavoriteAsync(shelve, CurrentUser);
 
             removedFavoriteShelve.UserId = CurrentUser.Id;
@@ -87,7 +87,7 @@
         public async Task<DeletedShelveModel> Delete(int shelveId)
         {
             await AssignCurrentUserAsync();
-            var shelve = await this.shelvesAccessorService.GetActiveByIdAsync(shelveId);
+            var shelve = await this.shelvesAccessorService.GetActiveByIdAsync(shelveId, nameof(Shelve));
             await this.shelveService.DeleteAsync(shelve, CurrentUser.Id);
             return mapper.Map<DeletedShelveModel>(shelve);
         }

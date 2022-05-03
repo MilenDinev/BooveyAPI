@@ -6,8 +6,6 @@
     using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
     using Base;
-    using Services.Constants;
-    using Services.Exceptions;
     using Services.Interfaces;
     using Services.Interfaces.IHandlers;
     using Data.Entities;
@@ -20,9 +18,6 @@
     {
         private readonly IAuthorService authorService;
         private readonly IContextAccessorService<Author> authorsAccessorService;
-        //private readonly IContextAccessorServices<Book> booksAccessorService;
-        //private readonly IContextAccessorServices<Genre> genresAccessorService;
-        //private readonly IContextAccessorServices<Publisher> publishersAccessorService;
         private readonly IMapper mapper;
         public AuthorsController(IContextAccessorService<Author> authorsAccessorService, IAuthorService authorService, IMapper mapper, IUserService userService) : base(userService)
         {
@@ -41,7 +36,7 @@
         [HttpGet("Get/Author/{authorId}")]
         public async Task<ActionResult<AuthorListingModel>> GetById(int authorId)
         {
-            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId);
+            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId, nameof(Author));
             return mapper.Map<AuthorListingModel>(author);
         }
 
@@ -64,7 +59,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId);
+            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId, nameof(Author));
             await this.authorService.EditAsync(author, authorInput, CurrentUser.Id);
 
             return mapper.Map<EditedAuthorModel>(author);
@@ -74,7 +69,7 @@
         public async Task<AddedFavoriteAuthorModel> AddFavorite(int authorId)
         {
             await AssignCurrentUserAsync();
-            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId);
+            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId, nameof(Author));
             await this.authorService.AddFavoriteAuthorAsync(author, CurrentUser);
             return mapper.Map<AddedFavoriteAuthorModel>(author);
         }
@@ -83,7 +78,7 @@
         public async Task<RemovedFavoriteAuthorModel> RemoveFavorite(int authorId)
         {
             await AssignCurrentUserAsync();
-            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId);
+            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId, nameof(Author));
             await this.authorService.RemoveFavoriteAuthorAsync(author, CurrentUser);
             var removedFavoriteAuthor = mapper.Map<RemovedFavoriteAuthorModel>(author);
             removedFavoriteAuthor.UserId = CurrentUser.Id;
@@ -94,7 +89,7 @@
         public async Task<DeletedAuthorModel> Delete(int authorId)
         {
             await AssignCurrentUserAsync();
-            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId);
+            var author = await this.authorsAccessorService.GetActiveByIdAsync(authorId, nameof(Author));
             await this.authorService.DeleteAsync(author, CurrentUser.Id);
             return mapper.Map<DeletedAuthorModel>(author);
         }

@@ -37,7 +37,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId);
+            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId, nameof(Quote));
             await this.quoteService.EditAsync(quote, quoteInput, CurrentUser.Id);
 
             return mapper.Map<EditedQuoteModel>(quote); ;
@@ -48,7 +48,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId);
+            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId, nameof(Quote));
             var addedFavoriteQuote = await this.quoteService.AddFavoriteAsync(quote, CurrentUser);
 
             return addedFavoriteQuote;
@@ -59,7 +59,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId);
+            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId, nameof(Quote));
             var removedFavoriteQuote = await this.quoteService.RemoveFavoriteAsync(quote, CurrentUser);
 
             return removedFavoriteQuote;
@@ -69,7 +69,7 @@
         public async Task<DeletedQuoteModel> Delete(int quoteId)
         {
             await AssignCurrentUserAsync();
-            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId);
+            var quote = await this.quotesAccessorService.GetActiveByIdAsync(quoteId, nameof(Quote));
             await this.quoteService.DeleteAsync(quote, CurrentUser.Id);
             return mapper.Map<DeletedQuoteModel>(quote);
         }

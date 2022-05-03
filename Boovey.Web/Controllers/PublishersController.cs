@@ -7,9 +7,7 @@
     using AutoMapper;
     using Base;
     using Services.Interfaces;
-    using Services.Exceptions;
     using Services.Interfaces.IHandlers;
-    using Services.Constants;
     using Data.Entities;
     using Models.Requests.PublisherModels;
     using Models.Responses.PublisherModels;
@@ -51,7 +49,7 @@
         public async Task<ActionResult<EditedPublisherModel>> Edit(EditPublisherModel publisherInput, int publisherId)
         {
             await AssignCurrentUserAsync();
-            var publisher = await this.publishersAccessorService.GetActiveByIdAsync(publisherId);
+            var publisher = await this.publishersAccessorService.GetActiveByIdAsync(publisherId, nameof(Quote));
             await this.publisherService.EditAsync(publisher, publisherInput, CurrentUser.Id);
 
             return mapper.Map<EditedPublisherModel>(publisher);
@@ -61,7 +59,7 @@
         public async Task<DeletedPublisherModel> Delete(int publisherId)
         {
             await AssignCurrentUserAsync();
-            var publisher = await this.publishersAccessorService.GetActiveByIdAsync(publisherId);
+            var publisher = await this.publishersAccessorService.GetActiveByIdAsync(publisherId, nameof(Publisher));
             await this.publisherService.DeleteAsync(publisher, CurrentUser.Id);
             return mapper.Map<DeletedPublisherModel>(publisher);
         }

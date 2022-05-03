@@ -36,7 +36,7 @@
         public async Task<ActionResult<EditedReviewModel>> Edit(EditReviewModel reviewInput, int reviewId)
         {
             await AssignCurrentUserAsync();
-            var review = await this.reviewsAccessorService.GetActiveByIdAsync(reviewId);
+            var review = await this.reviewsAccessorService.GetActiveByIdAsync(reviewId, nameof(Review));
             await this.reviewService.EditAsync(review, reviewInput, CurrentUser.Id);
             return mapper.Map<EditedReviewModel>(review);
         }
@@ -45,7 +45,7 @@
         public async Task<DeletedReviewModel> Delete(int reviewId)
         {
             await AssignCurrentUserAsync();
-            var review = await this.reviewsAccessorService.GetActiveByIdAsync(reviewId);
+            var review = await this.reviewsAccessorService.GetActiveByIdAsync(reviewId, nameof(Review));
             await this.reviewService.DeleteAsync(review, CurrentUser.Id);
             return mapper.Map<DeletedReviewModel>(review);
         }

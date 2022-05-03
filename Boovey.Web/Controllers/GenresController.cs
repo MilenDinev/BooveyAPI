@@ -7,8 +7,6 @@
     using AutoMapper;
     using Base;
     using Services.Interfaces;
-    using Services.Exceptions;
-    using Services.Constants;
     using Services.Interfaces.IHandlers;
     using Data.Entities;
     using Models.Requests.GenreModels;
@@ -20,9 +18,6 @@
     {
         private readonly IGenreService genreService;
         private readonly IContextAccessorService<Genre> genresAccessorService;
-        //private readonly IContextAccessorServices<Book> booksAccessorService;
-        //private readonly IContextAccessorServices<Genre> genresAccessorService;
-        //private readonly IContextAccessorServices<Publisher> publishersAccessorService;
         private readonly IMapper mapper;
         public GenresController(IGenreService genreService, IContextAccessorService<Genre> genresAccessorService, IMapper mapper, IUserService userService) : base(userService)
         {
@@ -56,7 +51,7 @@
         public async Task<ActionResult<EditedGenreModel>> Edit(EditGenreModel genreInput, int genreId)
         {
             await AssignCurrentUserAsync();
-            var genre = await this.genresAccessorService.GetActiveByIdAsync(genreId);
+            var genre = await this.genresAccessorService.GetActiveByIdAsync(genreId, nameof(Genre));
             await this.genreService.EditAsync(genre, genreInput, CurrentUser.Id);
 
             return mapper.Map<EditedGenreModel>(genre);
@@ -66,7 +61,7 @@
         public async Task<AddedFavoriteGenreModel> AddFavorite(int genreId)
         {
             await AssignCurrentUserAsync();
-            var genre = await this.genresAccessorService.GetActiveByIdAsync(genreId);
+            var genre = await this.genresAccessorService.GetActiveByIdAsync(genreId, nameof(Genre));
             await this.genreService.AddFavoriteAsync(genre, CurrentUser);
             return mapper.Map<AddedFavoriteGenreModel>(genre);
         }
@@ -75,7 +70,7 @@
         public async Task<RemovedFavoriteGenreModel> RemoveFavorite(int genreId)
         {
             await AssignCurrentUserAsync();
-            var genre = await this.genresAccessorService.GetActiveByIdAsync(genreId);
+            var genre = await this.genresAccessorService.GetActiveByIdAsync(genreId, nameof(Genre));
             await this.genreService.RemoveFavoriteAsync(genre, CurrentUser);
             var removedFavoriteGenre = mapper.Map<RemovedFavoriteGenreModel>(genre);
             removedFavoriteGenre.UserId = CurrentUser.Id;
@@ -86,7 +81,7 @@
         public async Task<DeletedGenreModel> Delete(int genreId)
         {
             await AssignCurrentUserAsync();
-            var genre = await this.genresAccessorService.GetActiveByIdAsync(genreId);
+            var genre = await this.genresAccessorService.GetActiveByIdAsync(genreId, nameof(Genre));
             await this.genreService.DeleteAsync(genre, CurrentUser.Id);
             return mapper.Map<DeletedGenreModel>(genre);
         }
