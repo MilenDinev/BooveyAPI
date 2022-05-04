@@ -1,6 +1,7 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
     using Interfaces;
 
     public class Publisher : Entity, IAssignable, IAccessible
@@ -11,6 +12,8 @@
         }
 
         public string Name { get; set; }
+        [NotMapped]
+        public string StringValue => Name;
         public virtual ICollection<Book> Books { get; set; }
     }
 }

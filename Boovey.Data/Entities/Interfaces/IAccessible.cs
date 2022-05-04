@@ -2,7 +2,8 @@
 {
     public interface IAccessible
     {
-        public int Id { get; set; }
-        public bool Deleted { get; set; }
+        public int Id { get; }
+        public string StringValue { get; }
+        public bool Deleted { get; }
     }
 }
