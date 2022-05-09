@@ -35,7 +35,9 @@
         }
         private async Task AddEntityAsync(TEntity entity, int creatorId)
         {
+            
             entity.CreatorId = creatorId;
+            entity.CreatedOn = DateTime.UtcNow;
             await this.dbContext.AddAsync(entity);
         }
     }
