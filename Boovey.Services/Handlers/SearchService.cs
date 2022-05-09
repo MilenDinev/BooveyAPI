@@ -10,12 +10,12 @@
     using Data;
     using Data.Entities.Interfaces;
 
-    public class AccessorService<TEntity> : IAccessorService<TEntity>
+    public class SearchService<TEntity> : ISearchService<TEntity>
         where TEntity : class, ISearchable
     {
         private readonly BooveyDbContext dbContext;
 
-        public AccessorService(BooveyDbContext dbContext)
+        public SearchService(BooveyDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
