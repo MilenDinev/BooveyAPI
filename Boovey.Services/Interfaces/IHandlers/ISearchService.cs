@@ -4,7 +4,7 @@
     using System.Threading.Tasks;
     using Data.Entities.Interfaces;
 
-    public interface IAccessorService<TEntity> where TEntity : class, ISearchable
+    public interface ISearchService<TEntity> where TEntity : class, ISearchable
     {
         Task<TEntity> GetByIdAsync(int id, string type);
         Task<TEntity> GetActiveByIdAsync(int id, string type);
