@@ -11,7 +11,7 @@
     using Data.Entities.Interfaces;
 
     public class AccessorService<TEntity> : IAccessorService<TEntity>
-        where TEntity : class, IAccessible
+        where TEntity : class, ISearchable
     {
         private readonly BooveyDbContext dbContext;
 
