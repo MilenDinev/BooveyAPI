@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using Interfaces;
 
-    public class Country : Entity, IAccessible
+    public class Country : Entity, ISearchable
     {
         public Country()
         {

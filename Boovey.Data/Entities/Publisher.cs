@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using Interfaces;
 
-    public class Publisher : Entity, IAssignable, IAccessible
+    public class Publisher : Entity, IAssignable, ISearchable
     {
         public Publisher()
         {

@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using Interfaces;
 
-    public class Quote : Entity, IAccessible
+    public class Quote : Entity, ISearchable
     {
         public Quote()
         {

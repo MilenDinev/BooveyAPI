@@ -1,9 +1,9 @@
 ﻿namespace Boovey.Data.Entities.Interfaces
 {
-    public interface IAccessible
+    public interface ISearchable
     {
         public int Id { get; }
-        public string StringValue { get; }
+        public string NormalizedName { get; }
         public bool Deleted { get; }
     }
 }

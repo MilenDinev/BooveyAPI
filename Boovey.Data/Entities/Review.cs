@@ -2,7 +2,7 @@
 {
     using Interfaces;
 
-    public class Review : Entity, IAccessible
+    public class Review : Entity, ISearchable
     {
         public double Rating { get; set; }
         public string Comment { get; set; }

@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using Interfaces;
 
-    public class Shelve : Entity, IAccessible
+    public class Shelve : Entity, ISearchable
     {
         public Shelve()
         {
