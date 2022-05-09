@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
     using Interfaces;
 
     public class Book : Entity, IBook
@@ -20,8 +19,6 @@
         public string Title { get; set; }
 
         public string CoverUrl { get; set; }
-        [NotMapped]
-        public string StringValue => Title;
         public int Pages { get; set; }
         public DateTime PublicationDate { get; set; }
         public int CountryId { get; set; }

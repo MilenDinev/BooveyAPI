@@ -1,7 +1,6 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
     using Interfaces;
 
     public class Author : Entity, IAssignable, IAccessible
@@ -15,8 +14,6 @@
         }
 
         public string Fullname { get; set; }
-        [NotMapped]
-        public string StringValue => Fullname;
         public int CountryId { get; set; }
         public virtual Country Country { get; set; }
         public string Summary { get; set; }

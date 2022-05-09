@@ -1,7 +1,6 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
     using Interfaces;
 
     public class Quote : Entity, IAccessible
@@ -12,8 +11,6 @@
         }
 
         public string Content { get; set; }
-        [NotMapped]
-        public string StringValue => Content;
         public int Likes { get; set; }
         public int? AuthorId { get; set; }
         public virtual Author Author { get; set; }
