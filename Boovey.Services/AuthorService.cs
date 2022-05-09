@@ -29,6 +29,7 @@
         {
             author.CountryId = authorModel.CountryId;
             author.Fullname = authorModel.Fullname;
+            author.NormalizedName = author.Fullname;
             author.Summary = authorModel.Summary;
 
             await SaveModificationAsync(author, modifierId);
