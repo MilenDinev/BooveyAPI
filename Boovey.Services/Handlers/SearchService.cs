@@ -25,17 +25,36 @@
             var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
             return entity;
         }
+        public async Task<TEntity> FindByStringOrDefaultAsync(string stringValue)
+        {
+            var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.NormalizedName == stringValue.ToUpper());
+            return entity;
+        }
         public async Task<TEntity> GetByIdAsync(int id, string type)
         {
             var entity = await FindByIdOrDefaultAsync(id);
-            await ExistenceChecker(entity, id, type);
+            await ExistenceChecker(entity, id.ToString(), type);
+
+            return entity;
+        }
+        public async Task<TEntity> GetByStringAsync(string stringValue, string type)
+        {
+            var entity = await FindByStringOrDefaultAsync(stringValue);
+            await ExistenceChecker(entity, stringValue, type);
 
             return entity;
         }
         public async Task<TEntity> GetActiveByIdAsync(int id, string type)
         {
             var entity = await GetByIdAsync(id, type);
-            await DeletedChecker(entity, id, type);
+            await DeletedChecker(entity.Deleted, id.ToString(), type);
+
+            return entity;
+        }
+        public async Task<TEntity> GetActiveByStringAsync(string stringValue, string type)
+        {
+            var entity = await GetByStringAsync(stringValue, type);
+            await DeletedChecker(entity.Deleted, stringValue, type);
 
             return entity;
         }
@@ -51,39 +70,25 @@
 
             return entities.Where(s => !s.Deleted).ToList();
         }
+        public async Task<bool> ContainsActiveByStringAsync(string stringValue)
+        {
+            var entities = await this.dbContext.Set<TEntity>().ToListAsync();
+            var contains = entities.Any(e => e.NormalizedName == stringValue.ToUpper() && !e.Deleted);
 
-        private async Task ExistenceChecker(TEntity entity, int id, string type)
+            return await Task.FromResult(contains);
+        }
+
+        private async Task ExistenceChecker(TEntity entity, string searchFlag, string type)
         {
             if (await Task.Run(() => entity == null))
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, type, id));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, type, searchFlag));
         }
-        private async Task DeletedChecker(TEntity entity, int id, string type)
+        private async Task DeletedChecker(bool deleted, string searchFlag, string type)
         {
-            if (await Task.Run(() =>entity.Deleted))
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, type, id));
+            if (await Task.Run(() => deleted))
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, type, searchFlag));
 
         }
-
-        //public async Task<TEntity> GetByStringAsync(string _string)
-        //{
-        //    var entity = await FindByNameOrDefaultAsync(_string)
-        //    ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(TEntity).GetType().Name));
-
-        //    return entity;
-        //}
-
-        //public async Task<bool> ContainsActiveByStringAsync(string _string)
-        //{
-        //    var contains = entities.Any(a => a._String == name && !a.Deleted);
-
-        //    return await Task.FromResult(contains);
-        //}
-
-        //private async Task<TEntity> FindByStringOrDefaultAsync(string _string)
-        //{
-        //    var entity = await this.dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e._String == name);
-        //    return entity;
-        //}
 
     }
 }
