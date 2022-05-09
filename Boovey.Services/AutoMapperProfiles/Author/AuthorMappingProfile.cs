@@ -12,8 +12,7 @@
         public AuthorMappingProfile()
         {
             this.CreateMap<CreateAuthorModel, Author>()
-                .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
-                .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
+                .ForMember(e => e.NormalizedName, m => m.MapFrom(m => m.Fullname.ToUpper()));
             this.CreateMap<Author, CreatedAuthorModel>();
             this.CreateMap<Author, EditedAuthorModel>()
                 .ForMember(m => m.Nationality, e => e.MapFrom(a => a.Country.Name));
