@@ -6,6 +6,8 @@
     using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
     using Base;
+    using Services.Constants;
+    using Services.Exceptions;
     using Services.Interfaces;
     using Services.Interfaces.IHandlers;
     using Data.Entities;
@@ -46,9 +48,9 @@
         public async Task<ActionResult> Create(CreateAuthorModel authorInput)
         {
             await AssignCurrentUserAsync();
-            //var alreadyExists = await this.authorService.ContainsActiveByNameAsync(authorInput.Fullname);
-            //if (alreadyExists)
-            //    throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Author)));
+            var alreadyExists = await this.authorSearchService.ContainsActiveByStringAsync(authorInput.Fullname);
+            if (alreadyExists)
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Author)));
             await this.countySearchService.GetActiveByIdAsync(authorInput.CountryId, nameof(Country));
             var author = await this.authorService.CreateAsync(authorInput, CurrentUser.Id);
             var createdAuthor = mapper.Map<CreatedAuthorModel>(author);
