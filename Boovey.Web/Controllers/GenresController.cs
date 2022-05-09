@@ -17,9 +17,9 @@
     public class GenresController : BooveyBaseController
     {
         private readonly IGenreService genreService;
-        private readonly IAccessorService<Genre> genresAccessorService;
+        private readonly ISearchService<Genre> genresAccessorService;
         private readonly IMapper mapper;
-        public GenresController(IGenreService genreService, IAccessorService<Genre> genresAccessorService, IMapper mapper, IUserService userService) : base(userService)
+        public GenresController(IGenreService genreService, ISearchService<Genre> genresAccessorService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.genreService = genreService;
             this.genresAccessorService = genresAccessorService;

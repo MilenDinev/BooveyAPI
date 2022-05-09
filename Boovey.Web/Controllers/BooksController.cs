@@ -22,12 +22,12 @@
     public class BooksController : BooveyBaseController
     {
         private readonly IBookService bookService;
-        private readonly IAccessorService<Book> bookAccessorService;
-        private readonly IAccessorService<Country> countryAccessorService;
+        private readonly ISearchService<Book> bookAccessorService;
+        private readonly ISearchService<Country> countryAccessorService;
         private readonly IMapper mapper;
 
         public BooksController(IBookService bookService, 
-            IAccessorService<Book> bookAccessorService,IAccessorService<Country> countryAccessorService,
+            ISearchService<Book> bookAccessorService,ISearchService<Country> countryAccessorService,
            IMapper mapper, IUserService userService) 
             : base(userService)
         {

@@ -16,13 +16,13 @@
     public class AssignController : BooveyBaseController
     {
         private readonly IBookService bookService;
-        private readonly IAccessorService<Book> bookAccessorService;
-        private readonly IAccessorService<Author> authorAccessorService;
-        private readonly IAccessorService<Genre> genreAccessorService;
-        private readonly IAccessorService<Publisher> publisherAccessorService;
+        private readonly ISearchService<Book> bookAccessorService;
+        private readonly ISearchService<Author> authorAccessorService;
+        private readonly ISearchService<Genre> genreAccessorService;
+        private readonly ISearchService<Publisher> publisherAccessorService;
         private readonly IMapper mapper;
-        public AssignController(IBookService bookService, IAccessorService<Book> bookAccessorService, IAccessorService<Author> authorAccessorService,
-        IAccessorService<Genre> genreAccessorService, IAccessorService<Publisher> publisherAccessorService,
+        public AssignController(IBookService bookService, ISearchService<Book> bookAccessorService, ISearchService<Author> authorAccessorService,
+        ISearchService<Genre> genreAccessorService, ISearchService<Publisher> publisherAccessorService,
         IMapper mapper, IUserService userService)
         : base(userService)
         {
