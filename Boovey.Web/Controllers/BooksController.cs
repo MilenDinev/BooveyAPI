@@ -13,7 +13,6 @@
     using Services.Interfaces.IHandlers;
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
-    using Models.Responses.SharedModels;
     using Data.Entities;
 
     [Route("api/[controller]")]
@@ -22,48 +21,56 @@
     public class BooksController : BooveyBaseController
     {
         private readonly IBookService bookService;
-        private readonly IAccessorService<Book> bookAccessorService;
-        private readonly IAccessorService<Country> countryAccessorService;
+        private readonly ISearchService<Book> bookSearchService;
+        private readonly ISearchService<Country> countrySearchService;
         private readonly IMapper mapper;
 
         public BooksController(IBookService bookService, 
-            IAccessorService<Book> bookAccessorService,IAccessorService<Country> countryAccessorService,
+            ISearchService<Book> bookSearchService,ISearchService<Country> countrySearchService,
            IMapper mapper, IUserService userService) 
             : base(userService)
         {
             this.bookService = bookService;
-            this.bookAccessorService = bookAccessorService;
-            this.countryAccessorService = countryAccessorService;
+            this.bookSearchService = bookSearchService;
+            this.countrySearchService = countrySearchService;
             this.mapper = mapper;
         }
 
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<BookListingModel>>> Get()
         {
-            var allBooks = await this.bookAccessorService.GetAllActiveAsync();
+            var allBooks = await this.bookSearchService.GetAllActiveAsync();
             return mapper.Map<ICollection<BookListingModel>>(allBooks).ToList();
         }
 
+        [HttpGet("Get/Book/{bookId}")]
+        public async Task<ActionResult<BookListingModel>> GetById(int bookId)
+        {
+            var book = await this.bookSearchService.GetActiveByIdAsync(bookId, nameof(Book));
+            return mapper.Map<BookListingModel>(book);
+        }
+
         [HttpPost("Add/")]
-        public async Task<ActionResult> Add(CreateBookModel bookInput)
+        public async Task<ActionResult> Create(CreateBookModel bookInput)
         {
             await AssignCurrentUserAsync();
-            await this.countryAccessorService.GetActiveByIdAsync(bookInput.CountryId, nameof(Country));
-            var allBooks = await this.bookAccessorService.GetAllActiveAsync();
-            var alreadyExists = await this.bookService.ContainsActiveByTitleAsync(bookInput.Title, allBooks);
+            var alreadyExists = await this.bookSearchService.ContainsActiveByStringAsync(bookInput.Title);
             if (alreadyExists)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Book)));
 
-            var addedBook = await this.bookService.CreateAsync(bookInput, CurrentUser.Id);
-            return CreatedAtAction(nameof(Get), "Books", new { id = addedBook.Id }, addedBook);
+            await this.countrySearchService.GetActiveByIdAsync(bookInput.CountryId, nameof(Country));
+            var book = await this.bookService.CreateAsync(bookInput, CurrentUser.Id);
+            var createdBook = mapper.Map<CreatedBookModel>(book);
+
+            return CreatedAtAction(nameof(Get), "Books", new { id = createdBook.Id }, createdBook);
         }
 
         [HttpPut("Edit/Book/{bookId}")]
         public async Task<ActionResult<EditedBookModel>> Edit(EditBookModel bookInput, int bookId)
         {
             await AssignCurrentUserAsync();
-            await this.countryAccessorService.GetActiveByIdAsync(bookInput.CountryId, nameof(Country));
-            var book = await this.bookAccessorService.GetActiveByIdAsync(bookId, nameof(Book));
+            await this.countrySearchService.GetActiveByIdAsync(bookInput.CountryId, nameof(Country));
+            var book = await this.bookSearchService.GetActiveByIdAsync(bookId, nameof(Book));
             await this.bookService.EditAsync(book, bookInput, CurrentUser.Id);
             return mapper.Map<EditedBookModel>(book);
         }
@@ -72,7 +79,7 @@
         public async Task<AddedFavoriteBookModel> AddFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookAccessorService.GetActiveByIdAsync(bookId, nameof(Book));
+            var book = await this.bookSearchService.GetActiveByIdAsync(bookId, nameof(Book));
             await this.bookService.AddFavoriteAsync(book, CurrentUser);
             return mapper.Map<AddedFavoriteBookModel>(book);
         }
@@ -81,7 +88,7 @@
         public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookAccessorService.GetActiveByIdAsync(bookId, nameof(Book));
+            var book = await this.bookSearchService.GetActiveByIdAsync(bookId, nameof(Book));
             await this.bookService.RemoveFavoriteAsync(book, CurrentUser);
             var removedFavoriteBook = mapper.Map<RemovedFavoriteBookModel>(book);
             removedFavoriteBook.UserId = CurrentUser.Id;
@@ -92,7 +99,7 @@
         public async Task<DeletedBookModel> Delete(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookAccessorService.GetActiveByIdAsync(bookId, nameof(Book));
+            var book = await this.bookSearchService.GetActiveByIdAsync(bookId, nameof(Book));
             await this.bookService.DeleteAsync(book, CurrentUser.Id);
             return mapper.Map<DeletedBookModel>(book);
         }

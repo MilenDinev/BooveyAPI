@@ -16,21 +16,21 @@
     public class AssignController : BooveyBaseController
     {
         private readonly IBookService bookService;
-        private readonly IAccessorService<Book> bookAccessorService;
-        private readonly IAccessorService<Author> authorAccessorService;
-        private readonly IAccessorService<Genre> genreAccessorService;
-        private readonly IAccessorService<Publisher> publisherAccessorService;
+        private readonly ISearchService<Book> bookSearchService;
+        private readonly ISearchService<Author> authorSearchService;
+        private readonly ISearchService<Genre> genreSearchService;
+        private readonly ISearchService<Publisher> publisherSearchService;
         private readonly IMapper mapper;
-        public AssignController(IBookService bookService, IAccessorService<Book> bookAccessorService, IAccessorService<Author> authorAccessorService,
-        IAccessorService<Genre> genreAccessorService, IAccessorService<Publisher> publisherAccessorService,
+        public AssignController(IBookService bookService, ISearchService<Book> bookSearchService, ISearchService<Author> authorSearchService,
+        ISearchService<Genre> genreSearchService, ISearchService<Publisher> publisherSearchService,
         IMapper mapper, IUserService userService)
         : base(userService)
         {
             this.bookService = bookService;
-            this.bookAccessorService = bookAccessorService;
-            this.authorAccessorService = authorAccessorService;
-            this.genreAccessorService = genreAccessorService;
-            this.publisherAccessorService = publisherAccessorService;
+            this.bookSearchService = bookSearchService;
+            this.authorSearchService = authorSearchService;
+            this.genreSearchService = genreSearchService;
+            this.publisherSearchService = publisherSearchService;
             this.mapper = mapper;
         }
 
@@ -38,8 +38,8 @@
         public async Task<AssignedBookAuthorModel> AssignAuthor(int bookId, int authorId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookAccessorService.GetActiveByIdAsync(bookId, nameof(Book));
-            var author = await this.authorAccessorService.GetActiveByIdAsync(authorId, nameof(Author));
+            var book = await this.bookSearchService.GetActiveByIdAsync(bookId, nameof(Book));
+            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
             var updatedBook = await this.bookService.AssignAuthorAsync(book, author, nameof(Author), CurrentUser.Id);
             return mapper.Map<AssignedBookAuthorModel>(updatedBook);
         }
@@ -48,8 +48,8 @@
         public async Task<AssignedBookGenreModel> AssignGenre(int bookId, int genreId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookAccessorService.GetActiveByIdAsync(bookId, nameof(Book));
-            var genre = await this.genreAccessorService.GetActiveByIdAsync(genreId, nameof(Genre));
+            var book = await this.bookSearchService.GetActiveByIdAsync(bookId, nameof(Book));
+            var genre = await this.genreSearchService.GetActiveByIdAsync(genreId, nameof(Genre));
             var updatedBook = await this.bookService.AssignGenreAsync(book, genre, nameof(Genre), CurrentUser.Id);
             return mapper.Map<AssignedBookGenreModel>(updatedBook);
         }
@@ -58,8 +58,8 @@
         public async Task<AssignedBookPublisherModel> AssignPublisher(int bookId, int publisherId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.bookAccessorService.GetActiveByIdAsync(bookId, nameof(Book));
-            var publisher = await this.publisherAccessorService.GetActiveByIdAsync(publisherId, nameof(Publisher));
+            var book = await this.bookSearchService.GetActiveByIdAsync(bookId, nameof(Book));
+            var publisher = await this.publisherSearchService.GetActiveByIdAsync(publisherId, nameof(Publisher));
             var updatedBook = await this.bookService.AssignPublisherAsync(book, publisher, nameof(Publisher), CurrentUser.Id);
             return mapper.Map<AssignedBookPublisherModel>(updatedBook);
         }

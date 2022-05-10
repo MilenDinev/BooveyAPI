@@ -25,14 +25,14 @@
             services.AddTransient<IReviewService, ReviewService>();
             services.AddTransient<IShelveService, ShelveService>();
             services.AddTransient(typeof(IAssignService<Book>), typeof(AssignService<Book>));
-            services.AddTransient(typeof(IAccessorService<Book>), typeof(AccessorService<Book>));
-            services.AddTransient(typeof(IAccessorService<Author>), typeof(AccessorService<Author>));
-            services.AddTransient(typeof(IAccessorService<Genre>), typeof(AccessorService<Genre>));
-            services.AddTransient(typeof(IAccessorService<Publisher>), typeof(AccessorService<Publisher>));
-            services.AddTransient(typeof(IAccessorService<Shelve>), typeof(AccessorService<Shelve>));
-            services.AddTransient(typeof(IAccessorService<Quote>), typeof(AccessorService<Quote>));
-            services.AddTransient(typeof(IAccessorService<Review>), typeof(AccessorService<Review>));
-            services.AddTransient(typeof(IAccessorService<Country>), typeof(AccessorService<Country>));
+            services.AddTransient(typeof(ISearchService<Book>), typeof(SearchService<Book>));
+            services.AddTransient(typeof(ISearchService<Author>), typeof(SearchService<Author>));
+            services.AddTransient(typeof(ISearchService<Genre>), typeof(SearchService<Genre>));
+            services.AddTransient(typeof(ISearchService<Publisher>), typeof(SearchService<Publisher>));
+            services.AddTransient(typeof(ISearchService<Shelve>), typeof(SearchService<Shelve>));
+            services.AddTransient(typeof(ISearchService<Quote>), typeof(SearchService<Quote>));
+            services.AddTransient(typeof(ISearchService<Review>), typeof(SearchService<Review>));
+            services.AddTransient(typeof(ISearchService<Country>), typeof(SearchService<Country>));
             services.AddHttpContextAccessor();
         }
     }
