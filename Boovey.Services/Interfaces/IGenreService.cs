@@ -12,8 +12,5 @@
 
         Task AddFavoriteAsync(Genre genre, User currentUser);
         Task RemoveFavoriteAsync(Genre genre, User currentUser);
-
-        Task<Genre> GetByTitleAsync(string title);
-        //Task<bool> ContainsActiveByTitleAsync(string title);
     }
 }

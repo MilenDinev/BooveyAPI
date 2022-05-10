@@ -4,8 +4,6 @@
     using System.Linq;
     using System.Globalization;
     using System.Threading.Tasks;
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
     using Exceptions;
@@ -119,12 +117,6 @@
             await SaveModificationAsync(book, modifierId);
             return book;
         }
-        public async Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Book> books)
-        {
-            var contains = await Task.Run(() => books.Any(s => s.Title == title && !s.Deleted));
-
-            return contains;
-        }
 
         private async Task SetTitleAsync(string title, Book book)
         {
@@ -146,11 +138,6 @@
                 ? true : throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Book), bookId));
 
             await Task.Delay(300);
-        }
-        private async Task<Book> FindByTitleOrDefaultAsync(string title)
-        {
-            var book = await this.dbContext.Books.FirstOrDefaultAsync(s => s.Title == title);
-            return book;
         }
     }
 }

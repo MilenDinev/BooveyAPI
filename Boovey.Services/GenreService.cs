@@ -2,7 +2,6 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
     using Exceptions;
@@ -54,21 +53,6 @@
             currentUser.FavoriteGenres.Remove(genre);
             await SaveModificationAsync(genre, currentUser.Id);
         }
-        public async Task<Genre> GetByTitleAsync(string title)
-        {
-            var genre = await FindByTitleOrDefaultAsync(title)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Genre), title));
-
-            return genre;
-        }
-
-        //public async Task<bool> ContainsActiveByTitleAsync(string title)
-        //{
-        //    var genres = await GetAllAsync();
-        //    var contains = genres.Any(s => s.Title == title && !s.Deleted);
-
-        //    return await Task.FromResult(contains);
-        //}
 
         private async Task SetTitleAsync(string title, Genre genre, int modifierId)
         {
@@ -77,11 +61,6 @@
                 genre.Title = title;
                 await SaveModificationAsync(genre, modifierId);
             }
-        }
-        private async Task<Genre> FindByTitleOrDefaultAsync(string title)
-        {
-            var genre = await this.dbContext.Genres.FirstOrDefaultAsync(s => s.Title == title);
-            return genre;
         }
     }
 }

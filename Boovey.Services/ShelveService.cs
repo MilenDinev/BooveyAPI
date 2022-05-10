@@ -2,8 +2,6 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
     using AutoMapper;
     using Interfaces;
     using Exceptions;
@@ -66,23 +64,6 @@
             return mapper.Map<RemovedFavoriteShelveModel>(shelve);
         }
 
-
-        public async Task<Shelve> GetByTitleAsync(string title)
-        {
-            var shelve = await FindByTitleOrDefaultAsync(title)
-            ?? throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(Shelve), title));
-
-            return shelve;
-        }
-
-
-        public async Task<bool> ContainsActiveByTitleAsync(string title, ICollection<Shelve> shelves)
-        {
-            var contains = shelves.Any(s => s.Title == title && !s.Deleted);
-
-            return await Task.FromResult(contains);
-        }
-
         private async Task SetTitleAsync(string title, Shelve shelve, int modifierId)
         {
             if (title != shelve.Title)
@@ -90,11 +71,6 @@
                 shelve.Title = title;
                 await SaveModificationAsync(shelve, modifierId);
             }
-        }
-        private async Task<Shelve> FindByTitleOrDefaultAsync(string title)
-        {
-            var shelve = await this.dbContext.Shelves.FirstOrDefaultAsync(s => s.Title == title);
-            return shelve;
         }
     }
 }
