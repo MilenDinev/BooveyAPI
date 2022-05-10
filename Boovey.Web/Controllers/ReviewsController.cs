@@ -15,12 +15,12 @@
     public class ReviewsController : BooveyBaseController
     {
         private readonly IReviewService reviewService;
-        private readonly ISearchService<Review> reviewsAccessorService;
+        private readonly ISearchService<Review> reviewSearchService;
         private readonly IMapper mapper;
-        public ReviewsController(IReviewService reviewService, ISearchService<Review> reviewsAccessorService, IMapper mapper, IUserService userService) : base(userService)
+        public ReviewsController(IReviewService reviewService, ISearchService<Review> reviewSearchService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.reviewService = reviewService;
-            this.reviewsAccessorService = reviewsAccessorService;
+            this.reviewSearchService = reviewSearchService;
             this.mapper = mapper;
         }
 
@@ -36,7 +36,7 @@
         public async Task<ActionResult<EditedReviewModel>> Edit(EditReviewModel reviewInput, int reviewId)
         {
             await AssignCurrentUserAsync();
-            var review = await this.reviewsAccessorService.GetActiveByIdAsync(reviewId, nameof(Review));
+            var review = await this.reviewSearchService.GetActiveByIdAsync(reviewId, nameof(Review));
             await this.reviewService.EditAsync(review, reviewInput, CurrentUser.Id);
             return mapper.Map<EditedReviewModel>(review);
         }
@@ -45,7 +45,7 @@
         public async Task<DeletedReviewModel> Delete(int reviewId)
         {
             await AssignCurrentUserAsync();
-            var review = await this.reviewsAccessorService.GetActiveByIdAsync(reviewId, nameof(Review));
+            var review = await this.reviewSearchService.GetActiveByIdAsync(reviewId, nameof(Review));
             await this.reviewService.DeleteAsync(review, CurrentUser.Id);
             return mapper.Map<DeletedReviewModel>(review);
         }

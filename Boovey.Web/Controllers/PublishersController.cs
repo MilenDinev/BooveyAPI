@@ -17,19 +17,19 @@
     public class PublishersController : BooveyBaseController
     {
         private readonly IPublisherService publisherService;
-        private readonly ISearchService<Publisher> publishersAccessorService;
+        private readonly ISearchService<Publisher> publisherSearchService;
         private readonly IMapper mapper;
-        public PublishersController(IPublisherService publisherService, ISearchService<Publisher> publishersAccessorService, IMapper mapper, IUserService userService) : base(userService)
+        public PublishersController(IPublisherService publisherService, ISearchService<Publisher> publisherSearchService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.publisherService = publisherService;
-            this.publishersAccessorService = publishersAccessorService;
+            this.publisherSearchService = publisherSearchService;
             this.mapper = mapper;
         }
 
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<PublisherListingModel>>> Get()
         {
-            var allPublishers = await this.publishersAccessorService.GetAllActiveAsync();
+            var allPublishers = await this.publisherSearchService.GetAllActiveAsync();
             return mapper.Map<ICollection<PublisherListingModel>>(allPublishers).ToList();
         }
 
@@ -37,7 +37,7 @@
         public async Task<ActionResult> Create(CreatePublisherModel publisherInput)
         {
             await AssignCurrentUserAsync();
-            //var alreadyExists = await this.publishersAccessorService.ContainsActiveByNameAsync(publisherInput.Name);
+            //var alreadyExists = await this.publisherSearchService.ContainsActiveByNameAsync(publisherInput.Name);
             //if (alreadyExists)
             //    throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Publisher)));
 
@@ -49,7 +49,7 @@
         public async Task<ActionResult<EditedPublisherModel>> Edit(EditPublisherModel publisherInput, int publisherId)
         {
             await AssignCurrentUserAsync();
-            var publisher = await this.publishersAccessorService.GetActiveByIdAsync(publisherId, nameof(Quote));
+            var publisher = await this.publisherSearchService.GetActiveByIdAsync(publisherId, nameof(Quote));
             await this.publisherService.EditAsync(publisher, publisherInput, CurrentUser.Id);
 
             return mapper.Map<EditedPublisherModel>(publisher);
@@ -59,7 +59,7 @@
         public async Task<DeletedPublisherModel> Delete(int publisherId)
         {
             await AssignCurrentUserAsync();
-            var publisher = await this.publishersAccessorService.GetActiveByIdAsync(publisherId, nameof(Publisher));
+            var publisher = await this.publisherSearchService.GetActiveByIdAsync(publisherId, nameof(Publisher));
             await this.publisherService.DeleteAsync(publisher, CurrentUser.Id);
             return mapper.Map<DeletedPublisherModel>(publisher);
         }
