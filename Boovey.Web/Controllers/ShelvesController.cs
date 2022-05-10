@@ -39,7 +39,7 @@
         public async Task<ActionResult> Create(CreateShelveModel shelveInput)
         {
             await AssignCurrentUserAsync();
-            var alreadyExists = await this.shelvesSearchService.ContainsActiveByStringAsync(shelveInput.Title);
+            var alreadyExists = await this.shelvesSearchService.ContainsActiveByStringAsync(shelveInput.Title, CurrentUser.Shelves);
             if (alreadyExists)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Shelve)));
 

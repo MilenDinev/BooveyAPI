@@ -15,5 +15,6 @@
         Task<TEntity> FindByIdOrDefaultAsync(int id);
         Task<TEntity> FindByStringOrDefaultAsync(string stringValue);
         Task<bool> ContainsActiveByStringAsync(string stringValue);
+        Task<bool> ContainsActiveByStringAsync(string stringValue, ICollection<TEntity> collection);
     }
 }
