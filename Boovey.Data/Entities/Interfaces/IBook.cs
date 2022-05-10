@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    public interface IBook : IAssignable, ISearchable
+    public interface IBook : IAssignee, ISearchable
     {
         public string CoverUrl { get; set; }
         public string Title { get; set; }

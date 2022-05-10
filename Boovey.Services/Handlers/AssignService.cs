@@ -9,7 +9,7 @@
     public class AssignService<TEntity> : IAssignService<TEntity>
         where TEntity : class, IBook
     {
-        public async Task AssignAsync(TEntity entity, IAssignable assignee, string assigneeType)
+        public async Task AssignAsync(TEntity entity, IAssignee assignee, string assigneeType)
         {
 
             if (assigneeType == "Author")
@@ -26,7 +26,7 @@
             }
         }
 
-        public async Task<bool> IsAlreadyAssigned(TEntity entity, IAssignable assignee, string assigneeType)
+        public async Task<bool> IsAlreadyAssigned(TEntity entity, IAssignee assignee, string assigneeType)
         {
             var isAlreadyAssigned = false;
 
