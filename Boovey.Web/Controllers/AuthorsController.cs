@@ -22,6 +22,7 @@
         private readonly ISearchService<Author> authorSearchService;
         private readonly ISearchService<Country> countySearchService;
         private readonly IMapper mapper;
+
         public AuthorsController(IAuthorService authorService, ISearchService<Author> authorSearchService, ISearchService<Country> countySearchService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.authorService = authorService;
