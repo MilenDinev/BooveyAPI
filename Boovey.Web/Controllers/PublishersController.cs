@@ -6,6 +6,8 @@
     using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
     using Base;
+    using Services.Constants;
+    using Services.Exceptions;
     using Services.Interfaces;
     using Services.Interfaces.IHandlers;
     using Data.Entities;
@@ -37,9 +39,9 @@
         public async Task<ActionResult> Create(CreatePublisherModel publisherInput)
         {
             await AssignCurrentUserAsync();
-            //var alreadyExists = await this.publisherSearchService.ContainsActiveByNameAsync(publisherInput.Name);
-            //if (alreadyExists)
-            //    throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Publisher)));
+            var alreadyExists = await this.publisherSearchService.ContainsActiveByStringAsync(publisherInput.Name);
+            if (alreadyExists)
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Publisher)));
 
             var addedPublisher = await this.publisherService.CreateAsync(publisherInput, CurrentUser.Id);
             return CreatedAtAction(nameof(Get), "Publishers", new { id = addedPublisher.Id }, addedPublisher);
