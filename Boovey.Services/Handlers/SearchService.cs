@@ -70,10 +70,17 @@
 
             return entities.Where(s => !s.Deleted).ToList();
         }
+
+
         public async Task<bool> ContainsActiveByStringAsync(string stringValue)
         {
             var entities = await this.dbContext.Set<TEntity>().ToListAsync();
-            var contains = entities.Any(e => e.NormalizedName == stringValue.ToUpper() && !e.Deleted);
+            return await ContainsActiveByStringAsync(stringValue, entities);
+        }
+
+        public async Task<bool> ContainsActiveByStringAsync(string stringValue, ICollection<TEntity> collection)
+        {
+            var contains = collection.Any(e => e.NormalizedName == stringValue.ToUpper() && !e.Deleted);
 
             return await Task.FromResult(contains);
         }
