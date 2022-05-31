@@ -19,19 +19,19 @@
     public class ShelvesController : BooveyBaseController
     {
         private readonly IShelveService shelveService;
-        private readonly ISearchService<Shelve> shelveSearchService;
+        private readonly ISearchService<Shelve> searchService;
         private readonly IMapper mapper;
-        public ShelvesController(IShelveService shelveService, ISearchService<Shelve> shelveSearchService, IMapper mapper, IUserService userService) : base(userService)
+        public ShelvesController(IShelveService shelveService, ISearchService<Shelve> searchService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.shelveService = shelveService;
-            this.shelveSearchService = shelveSearchService;
+            this.searchService = searchService;
             this.mapper = mapper;
         }
 
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<ShelveListingModel>>> Get()
         {
-            var allShelves = await this.shelveSearchService.GetAllActiveAsync();
+            var allShelves = await this.searchService.GetAllActiveAsync();
             return mapper.Map<ICollection<ShelveListingModel>>(allShelves).ToList();
         }
 
@@ -39,7 +39,7 @@
         public async Task<ActionResult> Create(CreateShelveModel shelveInput)
         {
             await AssignCurrentUserAsync();
-            var alreadyExists = await this.shelveSearchService.ContainsActiveByStringAsync(shelveInput.Title, CurrentUser.Shelves);
+            var alreadyExists = await this.searchService.ContainsActiveByStringAsync(shelveInput.Title, CurrentUser.Shelves);
             if (alreadyExists)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Shelve)));
 
@@ -53,7 +53,7 @@
         public async Task<ActionResult<EditedShelveModel>> Edit(EditShelveModel shelveInput, int shelveId)
         {
             await AssignCurrentUserAsync();
-            var shelve = await this.shelveSearchService.GetActiveByIdAsync(shelveId, nameof(Shelve));
+            var shelve = await this.searchService.GetActiveShelveByIdAsync(shelveId);
             await this.shelveService.EditAsync(shelve, shelveInput, CurrentUser.Id);
 
             return mapper.Map<EditedShelveModel>(shelve);
@@ -64,7 +64,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var shelve = await this.shelveSearchService.GetActiveByIdAsync(shelveId, nameof(Shelve));
+            var shelve = await this.searchService.GetActiveShelveByIdAsync(shelveId);
             var addedFavoriteShelve = await this.shelveService.AddFavoriteAsync(shelve, CurrentUser);
 
             addedFavoriteShelve.UserId = CurrentUser.Id;
@@ -76,7 +76,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var shelve = await this.shelveSearchService.GetActiveByIdAsync(shelveId, nameof(Shelve));
+            var shelve = await this.searchService.GetActiveShelveByIdAsync(shelveId);
             var removedFavoriteShelve = await this.shelveService.RemoveFavoriteAsync(shelve, CurrentUser);
 
             removedFavoriteShelve.UserId = CurrentUser.Id;
@@ -87,7 +87,7 @@
         public async Task<DeletedShelveModel> Delete(int shelveId)
         {
             await AssignCurrentUserAsync();
-            var shelve = await this.shelveSearchService.GetActiveByIdAsync(shelveId, nameof(Shelve));
+            var shelve = await this.searchService.GetActiveShelveByIdAsync(shelveId);
             await this.shelveService.DeleteAsync(shelve, CurrentUser.Id);
             return mapper.Map<DeletedShelveModel>(shelve);
         }

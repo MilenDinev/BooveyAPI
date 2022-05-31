@@ -15,12 +15,12 @@
     public class QuotesController : BooveyBaseController
     {
         private readonly IQuoteService quoteService;
-        private readonly ISearchService<Quote> quoteSearchService;
+        private readonly ISearchService<Quote> searchService;
         private readonly IMapper mapper;
-        public QuotesController(IQuoteService quoteService, ISearchService<Quote> quoteSearchService, IMapper mapper, IUserService userService) : base(userService)
+        public QuotesController(IQuoteService quoteService, ISearchService<Quote> searchService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.quoteService = quoteService;
-            this.quoteSearchService = quoteSearchService;
+            this.searchService = searchService;
             this.mapper = mapper;
         }
 
@@ -37,7 +37,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quoteSearchService.GetActiveByIdAsync(quoteId, nameof(Quote));
+            var quote = await this.searchService.GetActiveQuoteByIdAsync(quoteId);
             await this.quoteService.EditAsync(quote, quoteInput, CurrentUser.Id);
 
             return mapper.Map<EditedQuoteModel>(quote); ;
@@ -48,7 +48,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quoteSearchService.GetActiveByIdAsync(quoteId, nameof(Quote));
+            var quote = await this.searchService.GetActiveQuoteByIdAsync(quoteId);
             var addedFavoriteQuote = await this.quoteService.AddFavoriteAsync(quote, CurrentUser);
 
             return addedFavoriteQuote;
@@ -59,7 +59,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quoteSearchService.GetActiveByIdAsync(quoteId, nameof(Quote));
+            var quote = await this.searchService.GetActiveQuoteByIdAsync(quoteId);
             var removedFavoriteQuote = await this.quoteService.RemoveFavoriteAsync(quote, CurrentUser);
 
             return removedFavoriteQuote;
@@ -69,7 +69,7 @@
         public async Task<DeletedQuoteModel> Delete(int quoteId)
         {
             await AssignCurrentUserAsync();
-            var quote = await this.quoteSearchService.GetActiveByIdAsync(quoteId, nameof(Quote));
+            var quote = await this.searchService.GetActiveQuoteByIdAsync(quoteId);
             await this.quoteService.DeleteAsync(quote, CurrentUser.Id);
             return mapper.Map<DeletedQuoteModel>(quote);
         }

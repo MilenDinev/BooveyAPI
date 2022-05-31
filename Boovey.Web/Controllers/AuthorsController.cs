@@ -19,29 +19,27 @@
     public class AuthorsController : BooveyBaseController
     {
         private readonly IAuthorService authorService;
-        private readonly ISearchService<Author> authorSearchService;
-        private readonly ISearchService<Country> countySearchService;
+        private readonly ISearchService<Entity> searchService;
         private readonly IMapper mapper;
 
-        public AuthorsController(IAuthorService authorService, ISearchService<Author> authorSearchService, ISearchService<Country> countySearchService, IMapper mapper, IUserService userService) : base(userService)
+        public AuthorsController(IAuthorService authorService, ISearchService<Entity> searchService, IMapper mapper, IUserService userService) : base(userService)
         {
             this.authorService = authorService;
-            this.authorSearchService = authorSearchService;
-            this.countySearchService = countySearchService;
+            this.searchService = searchService;
             this.mapper = mapper;
         }
 
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<AuthorListingModel>>> Get()
         {
-            var allGenres = await this.authorSearchService.GetAllActiveAsync();
+            var allGenres = await this.searchService.GetAllActiveAsync();
             return mapper.Map<ICollection<AuthorListingModel>>(allGenres).ToList();
         }
 
         [HttpGet("Get/Author/{authorId}")]
         public async Task<ActionResult<AuthorListingModel>> GetById(int authorId)
         {
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+            var author = await this.searchService.GetActiveAuthorByIdAsync(authorId);
             return mapper.Map<AuthorListingModel>(author);
         }
 
@@ -49,11 +47,11 @@
         public async Task<ActionResult> Create(CreateAuthorModel authorInput)
         {
             await AssignCurrentUserAsync();
-            var alreadyExists = await this.authorSearchService.ContainsActiveByStringAsync(authorInput.Fullname);
+            var alreadyExists = await this.searchService.ContainsActiveByStringAsync(authorInput.Fullname);
             if (alreadyExists)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Author)));
 
-            await this.countySearchService.GetActiveByIdAsync(authorInput.CountryId, nameof(Country));
+            await this.searchService.GetActiveCountryByIdAsync(authorInput.CountryId);
             var author = await this.authorService.CreateAsync(authorInput, CurrentUser.Id);
             var createdAuthor = mapper.Map<CreatedAuthorModel>(author);
 
@@ -64,8 +62,8 @@
         public async Task<ActionResult<EditedAuthorModel>> Edit(EditAuthorModel authorInput, int authorId)
         {
             await AssignCurrentUserAsync();
-            await this.countySearchService.GetActiveByIdAsync(authorInput.CountryId, nameof(Country));
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+            await this.searchService.GetActiveCountryByIdAsync(authorInput.CountryId);
+            var author = await this.searchService.GetActiveAuthorByIdAsync(authorId);
             await this.authorService.EditAsync(author, authorInput, CurrentUser.Id);
 
             return mapper.Map<EditedAuthorModel>(author);
@@ -75,7 +73,7 @@
         public async Task<AddedFavoriteAuthorModel> AddFavorite(int authorId)
         {
             await AssignCurrentUserAsync();
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+            var author = await this.searchService.GetActiveAuthorByIdAsync(authorId);
             await this.authorService.AddFavoriteAuthorAsync(author, CurrentUser);
             return mapper.Map<AddedFavoriteAuthorModel>(author);
         }
@@ -84,7 +82,7 @@
         public async Task<RemovedFavoriteAuthorModel> RemoveFavorite(int authorId)
         {
             await AssignCurrentUserAsync();
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+            var author = await this.searchService.GetActiveAuthorByIdAsync(authorId);
             await this.authorService.RemoveFavoriteAuthorAsync(author, CurrentUser);
             var removedFavoriteAuthor = mapper.Map<RemovedFavoriteAuthorModel>(author);
             removedFavoriteAuthor.UserId = CurrentUser.Id;
@@ -95,7 +93,7 @@
         public async Task<DeletedAuthorModel> Delete(int authorId)
         {
             await AssignCurrentUserAsync();
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+            var author = await this.searchService.GetActiveAuthorByIdAsync(authorId);
             await this.authorService.DeleteAsync(author, CurrentUser.Id);
             return mapper.Map<DeletedAuthorModel>(author);
         }
