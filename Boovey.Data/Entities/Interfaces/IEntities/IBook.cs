@@ -9,7 +9,6 @@
 
         public string CoverUrl { get; set; }
         public string Title { get; set; }
-        public string NormalizedTitle { get; set; }
         public int Pages { get; set; }
         public DateTime PublicationDate { get; set; }
         public int CountryId { get; set; }

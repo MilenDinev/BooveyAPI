@@ -5,6 +5,5 @@
     internal interface IPublisher : IBookAssignable
     {
         string Name { get; set; }
-        string NormalizedName { get; set; }
     }
 }

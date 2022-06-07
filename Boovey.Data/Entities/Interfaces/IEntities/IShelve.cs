@@ -6,7 +6,6 @@
     internal interface IShelve : IBookAssignable
     {
         string Title { get; set; }
-        string NormalizedTitle { get; set; }
         User Creator { get; set; }
         ICollection<User> FavoriteByUsers { get; set; }
     }

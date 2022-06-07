@@ -5,6 +5,5 @@
     internal interface ICountry : IAuthorAssignable, IBookAssignable
     {
         string Name { get; set; }
-        string NormalizedName { get; set; }
     }
 }
