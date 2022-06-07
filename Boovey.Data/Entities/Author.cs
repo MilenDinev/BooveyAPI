@@ -1,9 +1,9 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
-    using Interfaces;
+    using Entities.Interfaces.IEntities;
 
-    public class Author : Entity, IAssignee, ISearchable
+    public class Author : Entity, IAuthor
     {
         public Author()
         {

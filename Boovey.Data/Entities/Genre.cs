@@ -1,9 +1,9 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
-    using Interfaces;
+    using Interfaces.IEntities;
 
-    public class Genre : Entity, IAssignee, ISearchable
+    public class Genre : Entity, IGenre
     {
         public Genre()
         {

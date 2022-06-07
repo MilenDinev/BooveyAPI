@@ -1,7 +1,7 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System;
-    using Interfaces;
+    using Interfaces.IEntities;
 
     public abstract class Entity : IEntity
     {
