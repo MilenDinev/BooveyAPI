@@ -7,12 +7,11 @@
     using Microsoft.AspNetCore.Authorization;
     using AutoMapper;
     using Base;
-    using Services.Constants;
-    using Services.Interfaces;
-    using Services.Exceptions;
     using Services.Interfaces.IHandlers;
+    using Services.Interfaces.IEntities;
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
+    using Models.Responses.SharedModels;
     using Data.Entities;
 
     [Route("api/[controller]")]
@@ -21,30 +20,36 @@
     public class BooksController : BooveyBaseController
     {
         private readonly IBookService bookService;
-        private readonly ISearchService<Entity> searchService;
+        private readonly ISearchService searchService;
+        private readonly IValidator validator;
         private readonly IMapper mapper;
 
-        public BooksController(IBookService bookService, 
-            ISearchService<Entity> searchService,
-           IMapper mapper, IUserService userService) 
+        public BooksController(IBookService bookService,
+            ISearchService searchService,
+            IValidator validator,
+            IMapper mapper,
+            IUserService userService)
             : base(userService)
         {
             this.bookService = bookService;
             this.searchService = searchService;
+            this.validator = validator;
             this.mapper = mapper;
         }
 
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<BookListingModel>>> Get()
         {
-            var allBooks = await this.searchService.GetAllActiveAsync();
+            var allBooks = await this.searchService.GetAllActiveAsync<Book>();
             return mapper.Map<ICollection<BookListingModel>>(allBooks).ToList();
         }
 
         [HttpGet("Get/Book/{bookId}")]
         public async Task<ActionResult<BookListingModel>> GetById(int bookId)
         {
-            var book = await this.searchService.GetActiveBookByIdAsync(bookId);
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
             return mapper.Map<BookListingModel>(book);
         }
 
@@ -52,32 +57,89 @@
         public async Task<ActionResult> Create(CreateBookModel bookInput)
         {
             await AssignCurrentUserAsync();
-            var alreadyExists = await this.searchService.ContainsActiveByStringAsync(bookInput.Title);
-            if (alreadyExists)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Book)));
 
-            await this.searchService.GetActiveCountryByIdAsync(bookInput.CountryId);
-            var book = await this.bookService.CreateAsync(bookInput, CurrentUser.Id);
-            var createdBook = mapper.Map<CreatedBookModel>(book);
+            var book = await this.searchService.FindByStringOrDefaultAsync<Book>(bookInput.Title);
+            await this.validator.ValidateUniqueEntityAsync(book);
 
-            return CreatedAtAction(nameof(Get), "Books", new { id = createdBook.Id }, createdBook);
+            var country = await this.searchService.FindByIdOrDefaultAsync<Country>(bookInput.CountryId);
+            await this.validator.ValidateEntityAsync(country, bookInput.CountryId.ToString());
+
+            book = await this.bookService.CreateAsync(bookInput, CurrentUser.Id);
+            var bookResponse = mapper.Map<CreatedBookModel>(book);
+
+            return CreatedAtAction(nameof(Get), "Books", new { id = bookResponse.Id }, bookResponse);
         }
 
         [HttpPut("Edit/Book/{bookId}")]
         public async Task<ActionResult<EditedBookModel>> Edit(EditBookModel bookInput, int bookId)
         {
             await AssignCurrentUserAsync();
-            await this.searchService.GetActiveCountryByIdAsync(bookInput.CountryId);
-            var book = await this.searchService.GetActiveBookByIdAsync(bookId);
+
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
+            var country = await this.searchService.FindByIdOrDefaultAsync<Country>(bookInput.CountryId);
+            await this.validator.ValidateEntityAsync(country, bookInput.CountryId.ToString());
+
             await this.bookService.EditAsync(book, bookInput, CurrentUser.Id);
             return mapper.Map<EditedBookModel>(book);
+        }
+
+        [HttpPut("Assign/Book/{bookId}/Author/{authorId}")]
+        public async Task<AssignedBookAuthorModel> AssignAuthor(int bookId, int authorId)
+        {
+            await AssignCurrentUserAsync();
+
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
+            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+
+            // to be optimized
+            var updatedBook = await this.bookService.AssignAuthorAsync(book, author, CurrentUser.Id);
+            return mapper.Map<AssignedBookAuthorModel>(updatedBook);
+        }
+
+        [HttpPut("Assign/Book/{bookId}/Genre/{genreId}")]
+        public async Task<AssignedBookGenreModel> AssignGenre(int bookId, int genreId)
+        {
+            await AssignCurrentUserAsync();
+
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
+            var genre = await this.searchService.FindByIdOrDefaultAsync<Genre>(genreId);
+            await this.validator.ValidateEntityAsync(genre, genreId.ToString());
+
+            var updatedBook = await this.bookService.AssignGenreAsync(book, genre, CurrentUser.Id);
+
+            return mapper.Map<AssignedBookGenreModel>(updatedBook);
+        }
+
+        [HttpPut("Assign/Book/{bookId}/Publisher/{publisherId}")]
+        public async Task<AssignedBookPublisherModel> AssignPublisher(int bookId, int publisherId)
+        {
+            await AssignCurrentUserAsync();
+
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
+            var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
+            await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
+
+            var updatedBook = await this.bookService.AssignPublisherAsync(book, publisher, CurrentUser.Id);
+            return mapper.Map<AssignedBookPublisherModel>(updatedBook);
         }
 
         [HttpPut("Favorites/Add/Book/{bookId}")]
         public async Task<AddedFavoriteBookModel> AddFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.searchService.GetActiveBookByIdAsync(bookId);
+
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
             await this.bookService.AddFavoriteAsync(book, CurrentUser);
             return mapper.Map<AddedFavoriteBookModel>(book);
         }
@@ -86,7 +148,10 @@
         public async Task<RemovedFavoriteBookModel> RemoveFavorite(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.searchService.GetActiveBookByIdAsync(bookId);
+
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
             await this.bookService.RemoveFavoriteAsync(book, CurrentUser);
             var removedFavoriteBook = mapper.Map<RemovedFavoriteBookModel>(book);
             removedFavoriteBook.UserId = CurrentUser.Id;
@@ -97,7 +162,9 @@
         public async Task<DeletedBookModel> Delete(int bookId)
         {
             await AssignCurrentUserAsync();
-            var book = await this.searchService.GetActiveBookByIdAsync(bookId);
+
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+
             await this.bookService.DeleteAsync(book, CurrentUser.Id);
             return mapper.Map<DeletedBookModel>(book);
         }
