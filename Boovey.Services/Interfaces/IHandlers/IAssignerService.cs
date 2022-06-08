@@ -4,7 +4,7 @@
     using Data.Entities;
     using Data.Entities.Interfaces.IAssignables;
 
-    public interface IAssignService
+    public interface IAssignerService
     {
         Task AssignBookAsync(IBookAssignable entity, Book book);
         Task AssignAuthorAsync(IAuthorAssignable entity, Author author);
