@@ -10,8 +10,6 @@
         Task EditAsync(Author author, EditAuthorModel model, int modifierId);
         Task DeleteAsync(Author author, int modifierId);
 
-        Task<Author> AssignGenreAsync(Author author, Genre genre, int modifierId);
-
         Task AddFavoriteAuthorAsync(Author author, User user);
         Task RemoveFavoriteAuthorAsync(Author author, User user);
         Task SaveModificationAsync(Author author, int modifierId);
