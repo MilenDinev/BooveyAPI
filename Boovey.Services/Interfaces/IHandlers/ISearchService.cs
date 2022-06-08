@@ -2,27 +2,13 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Data.Entities;
     using Data.Entities.Interfaces.IEntities;
 
-    public interface ISearchService<TEntity> where TEntity : class, IEntity
+    public interface ISearchService
     {
-        Task<TEntity> GetByIdAsync(int id, string type);
-        Task<TEntity> GetByStringAsync(string stringValue, string type);
-        Task<Book> GetActiveBookByIdAsync(int id);
-        Task<Author> GetActiveAuthorByIdAsync(int id);
-        Task<Genre> GetActiveGenreByIdAsync(int id);
-        Task<Publisher> GetActivePublisherByIdAsync(int id);
-        Task<Review> GetActiveReviewByIdAsync(int id);
-        Task<Quote> GetActiveQuoteByIdAsync(int id);
-        Task<Shelve> GetActiveShelveByIdAsync(int id);
-        Task<Country> GetActiveCountryByIdAsync(int id);
-        Task<TEntity> GetActiveByStringAsync(string stringValue, string type);
-        Task<ICollection<TEntity>> GetAllAsync();
-        Task<ICollection<TEntity>> GetAllActiveAsync();
-        Task<TEntity> FindByIdOrDefaultAsync(int id);
-        Task<TEntity> FindByStringOrDefaultAsync(string stringValue);
-        Task<bool> ContainsActiveByStringAsync(string stringValue);
-        Task<bool> ContainsActiveByStringAsync(string stringValue, ICollection<TEntity> collection);
+        Task<T> FindByIdOrDefaultAsync<T>(int id) where T : class, IEntity;
+        Task<T> FindByStringOrDefaultAsync<T>(string stringValue) where T : class, IEntity;
+        Task<ICollection<T>> GetAllAsync<T>() where T : class, IEntity;
+        Task<ICollection<T>> GetAllActiveAsync<T>() where T : class, IEntity;
     }
 }
