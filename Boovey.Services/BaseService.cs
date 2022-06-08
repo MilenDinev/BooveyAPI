@@ -3,7 +3,7 @@
     using System;
     using System.Threading.Tasks;
     using Data;
-    using Data.Entities.Interfaces;
+    using Data.Entities.Interfaces.IEntities;
 
     public abstract class BaseService<TEntity> where TEntity : class, IEntity
     {

@@ -4,7 +4,7 @@
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
-    using Interfaces;
+    using Interfaces.IEntities;
     using Exceptions;
     using Constants;
     using Data;
