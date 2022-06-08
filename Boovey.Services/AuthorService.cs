@@ -3,9 +3,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Interfaces;
     using Exceptions;
     using Constants;
+    using Interfaces.IEntities;
     using Data;
     using Data.Entities;
     using Models.Requests.AuthorModels;
