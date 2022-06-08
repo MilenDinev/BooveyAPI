@@ -14,5 +14,6 @@
 
         Task AddFavoriteAuthorAsync(Author author, User user);
         Task RemoveFavoriteAuthorAsync(Author author, User user);
+        Task SaveModificationAsync(Author author, int modifierId);
     }
 }
