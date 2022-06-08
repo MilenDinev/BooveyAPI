@@ -26,7 +26,7 @@
         }
 
         
-        protected async Task SaveModificationAsync(TEntity entity, int modifierId)
+        public async Task SaveModificationAsync(TEntity entity, int modifierId)
         {
             entity.LastModifierId = modifierId;
             entity.LastModifiedOn = DateTime.UtcNow;
