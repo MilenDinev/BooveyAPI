@@ -20,18 +20,22 @@
     public class BooksController : BooveyBaseController
     {
         private readonly IBookService bookService;
+        private readonly IAssigner assigner;
         private readonly ISearchService searchService;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public BooksController(IBookService bookService,
+
             ISearchService searchService,
+            IAssigner assigner,
             IValidator validator,
             IMapper mapper,
             IUserService userService)
             : base(userService)
         {
             this.bookService = bookService;
+            this.assigner = assigner;
             this.searchService = searchService;
             this.validator = validator;
             this.mapper = mapper;
@@ -97,8 +101,10 @@
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
             // to be optimized
-            var updatedBook = await this.bookService.AssignAuthorAsync(book, author, CurrentUser.Id);
-            return mapper.Map<AssignedBookAuthorModel>(updatedBook);
+            await this.assigner.AssignAuthorAsync(book, author);
+            await this.bookService.SaveModificationAsync(book, CurrentUser.Id);
+
+            return mapper.Map<AssignedBookAuthorModel>(book);
         }
 
         [HttpPut("Assign/Book/{bookId}/Genre/{genreId}")]
@@ -112,9 +118,10 @@
             var genre = await this.searchService.FindByIdOrDefaultAsync<Genre>(genreId);
             await this.validator.ValidateEntityAsync(genre, genreId.ToString());
 
-            var updatedBook = await this.bookService.AssignGenreAsync(book, genre, CurrentUser.Id);
+            await this.assigner.AssignGenreAsync(book, genre);
+            await this.bookService.SaveModificationAsync(book, CurrentUser.Id);
 
-            return mapper.Map<AssignedBookGenreModel>(updatedBook);
+            return mapper.Map<AssignedBookGenreModel>(book);
         }
 
         [HttpPut("Assign/Book/{bookId}/Publisher/{publisherId}")]
@@ -128,8 +135,10 @@
             var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
             await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
 
-            var updatedBook = await this.bookService.AssignPublisherAsync(book, publisher, CurrentUser.Id);
-            return mapper.Map<AssignedBookPublisherModel>(updatedBook);
+            await this.assigner.AssignPublisherAsync(book, publisher);
+            await this.bookService.SaveModificationAsync(book, CurrentUser.Id);
+
+            return mapper.Map<AssignedBookPublisherModel>(book);
         }
 
         [HttpPut("Favorites/Add/Book/{bookId}")]
