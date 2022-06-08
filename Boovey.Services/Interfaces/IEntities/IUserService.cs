@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services.Interfaces
+﻿namespace Boovey.Services.Interfaces.IEntities
 {
     using System.Collections.Generic;
     using System.Security.Claims;
