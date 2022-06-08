@@ -24,7 +24,7 @@
             services.AddTransient<IQuoteService, QuoteService>();
             services.AddTransient<IReviewService, ReviewService>();
             services.AddTransient<IShelveService, ShelveService>();
-            services.AddTransient<IAssignerService, AssignerService>();
+            services.AddTransient<IAssigner, Assigner>();
             services.AddTransient<ISearchService, SearchService>();
             services.AddTransient<IEntityChecker, EntityChecker>();
             services.AddTransient<IValidator, Validator>();
