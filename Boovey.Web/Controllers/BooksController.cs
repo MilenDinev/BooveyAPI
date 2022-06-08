@@ -100,7 +100,7 @@
             var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
-            // to be optimized
+            await this.validator.ValidateAssigningAuthor(book, author);
             await this.assigner.AssignAuthorAsync(book, author);
             await this.bookService.SaveModificationAsync(book, CurrentUser.Id);
 
@@ -118,6 +118,7 @@
             var genre = await this.searchService.FindByIdOrDefaultAsync<Genre>(genreId);
             await this.validator.ValidateEntityAsync(genre, genreId.ToString());
 
+            await this.validator.ValidateAssigningGenre(book, genre);
             await this.assigner.AssignGenreAsync(book, genre);
             await this.bookService.SaveModificationAsync(book, CurrentUser.Id);
 
@@ -135,6 +136,7 @@
             var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
             await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
 
+            await this.validator.ValidateAssigningPublisher(book, publisher);
             await this.assigner.AssignPublisherAsync(book, publisher);
             await this.bookService.SaveModificationAsync(book, CurrentUser.Id);
 
