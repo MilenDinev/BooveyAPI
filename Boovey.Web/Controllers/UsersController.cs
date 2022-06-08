@@ -6,7 +6,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
     using Base;
-    using Services.Interfaces;
+    using Services.Interfaces.IEntities;
     using Models.Requests;
     using Models.Responses.UserModels;
 
