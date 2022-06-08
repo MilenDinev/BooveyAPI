@@ -10,6 +10,7 @@
     using Services.Interfaces.IHandlers;
     using Data.Entities;
     using Models.Requests.AuthorModels;
+    using Models.Responses.SharedModels;
     using Models.Responses.AuthorModels;
 
     [Route("api/[controller]")]
@@ -17,11 +18,13 @@
     public class AuthorsController : BooveyBaseController
     {
         private readonly IAuthorService authorService;
+        private readonly IAssigner assigner;
         private readonly ISearchService searchService;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public AuthorsController(IAuthorService authorService, 
+            IAssigner assigner,
             ISearchService searchService,
             IValidator validator,
             IMapper mapper, 
@@ -29,6 +32,7 @@
             : base(userService)
         {
             this.authorService = authorService;
+            this.assigner = assigner;
             this.searchService = searchService;
             this.validator = validator;
             this.mapper = mapper;
@@ -81,6 +85,43 @@
 
             return mapper.Map<EditedAuthorModel>(author);
         }
+
+        [HttpPut("Assign/Author/{authorId}/Book/{bookId}")]
+        public async Task<AssignedBookAuthorModel> AssignBook(int authorId, int bookId)
+        {
+            await AssignCurrentUserAsync();
+
+            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+            
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);       
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
+            await this.validator.ValidateAssigningBook(author, book);
+            await this.assigner.AssignBookAsync(author, book);
+            await this.authorService.SaveModificationAsync(author, CurrentUser.Id);
+
+            return mapper.Map<AssignedBookAuthorModel>(book);
+        }
+
+        [HttpPut("Assign/Author/{authorId}/Genre/{genreId}")]
+        public async Task<AssignedAuthorGenreModel> AssignGenre(int authorId, int genreId)
+        {
+            await AssignCurrentUserAsync();
+
+            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+
+            var genre = await this.searchService.FindByIdOrDefaultAsync<Genre>(genreId);
+            await this.validator.ValidateEntityAsync(genre, genreId.ToString());
+
+            await this.validator.ValidateAssigningGenre(author, genre);
+            await this.assigner.AssignGenreAsync(author, genre);
+            await this.authorService.SaveModificationAsync(author, CurrentUser.Id);
+
+            return mapper.Map<AssignedAuthorGenreModel>(author);
+        }
+
 
         [HttpPut("Favorites/Add/Author/{authorId}")]
         public async Task<AddedFavoriteAuthorModel> AddFavorite(int authorId)

@@ -9,6 +9,7 @@
     using Services.Interfaces.IEntities;
     using Services.Interfaces.IHandlers;
     using Data.Entities;
+    using Models.Responses.SharedModels;
     using Models.Requests.PublisherModels;
     using Models.Responses.PublisherModels;
 
@@ -17,10 +18,12 @@
     public class PublishersController : BooveyBaseController
     {
         private readonly IPublisherService publisherService;
+        private readonly IAssigner assigner;
         private readonly ISearchService searchService;
         private readonly IValidator validator;
         private readonly IMapper mapper;
-        public PublishersController(IPublisherService publisherService, 
+        public PublishersController(IPublisherService publisherService,
+            IAssigner assigner,
             ISearchService searchService,
             IValidator validator,
             IMapper mapper, 
@@ -28,6 +31,7 @@
             : base(userService)
         {
             this.publisherService = publisherService;
+            this.assigner = assigner;
             this.searchService = searchService;
             this.validator = validator;
             this.mapper = mapper;
@@ -58,6 +62,7 @@
         public async Task<ActionResult<EditedPublisherModel>> Edit(EditPublisherModel publisherInput, int publisherId)
         {
             await AssignCurrentUserAsync();
+
             var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
             await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
             await this.publisherService.EditAsync(publisher, publisherInput, CurrentUser.Id);
@@ -69,10 +74,30 @@
         public async Task<DeletedPublisherModel> Delete(int publisherId)
         {
             await AssignCurrentUserAsync();
+
             var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
             await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
             await this.publisherService.DeleteAsync(publisher, CurrentUser.Id);
+
             return mapper.Map<DeletedPublisherModel>(publisher);
+        }
+
+        [HttpPut("Assign/Publisher/{publisherId}/Book/{bookId}")]
+        public async Task<AssignedBookPublisherModel> AssignBook(int publisherId, int bookId)
+        {
+            await AssignCurrentUserAsync();
+
+            var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
+            await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
+
+            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
+            await this.validator.ValidateAssigningBook(publisher, book);
+            await this.assigner.AssignBookAsync(publisher, book);
+            await this.publisherService.SaveModificationAsync(publisher, CurrentUser.Id);
+
+            return mapper.Map<AssignedBookPublisherModel>(book);
         }
     }
 }
