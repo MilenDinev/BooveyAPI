@@ -5,22 +5,20 @@
     using System.Globalization;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Interfaces;
+    using Interfaces.IEntities;
     using Exceptions;
     using Constants;
     using Data;
     using Data.Entities;
     using Models.Requests.BookModels;
-    using Services.Interfaces.IHandlers;
 
     public class BookService : BaseService<Book>, IBookService
     {
-        private readonly IAssignService<Book> assigningService;
         private readonly IMapper mapper;
-        public BookService(IAssignService<Book> assigningHandler, IMapper mapper, BooveyDbContext dbContext) 
+
+        public BookService(BooveyDbContext dbContext, IMapper mapper) 
             : base(dbContext)
         {
-            this.assigningService = assigningHandler;
             this.mapper = mapper;
         }
 
@@ -31,6 +29,7 @@
                 throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
 
             var book = mapper.Map<Book>(model);
+
             await CreateEntityAsync(book, creatorId);
             return book;
         }
@@ -47,6 +46,7 @@
             book.Publisher.Id = model.PublisherId;
 
             await SetTitleAsync(model.Title, book);
+
             await SaveModificationAsync(book, modifierId);
         }
         public async Task DeleteAsync(Book book, int modifierId)
@@ -58,6 +58,7 @@
         public async Task AddFavoriteAsync(Book book, User currentUser)
         {
             await AlreadyFavoriteBookChecker(book.Id, currentUser);
+
             currentUser.FavoriteBooks.Add(book);
 
             foreach (var genre in book.Genres)
@@ -77,45 +78,6 @@
             currentUser.FavoriteBooks.Remove(book);
 
             await SaveModificationAsync(book, currentUser.Id);
-        }
-
-        public async Task<Book> AssignAuthorAsync(Book book, Author author, string assigneeType, int modifierId)
-        {
-            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, author, assigneeType);
-
-            if (isAlreadyAssigned)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId,
-                    nameof(Author), author.Id, nameof(Book), book.Id));
-
-            await this.assigningService.AssignAsync(book, author, assigneeType);
-            await SaveModificationAsync(book, modifierId);
-            return book;
-        }
-        public async Task<Book> AssignGenreAsync(Book book, Genre genre, string assigneeType, int modifierId)
-        {
-            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, genre, assigneeType);
-
-            if (isAlreadyAssigned)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId,
-                    nameof(Genre), genre.Id, nameof(Book), book.Id));
-
-            await this.assigningService.AssignAsync(book, genre, assigneeType);
-            await SaveModificationAsync(book, modifierId);
-            return book;
-
-            
-        }
-        public async Task<Book> AssignPublisherAsync(Book book, Publisher publisher, string assigneeType, int modifierId)
-        {
-            var isAlreadyAssigned = await this.assigningService.IsAlreadyAssigned(book, publisher, assigneeType);
-
-            if (isAlreadyAssigned)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyAssignedId,
-                    nameof(Publisher), publisher.Id, nameof(Book), book.Id));
-
-            await this.assigningService.AssignAsync(book, publisher, assigneeType);
-            await SaveModificationAsync(book, modifierId);
-            return book;
         }
 
         private async Task SetTitleAsync(string title, Book book)
