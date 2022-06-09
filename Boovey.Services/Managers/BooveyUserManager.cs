@@ -8,9 +8,8 @@
     using Microsoft.Extensions.Options;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
-    using Interfaces;
+    using Interfaces.IManagers;
     using Data.Entities;
-    using Boovey.Services.Interfaces.IManagers;
 
     public class BooveyUserManager : UserManager<User>, IUserManager
     {
