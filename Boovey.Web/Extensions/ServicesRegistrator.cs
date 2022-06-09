@@ -25,7 +25,7 @@
             services.AddTransient<IReviewService, ReviewService>();
             services.AddTransient<IShelveService, ShelveService>();
             services.AddTransient<IAssigner, Assigner>();
-            services.AddTransient<ISearchService, SearchService>();
+            services.AddTransient<IFinder, Finder>();
             services.AddTransient<IEntityChecker, EntityChecker>();
             services.AddTransient<IValidator, Validator>();
             services.AddHttpContextAccessor();

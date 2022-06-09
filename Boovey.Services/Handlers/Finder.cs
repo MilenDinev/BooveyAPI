@@ -8,11 +8,11 @@
     using Data;
     using Data.Entities.Interfaces.IEntities;
 
-    public class SearchService : ISearchService
+    public class Finder : IFinder
     {
         private readonly BooveyDbContext dbContext;
 
-        public SearchService(BooveyDbContext dbContext)
+        public Finder(BooveyDbContext dbContext)
         {
             this.dbContext = dbContext;
         }

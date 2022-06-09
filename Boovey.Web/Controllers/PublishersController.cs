@@ -19,12 +19,12 @@
     {
         private readonly IPublisherService publisherService;
         private readonly IAssigner assigner;
-        private readonly ISearchService searchService;
+        private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
         public PublishersController(IPublisherService publisherService,
             IAssigner assigner,
-            ISearchService searchService,
+            IFinder finder,
             IValidator validator,
             IMapper mapper, 
             IUserService userService) 
@@ -32,7 +32,7 @@
         {
             this.publisherService = publisherService;
             this.assigner = assigner;
-            this.searchService = searchService;
+            this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
         }
@@ -40,7 +40,7 @@
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<PublisherListingModel>>> Get()
         {
-            var allPublishers = await this.searchService.GetAllActiveAsync<Publisher>();
+            var allPublishers = await this.finder.GetAllActiveAsync<Publisher>();
             return mapper.Map<ICollection<PublisherListingModel>>(allPublishers).ToList();
         }
 
@@ -48,7 +48,7 @@
         public async Task<ActionResult> Create(CreatePublisherModel publisherInput)
         {
             await AssignCurrentUserAsync();
-            var publisher = await this.searchService.FindByStringOrDefaultAsync<Publisher>(publisherInput.Name);
+            var publisher = await this.finder.FindByStringOrDefaultAsync<Publisher>(publisherInput.Name);
             await this.validator.ValidateUniqueEntityAsync(publisher);
 
             var addedPublisher = await this.publisherService.CreateAsync(publisherInput, CurrentUser.Id);
@@ -63,7 +63,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
+            var publisher = await this.finder.FindByIdOrDefaultAsync<Publisher>(publisherId);
             await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
             await this.publisherService.EditAsync(publisher, publisherInput, CurrentUser.Id);
 
@@ -75,7 +75,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
+            var publisher = await this.finder.FindByIdOrDefaultAsync<Publisher>(publisherId);
             await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
             await this.publisherService.DeleteAsync(publisher, CurrentUser.Id);
 
@@ -87,10 +87,10 @@
         {
             await AssignCurrentUserAsync();
 
-            var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
+            var publisher = await this.finder.FindByIdOrDefaultAsync<Publisher>(publisherId);
             await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
 
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
             await this.validator.ValidateAssigningBook(publisher, book);

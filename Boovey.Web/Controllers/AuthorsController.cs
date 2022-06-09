@@ -19,13 +19,13 @@
     {
         private readonly IAuthorService authorService;
         private readonly IAssigner assigner;
-        private readonly ISearchService searchService;
+        private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public AuthorsController(IAuthorService authorService, 
             IAssigner assigner,
-            ISearchService searchService,
+            IFinder finder,
             IValidator validator,
             IMapper mapper, 
             IUserService userService) 
@@ -33,7 +33,7 @@
         {
             this.authorService = authorService;
             this.assigner = assigner;
-            this.searchService = searchService;
+            this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
         }
@@ -41,14 +41,14 @@
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<AuthorListingModel>>> Get()
         {
-            var allGenres = await this.searchService.GetAllActiveAsync<Author>();
+            var allGenres = await this.finder.GetAllActiveAsync<Author>();
             return mapper.Map<ICollection<AuthorListingModel>>(allGenres).ToList();
         }
 
         [HttpGet("Get/Author/{authorId}")]
         public async Task<ActionResult<AuthorListingModel>> GetById(int authorId)
         {
-            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
             return mapper.Map<AuthorListingModel>(author);
@@ -58,10 +58,10 @@
         public async Task<ActionResult> Create(CreateAuthorModel authorInput)
         {
             await AssignCurrentUserAsync();
-            var author = await this.searchService.FindByStringOrDefaultAsync<Author>(authorInput.Fullname);
+            var author = await this.finder.FindByStringOrDefaultAsync<Author>(authorInput.Fullname);
             await this.validator.ValidateUniqueEntityAsync(author);
 
-            var country = await this.searchService.FindByIdOrDefaultAsync<Country>(authorInput.CountryId);
+            var country = await this.finder.FindByIdOrDefaultAsync<Country>(authorInput.CountryId);
             await this.validator.ValidateEntityAsync(country, authorInput.CountryId.ToString());
 
             author = await this.authorService.CreateAsync(authorInput, CurrentUser.Id);
@@ -75,10 +75,10 @@
         {
             await AssignCurrentUserAsync();
 
-            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
-            var country = await this.searchService.FindByIdOrDefaultAsync<Country>(authorInput.CountryId);
+            var country = await this.finder.FindByIdOrDefaultAsync<Country>(authorInput.CountryId);
             await this.validator.ValidateEntityAsync(country, authorInput.CountryId.ToString());
 
             await this.authorService.EditAsync(author, authorInput, CurrentUser.Id);
@@ -91,10 +91,10 @@
         {
             await AssignCurrentUserAsync();
 
-            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
             
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);       
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);       
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
             await this.validator.ValidateAssigningBook(author, book);
@@ -109,10 +109,10 @@
         {
             await AssignCurrentUserAsync();
 
-            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
-            var genre = await this.searchService.FindByIdOrDefaultAsync<Genre>(genreId);
+            var genre = await this.finder.FindByIdOrDefaultAsync<Genre>(genreId);
             await this.validator.ValidateEntityAsync(genre, genreId.ToString());
 
             await this.validator.ValidateAssigningGenre(author, genre);
@@ -128,7 +128,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
             await this.authorService.AddFavoriteAuthorAsync(author, CurrentUser);
@@ -140,7 +140,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
             await this.authorService.RemoveFavoriteAuthorAsync(author, CurrentUser);
@@ -154,7 +154,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
             await this.authorService.DeleteAsync(author, CurrentUser.Id);

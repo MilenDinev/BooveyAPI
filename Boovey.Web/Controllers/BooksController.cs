@@ -21,13 +21,13 @@
     {
         private readonly IBookService bookService;
         private readonly IAssigner assigner;
-        private readonly ISearchService searchService;
+        private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public BooksController(IBookService bookService,
 
-            ISearchService searchService,
+            IFinder finder,
             IAssigner assigner,
             IValidator validator,
             IMapper mapper,
@@ -36,7 +36,7 @@
         {
             this.bookService = bookService;
             this.assigner = assigner;
-            this.searchService = searchService;
+            this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
         }
@@ -44,14 +44,14 @@
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<BookListingModel>>> Get()
         {
-            var allBooks = await this.searchService.GetAllActiveAsync<Book>();
+            var allBooks = await this.finder.GetAllActiveAsync<Book>();
             return mapper.Map<ICollection<BookListingModel>>(allBooks).ToList();
         }
 
         [HttpGet("Get/Book/{bookId}")]
         public async Task<ActionResult<BookListingModel>> GetById(int bookId)
         {
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
             return mapper.Map<BookListingModel>(book);
@@ -62,10 +62,10 @@
         {
             await AssignCurrentUserAsync();
 
-            var book = await this.searchService.FindByStringOrDefaultAsync<Book>(bookInput.Title);
+            var book = await this.finder.FindByStringOrDefaultAsync<Book>(bookInput.Title);
             await this.validator.ValidateUniqueEntityAsync(book);
 
-            var country = await this.searchService.FindByIdOrDefaultAsync<Country>(bookInput.CountryId);
+            var country = await this.finder.FindByIdOrDefaultAsync<Country>(bookInput.CountryId);
             await this.validator.ValidateEntityAsync(country, bookInput.CountryId.ToString());
 
             book = await this.bookService.CreateAsync(bookInput, CurrentUser.Id);
@@ -79,10 +79,10 @@
         {
             await AssignCurrentUserAsync();
 
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
-            var country = await this.searchService.FindByIdOrDefaultAsync<Country>(bookInput.CountryId);
+            var country = await this.finder.FindByIdOrDefaultAsync<Country>(bookInput.CountryId);
             await this.validator.ValidateEntityAsync(country, bookInput.CountryId.ToString());
 
             await this.bookService.EditAsync(book, bookInput, CurrentUser.Id);
@@ -94,10 +94,10 @@
         {
             await AssignCurrentUserAsync();
 
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
-            var author = await this.searchService.FindByIdOrDefaultAsync<Author>(authorId);
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
             await this.validator.ValidateAssigningAuthor(book, author);
@@ -112,10 +112,10 @@
         {
             await AssignCurrentUserAsync();
 
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
-            var genre = await this.searchService.FindByIdOrDefaultAsync<Genre>(genreId);
+            var genre = await this.finder.FindByIdOrDefaultAsync<Genre>(genreId);
             await this.validator.ValidateEntityAsync(genre, genreId.ToString());
 
             await this.validator.ValidateAssigningGenre(book, genre);
@@ -130,10 +130,10 @@
         {
             await AssignCurrentUserAsync();
 
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
-            var publisher = await this.searchService.FindByIdOrDefaultAsync<Publisher>(publisherId);
+            var publisher = await this.finder.FindByIdOrDefaultAsync<Publisher>(publisherId);
             await this.validator.ValidateEntityAsync(publisher, publisherId.ToString());
 
             await this.validator.ValidateAssigningPublisher(book, publisher);
@@ -148,7 +148,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
             await this.bookService.AddFavoriteAsync(book, CurrentUser);
@@ -160,7 +160,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
             await this.bookService.RemoveFavoriteAsync(book, CurrentUser);
@@ -174,7 +174,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var book = await this.searchService.FindByIdOrDefaultAsync<Book>(bookId);
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
 
             await this.bookService.DeleteAsync(book, CurrentUser.Id);
             return mapper.Map<DeletedBookModel>(book);

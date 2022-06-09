@@ -4,7 +4,7 @@
     using System.Threading.Tasks;
     using Data.Entities.Interfaces.IEntities;
 
-    public interface ISearchService
+    public interface IFinder
     {
         Task<T> FindByIdOrDefaultAsync<T>(int id) where T : class, IEntity;
         Task<T> FindByStringOrDefaultAsync<T>(string stringValue) where T : class, IEntity;

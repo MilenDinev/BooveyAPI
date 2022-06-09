@@ -15,18 +15,18 @@
     public class QuotesController : BooveyBaseController
     {
         private readonly IQuoteService quoteService;
-        private readonly ISearchService searchService;
+        private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
         public QuotesController(IQuoteService quoteService,
-            ISearchService searchService,
+            IFinder finder,
             IValidator validator,
             IMapper mapper, 
             IUserService userService) 
             : base(userService)
         {
             this.quoteService = quoteService;
-            this.searchService = searchService;
+            this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
         }
@@ -35,7 +35,7 @@
         public async Task<ActionResult> Add(CreateQuoteModel quoteInput)
         {
             await AssignCurrentUserAsync();
-            var quote = await this.searchService.FindByStringOrDefaultAsync<Quote>(quoteInput.Content);
+            var quote = await this.finder.FindByStringOrDefaultAsync<Quote>(quoteInput.Content);
             await this.validator.ValidateUniqueEntityAsync(quote);
 
             var createdQuote = await this.quoteService.CreateAsync(quoteInput, CurrentUser.Id);
@@ -47,7 +47,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.searchService.FindByIdOrDefaultAsync<Quote>(quoteId);
+            var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
             await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
 
             await this.quoteService.EditAsync(quote, quoteInput, CurrentUser.Id);
@@ -60,7 +60,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.searchService.FindByIdOrDefaultAsync<Quote>(quoteId);
+            var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
             await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
 
             var addedFavoriteQuote = await this.quoteService.AddFavoriteAsync(quote, CurrentUser);
@@ -73,7 +73,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.searchService.FindByIdOrDefaultAsync<Quote>(quoteId);
+            var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
             await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
 
             var removedFavoriteQuote = await this.quoteService.RemoveFavoriteAsync(quote, CurrentUser);
@@ -86,7 +86,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.searchService.FindByIdOrDefaultAsync<Quote>(quoteId);
+            var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
             await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
 
             await this.quoteService.DeleteAsync(quote, CurrentUser.Id);

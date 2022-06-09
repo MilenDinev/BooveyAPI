@@ -17,19 +17,19 @@
     public class ShelvesController : BooveyBaseController
     {
         private readonly IShelveService shelveService;
-        private readonly ISearchService searchService;
+        private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public ShelvesController(IShelveService shelveService,
-            ISearchService searchService,
+            IFinder finder,
             IValidator validator,
             IMapper mapper, 
             IUserService userService) 
             : base(userService)
         {
             this.shelveService = shelveService;
-            this.searchService = searchService;
+            this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
         }
@@ -37,7 +37,7 @@
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<ShelveListingModel>>> Get()
         {
-            var allShelves = await this.searchService.GetAllActiveAsync<Shelve>();
+            var allShelves = await this.finder.GetAllActiveAsync<Shelve>();
             return mapper.Map<ICollection<ShelveListingModel>>(allShelves).ToList();
         }
 
@@ -45,7 +45,7 @@
         public async Task<ActionResult> Create(CreateShelveModel shelveInput)
         {
             await AssignCurrentUserAsync();
-            var shelve = await this.searchService.FindByStringOrDefaultAsync<Shelve>(shelveInput.Title);
+            var shelve = await this.finder.FindByStringOrDefaultAsync<Shelve>(shelveInput.Title);
             await this.validator.ValidateUniqueEntityAsync(shelve);
 
             shelve = await this.shelveService.CreateAsync(shelveInput, CurrentUser.Id);
@@ -59,7 +59,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var shelve = await this.searchService.FindByIdOrDefaultAsync<Shelve>(shelveId);
+            var shelve = await this.finder.FindByIdOrDefaultAsync<Shelve>(shelveId);
             await this.validator.ValidateEntityAsync(shelve, shelveId.ToString());
 
             await this.shelveService.EditAsync(shelve, shelveInput, CurrentUser.Id);
@@ -72,7 +72,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var shelve = await this.searchService.FindByIdOrDefaultAsync<Shelve>(shelveId);
+            var shelve = await this.finder.FindByIdOrDefaultAsync<Shelve>(shelveId);
             await this.validator.ValidateEntityAsync(shelve, shelveId.ToString());
 
             var addedFavoriteShelve = await this.shelveService.AddFavoriteAsync(shelve, CurrentUser);
@@ -86,7 +86,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var shelve = await this.searchService.FindByIdOrDefaultAsync<Shelve>(shelveId);
+            var shelve = await this.finder.FindByIdOrDefaultAsync<Shelve>(shelveId);
             await this.validator.ValidateEntityAsync(shelve, shelveId.ToString());
 
             var removedFavoriteShelve = await this.shelveService.RemoveFavoriteAsync(shelve, CurrentUser);
@@ -100,7 +100,7 @@
         {
             await AssignCurrentUserAsync();
 
-            var shelve = await this.searchService.FindByIdOrDefaultAsync<Shelve>(shelveId);
+            var shelve = await this.finder.FindByIdOrDefaultAsync<Shelve>(shelveId);
             await this.validator.ValidateEntityAsync(shelve, shelveId.ToString());
 
             await this.shelveService.DeleteAsync(shelve, CurrentUser.Id);

@@ -10,12 +10,12 @@
 
     public class Validator : IValidator
     {
-        private readonly ISearchService searchService;
+        private readonly IFinder finder;
         private readonly IEntityChecker entityChecker;
 
-        public Validator(ISearchService searchService, IEntityChecker entityChecker)
+        public Validator(IFinder finder, IEntityChecker entityChecker)
         {
-            this.searchService = searchService;
+            this.finder = finder;
             this.entityChecker = entityChecker;
         }
 
