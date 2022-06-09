@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using AutoMapper;
+    using Base;
     using Interfaces.IEntities;
     using Data;
     using Data.Entities;
