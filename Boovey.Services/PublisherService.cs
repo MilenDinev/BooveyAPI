@@ -2,7 +2,8 @@
 {
     using System.Threading.Tasks;
     using AutoMapper;
-    using Interfaces;
+    using Base;
+    using Interfaces.IEntities;
     using Data;
     using Data.Entities;
     using Models.Requests.PublisherModels;

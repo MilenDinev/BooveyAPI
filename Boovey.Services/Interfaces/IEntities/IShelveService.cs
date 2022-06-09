@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services.Interfaces
+﻿namespace Boovey.Services.Interfaces.IEntities
 {
     using System.Threading.Tasks;
     using Data.Entities;
@@ -13,5 +13,6 @@
 
         Task<AddedFavoriteShelveModel> AddFavoriteAsync(Shelve shelve, User currentUser);
         Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(Shelve shelve, User currentUser);
+        Task SaveModificationAsync(Shelve shelve, int modifierId);
     }
 }

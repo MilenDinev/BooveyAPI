@@ -10,6 +10,7 @@
     using Microsoft.EntityFrameworkCore;
     using Interfaces;
     using Data.Entities;
+    using Boovey.Services.Interfaces.IManagers;
 
     public class BooveyUserManager : UserManager<User>, IUserManager
     {

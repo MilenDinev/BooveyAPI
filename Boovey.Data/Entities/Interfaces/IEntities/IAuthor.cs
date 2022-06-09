@@ -6,7 +6,6 @@
     public interface IAuthor : IBookAssignable, IGenreAssignable
     {
         public string Fullname { get; set; }
-        public string NormalizedName { get; set; }
         public int CountryId { get; set; }
         public Country Country { get; set; }
         public string Summary { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services.Interfaces
+﻿namespace Boovey.Services.Interfaces.IEntities
 {
     using System.Threading.Tasks;
     using Data.Entities;
@@ -9,5 +9,6 @@
         Task<Review> CreateAsync(CreateReviewModel model, int creatorId);
         Task EditAsync(Review review, EditReviewModel model, int modifierId);
         Task DeleteAsync(Review review, int modifierId);
+        Task SaveModificationAsync(Review review, int modifierId);
     }
 }

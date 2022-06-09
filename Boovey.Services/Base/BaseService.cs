@@ -1,9 +1,9 @@
-﻿namespace Boovey.Services
+﻿namespace Boovey.Services.Base
 {
     using System;
     using System.Threading.Tasks;
     using Data;
-    using Data.Entities.Interfaces;
+    using Data.Entities.Interfaces.IEntities;
 
     public abstract class BaseService<TEntity> where TEntity : class, IEntity
     {
@@ -25,20 +25,20 @@
             await SaveModificationAsync(entity, modifierId);
         }
 
-        
-        protected async Task SaveModificationAsync(TEntity entity, int modifierId)
+
+        public async Task SaveModificationAsync(TEntity entity, int modifierId)
         {
             entity.LastModifierId = modifierId;
             entity.LastModifiedOn = DateTime.UtcNow;
 
-            await this.dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
         private async Task AddEntityAsync(TEntity entity, int creatorId)
         {
-            
+
             entity.CreatorId = creatorId;
             entity.CreatedOn = DateTime.UtcNow;
-            await this.dbContext.AddAsync(entity);
+            await dbContext.AddAsync(entity);
         }
     }
 }

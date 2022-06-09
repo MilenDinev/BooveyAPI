@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Boovey.Data.Migrations
 {
     [DbContext(typeof(BooveyDbContext))]
-    [Migration("20220509214859_AddingNormalizedNameProperty")]
+    [Migration("20220605202136_AddingNormalizedNameProperty")]
     partial class AddingNormalizedNameProperty
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

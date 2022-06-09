@@ -3,9 +3,10 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Interfaces;
-    using Exceptions;
+    using Interfaces.IEntities;
+    using Base;
     using Constants;
+    using Exceptions;
     using Data;
     using Data.Entities;
     using Models.Requests.GenreModels;

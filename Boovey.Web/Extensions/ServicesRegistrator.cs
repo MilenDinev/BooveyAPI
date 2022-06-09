@@ -5,10 +5,10 @@
     using Constants;
     using Services;
     using Services.Managers;
-    using Services.Interfaces;
+    using Services.Interfaces.IEntities;
+    using Services.Interfaces.IManagers;
     using Services.Interfaces.IHandlers;
     using Services.Handlers;
-    using Data.Entities;
 
     public static class ServicesRegistrator
     {
@@ -24,15 +24,10 @@
             services.AddTransient<IQuoteService, QuoteService>();
             services.AddTransient<IReviewService, ReviewService>();
             services.AddTransient<IShelveService, ShelveService>();
-            services.AddTransient(typeof(IAssignService<Book>), typeof(AssignService<Book>));
-            services.AddTransient(typeof(ISearchService<Book>), typeof(SearchService<Book>));
-            services.AddTransient(typeof(ISearchService<Author>), typeof(SearchService<Author>));
-            services.AddTransient(typeof(ISearchService<Genre>), typeof(SearchService<Genre>));
-            services.AddTransient(typeof(ISearchService<Publisher>), typeof(SearchService<Publisher>));
-            services.AddTransient(typeof(ISearchService<Shelve>), typeof(SearchService<Shelve>));
-            services.AddTransient(typeof(ISearchService<Quote>), typeof(SearchService<Quote>));
-            services.AddTransient(typeof(ISearchService<Review>), typeof(SearchService<Review>));
-            services.AddTransient(typeof(ISearchService<Country>), typeof(SearchService<Country>));
+            services.AddTransient<IAssigner, Assigner>();
+            services.AddTransient<IFinder, Finder>();
+            services.AddTransient<IEntityChecker, EntityChecker>();
+            services.AddTransient<IValidator, Validator>();
             services.AddHttpContextAccessor();
         }
     }

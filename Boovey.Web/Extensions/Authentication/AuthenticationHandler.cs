@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using Constants;
-    using Services.Interfaces;
+    using Services.Interfaces.IEntities;
     using Models.Responses;
 
     public static class AuthenticationHandler

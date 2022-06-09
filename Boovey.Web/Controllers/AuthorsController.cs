@@ -6,12 +6,11 @@
     using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
     using Base;
-    using Services.Constants;
-    using Services.Exceptions;
-    using Services.Interfaces;
+    using Services.Interfaces.IEntities;
     using Services.Interfaces.IHandlers;
     using Data.Entities;
     using Models.Requests.AuthorModels;
+    using Models.Responses.SharedModels;
     using Models.Responses.AuthorModels;
 
     [Route("api/[controller]")]
@@ -19,29 +18,39 @@
     public class AuthorsController : BooveyBaseController
     {
         private readonly IAuthorService authorService;
-        private readonly ISearchService<Author> authorSearchService;
-        private readonly ISearchService<Country> countySearchService;
+        private readonly IAssigner assigner;
+        private readonly IFinder finder;
+        private readonly IValidator validator;
         private readonly IMapper mapper;
 
-        public AuthorsController(IAuthorService authorService, ISearchService<Author> authorSearchService, ISearchService<Country> countySearchService, IMapper mapper, IUserService userService) : base(userService)
+        public AuthorsController(IAuthorService authorService, 
+            IAssigner assigner,
+            IFinder finder,
+            IValidator validator,
+            IMapper mapper, 
+            IUserService userService) 
+            : base(userService)
         {
             this.authorService = authorService;
-            this.authorSearchService = authorSearchService;
-            this.countySearchService = countySearchService;
+            this.assigner = assigner;
+            this.finder = finder;
+            this.validator = validator;
             this.mapper = mapper;
         }
 
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<AuthorListingModel>>> Get()
         {
-            var allGenres = await this.authorSearchService.GetAllActiveAsync();
+            var allGenres = await this.finder.GetAllActiveAsync<Author>();
             return mapper.Map<ICollection<AuthorListingModel>>(allGenres).ToList();
         }
 
         [HttpGet("Get/Author/{authorId}")]
         public async Task<ActionResult<AuthorListingModel>> GetById(int authorId)
         {
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+
             return mapper.Map<AuthorListingModel>(author);
         }
 
@@ -49,12 +58,13 @@
         public async Task<ActionResult> Create(CreateAuthorModel authorInput)
         {
             await AssignCurrentUserAsync();
-            var alreadyExists = await this.authorSearchService.ContainsActiveByStringAsync(authorInput.Fullname);
-            if (alreadyExists)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(Author)));
+            var author = await this.finder.FindByStringOrDefaultAsync<Author>(authorInput.Fullname);
+            await this.validator.ValidateUniqueEntityAsync(author);
 
-            await this.countySearchService.GetActiveByIdAsync(authorInput.CountryId, nameof(Country));
-            var author = await this.authorService.CreateAsync(authorInput, CurrentUser.Id);
+            var country = await this.finder.FindByIdOrDefaultAsync<Country>(authorInput.CountryId);
+            await this.validator.ValidateEntityAsync(country, authorInput.CountryId.ToString());
+
+            author = await this.authorService.CreateAsync(authorInput, CurrentUser.Id);
             var createdAuthor = mapper.Map<CreatedAuthorModel>(author);
 
             return CreatedAtAction(nameof(Get), "Authors", new { id = createdAuthor.Id }, createdAuthor);
@@ -64,18 +74,63 @@
         public async Task<ActionResult<EditedAuthorModel>> Edit(EditAuthorModel authorInput, int authorId)
         {
             await AssignCurrentUserAsync();
-            await this.countySearchService.GetActiveByIdAsync(authorInput.CountryId, nameof(Country));
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+
+            var country = await this.finder.FindByIdOrDefaultAsync<Country>(authorInput.CountryId);
+            await this.validator.ValidateEntityAsync(country, authorInput.CountryId.ToString());
+
             await this.authorService.EditAsync(author, authorInput, CurrentUser.Id);
 
             return mapper.Map<EditedAuthorModel>(author);
         }
 
+        [HttpPut("Assign/Author/{authorId}/Book/{bookId}")]
+        public async Task<AssignedBookAuthorModel> AssignBook(int authorId, int bookId)
+        {
+            await AssignCurrentUserAsync();
+
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+            
+            var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);       
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+
+            await this.validator.ValidateAssigningBook(author, book);
+            await this.assigner.AssignBookAsync(author, book);
+            await this.authorService.SaveModificationAsync(author, CurrentUser.Id);
+
+            return mapper.Map<AssignedBookAuthorModel>(book);
+        }
+
+        [HttpPut("Assign/Author/{authorId}/Genre/{genreId}")]
+        public async Task<AssignedAuthorGenreModel> AssignGenre(int authorId, int genreId)
+        {
+            await AssignCurrentUserAsync();
+
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+
+            var genre = await this.finder.FindByIdOrDefaultAsync<Genre>(genreId);
+            await this.validator.ValidateEntityAsync(genre, genreId.ToString());
+
+            await this.validator.ValidateAssigningGenre(author, genre);
+            await this.assigner.AssignGenreAsync(author, genre);
+            await this.authorService.SaveModificationAsync(author, CurrentUser.Id);
+
+            return mapper.Map<AssignedAuthorGenreModel>(author);
+        }
+
+
         [HttpPut("Favorites/Add/Author/{authorId}")]
         public async Task<AddedFavoriteAuthorModel> AddFavorite(int authorId)
         {
             await AssignCurrentUserAsync();
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+
             await this.authorService.AddFavoriteAuthorAsync(author, CurrentUser);
             return mapper.Map<AddedFavoriteAuthorModel>(author);
         }
@@ -84,7 +139,10 @@
         public async Task<RemovedFavoriteAuthorModel> RemoveFavorite(int authorId)
         {
             await AssignCurrentUserAsync();
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+
             await this.authorService.RemoveFavoriteAuthorAsync(author, CurrentUser);
             var removedFavoriteAuthor = mapper.Map<RemovedFavoriteAuthorModel>(author);
             removedFavoriteAuthor.UserId = CurrentUser.Id;
@@ -95,7 +153,10 @@
         public async Task<DeletedAuthorModel> Delete(int authorId)
         {
             await AssignCurrentUserAsync();
-            var author = await this.authorSearchService.GetActiveByIdAsync(authorId, nameof(Author));
+
+            var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+
             await this.authorService.DeleteAsync(author, CurrentUser.Id);
             return mapper.Map<DeletedAuthorModel>(author);
         }

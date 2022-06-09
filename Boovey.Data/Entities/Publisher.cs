@@ -1,9 +1,9 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
-    using Interfaces;
+    using Interfaces.IEntities;
 
-    public class Publisher : Entity, IAssignee, ISearchable
+    public class Publisher : Entity, IPublisher
     {
         public Publisher()
         {

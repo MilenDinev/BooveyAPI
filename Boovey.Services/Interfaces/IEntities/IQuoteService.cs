@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services.Interfaces
+﻿namespace Boovey.Services.Interfaces.IEntities
 {
     using System.Threading.Tasks;
     using Data.Entities;
@@ -12,5 +12,6 @@
         Task DeleteAsync(Quote quote, int modifierId);
         Task<AddedFavoriteQuoteModel> AddFavoriteAsync(Quote quote, User user);
         Task<RemovedFavoriteQuoteModel> RemoveFavoriteAsync(Quote quote, User user);
+        Task SaveModificationAsync(Quote quote, int modifierId);
     }
 }

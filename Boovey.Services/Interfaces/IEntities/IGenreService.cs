@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services.Interfaces
+﻿namespace Boovey.Services.Interfaces.IEntities
 {
     using Data.Entities;
     using Models.Requests.GenreModels;
@@ -12,5 +12,6 @@
 
         Task AddFavoriteAsync(Genre genre, User currentUser);
         Task RemoveFavoriteAsync(Genre genre, User currentUser);
+        Task SaveModificationAsync(Genre genre, int modifierId);
     }
 }

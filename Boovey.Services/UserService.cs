@@ -6,7 +6,8 @@
     using System.Security.Claims;
     using System.Collections.Generic;
     using AutoMapper;
-    using Interfaces;
+    using Interfaces.IEntities;
+    using Interfaces.IManagers;
     using Exceptions;
     using Constants;
     using Data;

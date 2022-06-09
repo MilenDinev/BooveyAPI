@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using Interfaces;
+    using Interfaces.IEntities;
 
     public class Book : Entity, IBook
     {
@@ -17,7 +17,6 @@
         }
 
         public string Title { get; set; }
-
         public string CoverUrl { get; set; }
         public int Pages { get; set; }
         public DateTime PublicationDate { get; set; }

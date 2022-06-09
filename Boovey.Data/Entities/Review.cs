@@ -1,8 +1,8 @@
 ﻿namespace Boovey.Data.Entities
 {
-    using Interfaces;
+    using Interfaces.IEntities;
 
-    public class Review : Entity, ISearchable
+    public class Review : Entity, IReview
     {
         public double Rating { get; set; }
         public string Comment { get; set; }

@@ -5,7 +5,6 @@
 
     internal interface IGenre : IBookAssignable, IAuthorAssignable
     {
-        string NormalizedTitle { get; set; }
         ICollection<User> FavoriteByUsers { get; set; }
     }
 }

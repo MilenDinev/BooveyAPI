@@ -1,9 +1,9 @@
 ﻿namespace Boovey.Data.Entities
 {
     using System.Collections.Generic;
-    using Interfaces;
+    using Interfaces.IEntities;
 
-    public class Quote : Entity, ISearchable
+    public class Quote : Entity, IQuote
     {
         public Quote()
         {

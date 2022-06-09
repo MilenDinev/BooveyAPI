@@ -4,7 +4,7 @@
     using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
     using Base;
-    using Services.Interfaces;
+    using Services.Interfaces.IEntities;
     using Services.Interfaces.IHandlers;
     using Data.Entities;
     using Models.Requests.QuoteModels;
@@ -15,12 +15,19 @@
     public class QuotesController : BooveyBaseController
     {
         private readonly IQuoteService quoteService;
-        private readonly ISearchService<Quote> quoteSearchService;
+        private readonly IFinder finder;
+        private readonly IValidator validator;
         private readonly IMapper mapper;
-        public QuotesController(IQuoteService quoteService, ISearchService<Quote> quoteSearchService, IMapper mapper, IUserService userService) : base(userService)
+        public QuotesController(IQuoteService quoteService,
+            IFinder finder,
+            IValidator validator,
+            IMapper mapper, 
+            IUserService userService) 
+            : base(userService)
         {
             this.quoteService = quoteService;
-            this.quoteSearchService = quoteSearchService;
+            this.finder = finder;
+            this.validator = validator;
             this.mapper = mapper;
         }
 
@@ -28,6 +35,9 @@
         public async Task<ActionResult> Add(CreateQuoteModel quoteInput)
         {
             await AssignCurrentUserAsync();
+            var quote = await this.finder.FindByStringOrDefaultAsync<Quote>(quoteInput.Content);
+            await this.validator.ValidateUniqueEntityAsync(quote);
+
             var createdQuote = await this.quoteService.CreateAsync(quoteInput, CurrentUser.Id);
             return CreatedAtAction(nameof(Add), "Quotes", new { id = createdQuote.Id }, createdQuote);
         }
@@ -37,7 +47,9 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quoteSearchService.GetActiveByIdAsync(quoteId, nameof(Quote));
+            var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
+            await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
+
             await this.quoteService.EditAsync(quote, quoteInput, CurrentUser.Id);
 
             return mapper.Map<EditedQuoteModel>(quote); ;
@@ -48,7 +60,9 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quoteSearchService.GetActiveByIdAsync(quoteId, nameof(Quote));
+            var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
+            await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
+
             var addedFavoriteQuote = await this.quoteService.AddFavoriteAsync(quote, CurrentUser);
 
             return addedFavoriteQuote;
@@ -59,7 +73,9 @@
         {
             await AssignCurrentUserAsync();
 
-            var quote = await this.quoteSearchService.GetActiveByIdAsync(quoteId, nameof(Quote));
+            var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
+            await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
+
             var removedFavoriteQuote = await this.quoteService.RemoveFavoriteAsync(quote, CurrentUser);
 
             return removedFavoriteQuote;
@@ -69,7 +85,10 @@
         public async Task<DeletedQuoteModel> Delete(int quoteId)
         {
             await AssignCurrentUserAsync();
-            var quote = await this.quoteSearchService.GetActiveByIdAsync(quoteId, nameof(Quote));
+
+            var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
+            await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
+
             await this.quoteService.DeleteAsync(quote, CurrentUser.Id);
             return mapper.Map<DeletedQuoteModel>(quote);
         }
