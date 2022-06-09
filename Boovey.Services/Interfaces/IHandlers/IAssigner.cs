@@ -10,6 +10,5 @@
         Task AssignAuthorAsync<T>(T entity, Author author) where T : class, IAuthorAssignable;
         Task AssignPublisherAsync<T>(T entity, Publisher publisher) where T : class, IPublisherAssignable;
         Task AssignGenreAsync<T>(T entity, Genre genre) where T : class, IGenreAssignable;
-
     }
 }
