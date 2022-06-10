@@ -36,25 +36,6 @@
             await DeleteEntityAsync(genre, modifierId);
         }
 
-        public async Task AddFavoriteAsync(Genre genre, User currentUser)
-        {
-            var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.Any(s => s.Id == genre.Id);
-            if (isAlreadyFavoriteGenre)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId, nameof(Genre), genre.Id));
-
-            currentUser.FavoriteGenres.Add(genre);
-            await SaveModificationAsync(genre, currentUser.Id);
-        }
-        public async Task RemoveFavoriteAsync(Genre genre, User currentUser)
-        {
-            var isFavorite = currentUser.FavoriteGenres.Any(s => s.Id == genre.Id);
-            if (!isFavorite)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Genre), genre.Id));
-
-            currentUser.FavoriteGenres.Remove(genre);
-            await SaveModificationAsync(genre, currentUser.Id);
-        }
-
         private async Task SetTitleAsync(string title, Genre genre, int modifierId)
         {
             if (title != genre.Title)

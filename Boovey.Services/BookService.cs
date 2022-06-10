@@ -56,31 +56,6 @@
             await SaveModificationAsync(book, modifierId);
         }
 
-        public async Task AddFavoriteAsync(Book book, User currentUser)
-        {
-            await AlreadyFavoriteBookChecker(book.Id, currentUser);
-
-            currentUser.FavoriteBooks.Add(book);
-
-            foreach (var genre in book.Genres)
-            {
-                var isAlreadyFavoriteGenre = currentUser.FavoriteGenres.Any(g => g.Id == genre.Id);
-                if (isAlreadyFavoriteGenre)
-                {
-                    currentUser.FavoriteGenres.Add(genre);
-                }
-            }
-            await SaveModificationAsync(book, currentUser.Id);
-        }
-        public async Task RemoveFavoriteAsync(Book book, User currentUser)
-        {
-            await NotFavoriteBookChecker(book.Id, currentUser);
-
-            currentUser.FavoriteBooks.Remove(book);
-
-            await SaveModificationAsync(book, currentUser.Id);
-        }
-
         private async Task SetTitleAsync(string title, Book book)
         {
             if (title != book.Title)
