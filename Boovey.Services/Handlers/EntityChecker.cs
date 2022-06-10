@@ -2,9 +2,6 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using System.Collections.Generic;
-    using Constants;
-    using Exceptions;
     using Data;
     using Interfaces.IHandlers;
     using Data.Entities;
@@ -20,36 +17,13 @@
             this.dbContext = dbContext;
         }
 
-        public async Task<bool> DuplicationCheck<T>(string searchFlag, ICollection<T> collection) where T : class, IEntity 
+        public async Task<bool> NullableCheck<T>(T entity, string searchFlag) where T : class, IEntity
         {
-            var contains = collection.Any(e => e.NormalizedName == searchFlag.ToUpper());
-
-            if (!contains)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(T), searchFlag));
-
-            return await Task.FromResult(contains);
+            return await Task.Run(() => entity == null);           
         }
-
-        public async Task<bool> DuplicationCheck<T>(int searchFlag, ICollection<T> collection) where T : class, IEntity
+        public async Task<bool> DeletedCheck<T>(T entity) where T : class, IEntity
         {
-            var contains = collection.Any(e => e.Id == searchFlag);
-
-            if (!contains)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(T), searchFlag));
-
-            return await Task.FromResult(contains);
-        }
-
-        public async Task NullableCheck<T>(T entity, string searchFlag) where T : class, IEntity
-        {
-            if (await Task.Run(() => entity == null))
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityIdDoesNotExist, nameof(T), searchFlag));
-        }
-        public async Task DeletedCheck<T>(T entity) where T : class, IEntity
-        {
-            if (await Task.Run(() => entity.Deleted))
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(T)));
-
+            return await Task.Run(() => entity.Deleted);
         }
 
         public async Task<bool> AuthorAssignedCheck<T>(T entity, Author author) where T : class, IAuthorAssignable
