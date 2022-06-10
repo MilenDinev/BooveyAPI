@@ -28,6 +28,7 @@
             services.AddTransient<IFinder, Finder>();
             services.AddTransient<IEntityChecker, EntityChecker>();
             services.AddTransient<IValidator, Validator>();
+            services.AddTransient<IFavoritesManager, FavoritesManager>();
             services.AddHttpContextAccessor();
         }
     }
