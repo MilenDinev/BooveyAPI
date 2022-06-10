@@ -1,12 +1,14 @@
 ﻿namespace Boovey.Services.Handlers
 {
     using System.Threading.Tasks;
+    using System.Collections.Generic;
     using Constants;
     using Exceptions;
     using Interfaces.IHandlers;
     using Data.Entities;
     using Data.Entities.Interfaces.IEntities;
     using Data.Entities.Interfaces.IAssignables;
+    using System.Linq;
 
     public class Validator : IValidator
     {
@@ -71,6 +73,23 @@
                 nameof(Publisher), publisher.Id, nameof(T),"test Id"));
             }
         }
-
+        public async Task ValidateAddingFavorite<T>(int entityId, ICollection<T> collection) where T : class, IEntity
+        {
+            var isAlreadyFavorite = await Task.Run(() => collection.Any(x => x.Id == entityId));
+            if (isAlreadyFavorite)
+            {
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFavoriteId,
+                nameof(T), entityId));
+            }
+        }
+        public async Task ValidateRemovingFavorite<T>(int entityId, ICollection<T> collection) where T : class, IEntity
+        {
+            var isAlreadyFavorite = await Task.Run(() => collection.Any(x => x.Id == entityId));
+            if (!isAlreadyFavorite)
+            {
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId,
+                nameof(T), entityId));
+            }
+        }
     }
 }
