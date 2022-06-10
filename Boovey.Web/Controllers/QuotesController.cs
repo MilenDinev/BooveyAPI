@@ -4,9 +4,9 @@
     using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
     using Base;
-    using Services.Interfaces.IEntities;
-    using Services.Interfaces.IHandlers;
-    using Services.Interfaces.IManagers;
+    using Services.Handlers.Interfaces;
+    using Services.Managers.Interfaces;
+    using Services.MainServices.Interfaces;
     using Data.Entities;
     using Models.Requests.QuoteModels;
     using Models.Responses.QuoteModels;

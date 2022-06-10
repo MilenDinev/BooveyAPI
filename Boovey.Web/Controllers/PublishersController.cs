@@ -6,8 +6,8 @@
     using Microsoft.AspNetCore.Mvc;
     using AutoMapper;
     using Base;
-    using Services.Interfaces.IEntities;
-    using Services.Interfaces.IHandlers;
+    using Services.Handlers.Interfaces;
+    using Services.MainServices.Interfaces;
     using Data.Entities;
     using Models.Responses.SharedModels;
     using Models.Requests.PublisherModels;

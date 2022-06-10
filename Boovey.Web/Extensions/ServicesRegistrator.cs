@@ -3,12 +3,12 @@
     using System.Reflection;
     using Microsoft.Extensions.DependencyInjection;
     using Constants;
-    using Services;
+    using Services.MainServices;
+    using Services.MainServices.Interfaces;
     using Services.Managers;
-    using Services.Interfaces.IEntities;
-    using Services.Interfaces.IManagers;
-    using Services.Interfaces.IHandlers;
     using Services.Handlers;
+    using Services.Managers.Interfaces;
+    using Services.Handlers.Interfaces;
 
     public static class ServicesRegistrator
     {

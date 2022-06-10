@@ -7,9 +7,9 @@
     using AutoMapper;
     using Base;
     using Data.Entities;
-    using Services.Interfaces.IEntities;
-    using Services.Interfaces.IHandlers;
-    using Services.Interfaces.IManagers;
+    using Services.Handlers.Interfaces;
+    using Services.Managers.Interfaces;
+    using Services.MainServices.Interfaces;
     using Models.Requests.ShelveModels;
     using Models.Responses.ShelveModels;
 

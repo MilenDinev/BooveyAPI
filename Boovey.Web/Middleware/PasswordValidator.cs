@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
     using IdentityServer4.Models;
     using IdentityServer4.Validation;
-    using Services.Interfaces.IManagers;
+    using Services.Managers.Interfaces;
     using Constants;
 
     public class PasswordValidator : IResourceOwnerPasswordValidator
