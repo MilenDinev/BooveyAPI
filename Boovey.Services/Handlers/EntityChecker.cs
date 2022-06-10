@@ -26,8 +26,20 @@
 
             if (!contains)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(T), searchFlag));
+
             return await Task.FromResult(contains);
         }
+
+        public async Task<bool> DuplicationCheck<T>(int searchFlag, ICollection<T> collection) where T : class, IEntity
+        {
+            var contains = collection.Any(e => e.Id == searchFlag);
+
+            if (!contains)
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyContained, nameof(T), searchFlag));
+
+            return await Task.FromResult(contains);
+        }
+
         public async Task NullableCheck<T>(T entity, string searchFlag) where T : class, IEntity
         {
             if (await Task.Run(() => entity == null))
