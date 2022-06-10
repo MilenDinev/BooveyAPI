@@ -8,6 +8,7 @@
     using Base;
     using Services.Interfaces.IEntities;
     using Services.Interfaces.IHandlers;
+    using Services.Interfaces.IManagers;
     using Data.Entities;
     using Models.Requests.GenreModels;
     using Models.Responses.GenreModels;
@@ -19,12 +20,14 @@
     {
         private readonly IGenreService genreService;
         private readonly IAssigner assigner;
+        private readonly IFavoritesManager favoritesManager;
         private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public GenresController(IGenreService genreService,
             IAssigner assigner,
+            IFavoritesManager favoritesManager,
             IFinder finder,
             IValidator validator,
             IMapper mapper, 
@@ -33,6 +36,7 @@
         {
             this.genreService = genreService;
             this.assigner = assigner;
+            this.favoritesManager = favoritesManager;
             this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
@@ -113,9 +117,13 @@
         {
             await AssignCurrentUserAsync();
             var genre = await this.finder.FindByIdOrDefaultAsync<Genre>(genreId);
-            await this.validator.ValidateEntityAsync(genre, genreId.ToString());
 
-            await this.genreService.AddFavoriteAsync(genre, CurrentUser);
+            await this.validator.ValidateEntityAsync(genre, genreId.ToString());
+            await this.validator.ValidateAddingFavorite(genreId, this.CurrentUser.FavoriteGenres);
+
+            await this.favoritesManager.AddFavoriteGenre(genre, this.CurrentUser);
+
+            await this.genreService.SaveModificationAsync(genre, CurrentUser.Id);
             return mapper.Map<AddedFavoriteGenreModel>(genre);
         }
 
@@ -125,7 +133,11 @@
             await AssignCurrentUserAsync();
             var genre = await this.finder.FindByIdOrDefaultAsync<Genre>(genreId);
             await this.validator.ValidateEntityAsync(genre, genreId.ToString());
-            await this.genreService.RemoveFavoriteAsync(genre, CurrentUser);
+            await this.validator.ValidateRemovingFavorite(genreId, this.CurrentUser.FavoriteGenres);
+
+            await this.favoritesManager.RemoveFavoriteGenre(genre, this.CurrentUser);
+            await this.genreService.SaveModificationAsync(genre, CurrentUser.Id);
+
             var removedFavoriteGenre = mapper.Map<RemovedFavoriteGenreModel>(genre);
             removedFavoriteGenre.UserId = CurrentUser.Id;
             return removedFavoriteGenre;

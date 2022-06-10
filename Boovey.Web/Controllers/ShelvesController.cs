@@ -9,6 +9,7 @@
     using Data.Entities;
     using Services.Interfaces.IEntities;
     using Services.Interfaces.IHandlers;
+    using Services.Interfaces.IManagers;
     using Models.Requests.ShelveModels;
     using Models.Responses.ShelveModels;
 
@@ -17,11 +18,13 @@
     public class ShelvesController : BooveyBaseController
     {
         private readonly IShelveService shelveService;
+        private readonly IFavoritesManager favoritesManager;
         private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public ShelvesController(IShelveService shelveService,
+            IFavoritesManager favoritesManager,
             IFinder finder,
             IValidator validator,
             IMapper mapper, 
@@ -29,6 +32,7 @@
             : base(userService)
         {
             this.shelveService = shelveService;
+            this.favoritesManager = favoritesManager;
             this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
@@ -74,11 +78,13 @@
 
             var shelve = await this.finder.FindByIdOrDefaultAsync<Shelve>(shelveId);
             await this.validator.ValidateEntityAsync(shelve, shelveId.ToString());
+            await this.validator.ValidateAddingFavorite(shelveId, this.CurrentUser.FavoriteShelves);
 
-            var addedFavoriteShelve = await this.shelveService.AddFavoriteAsync(shelve, CurrentUser);
+            await this.favoritesManager.AddFavoriteShelve(shelve, this.CurrentUser);
 
-            addedFavoriteShelve.UserId = CurrentUser.Id;
-            return addedFavoriteShelve;
+            await this.shelveService.SaveModificationAsync(shelve, CurrentUser.Id);
+
+            return mapper.Map<AddedFavoriteShelveModel>(shelve);
         }
 
         [HttpPut("Favorites/Remove/Shelve/{shelveId}")]
@@ -88,9 +94,12 @@
 
             var shelve = await this.finder.FindByIdOrDefaultAsync<Shelve>(shelveId);
             await this.validator.ValidateEntityAsync(shelve, shelveId.ToString());
+            await this.validator.ValidateRemovingFavorite(shelveId, this.CurrentUser.FavoriteShelves);
 
-            var removedFavoriteShelve = await this.shelveService.RemoveFavoriteAsync(shelve, CurrentUser);
+            await this.favoritesManager.RemoveFavoriteShelve(shelve, this.CurrentUser);
+            await this.shelveService.SaveModificationAsync(shelve, CurrentUser.Id);
 
+            var removedFavoriteShelve= mapper.Map<RemovedFavoriteShelveModel>(shelve);
             removedFavoriteShelve.UserId = CurrentUser.Id;
             return removedFavoriteShelve;
         }

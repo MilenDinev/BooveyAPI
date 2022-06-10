@@ -6,6 +6,7 @@
     using Base;
     using Services.Interfaces.IEntities;
     using Services.Interfaces.IHandlers;
+    using Services.Interfaces.IManagers;
     using Data.Entities;
     using Models.Requests.QuoteModels;
     using Models.Responses.QuoteModels;
@@ -15,10 +16,12 @@
     public class QuotesController : BooveyBaseController
     {
         private readonly IQuoteService quoteService;
+        private readonly IFavoritesManager favoritesManager;
         private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
         public QuotesController(IQuoteService quoteService,
+            IFavoritesManager favoritesManager,
             IFinder finder,
             IValidator validator,
             IMapper mapper, 
@@ -26,6 +29,7 @@
             : base(userService)
         {
             this.quoteService = quoteService;
+            this.favoritesManager = favoritesManager;
             this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
@@ -62,10 +66,13 @@
 
             var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
             await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
+            await this.validator.ValidateAddingFavorite(quoteId, this.CurrentUser.FavoriteQuotes);
 
-            var addedFavoriteQuote = await this.quoteService.AddFavoriteAsync(quote, CurrentUser);
+            await this.favoritesManager.AddFavoriteQuote(quote, this.CurrentUser);
 
-            return addedFavoriteQuote;
+            await this.quoteService.SaveModificationAsync(quote, CurrentUser.Id);
+
+            return mapper.Map<AddedFavoriteQuoteModel>(quote);
         }
 
         [HttpPut("Favorites/Remove/Quote/{quoteId}")]
@@ -75,9 +82,13 @@
 
             var quote = await this.finder.FindByIdOrDefaultAsync<Quote>(quoteId);
             await this.validator.ValidateEntityAsync(quote, quoteId.ToString());
+            await this.validator.ValidateRemovingFavorite(quoteId, this.CurrentUser.FavoriteQuotes);
 
-            var removedFavoriteQuote = await this.quoteService.RemoveFavoriteAsync(quote, CurrentUser);
+            await this.favoritesManager.RemoveFavoriteQuote(quote, this.CurrentUser);
+            await this.quoteService.SaveModificationAsync(quote, CurrentUser.Id);
 
+            var removedFavoriteQuote = mapper.Map<RemovedFavoriteQuoteModel>(quote);
+            removedFavoriteQuote.UserId = CurrentUser.Id;
             return removedFavoriteQuote;
         }
 
