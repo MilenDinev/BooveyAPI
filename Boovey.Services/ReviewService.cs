@@ -3,8 +3,6 @@
     using System.Threading.Tasks;
     using AutoMapper;
     using Base;
-    using Constants;
-    using Exceptions;
     using Interfaces.IEntities;
     using Data;
     using Data.Entities;
