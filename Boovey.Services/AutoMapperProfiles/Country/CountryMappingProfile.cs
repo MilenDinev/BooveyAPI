@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services.AutoMapperProfiles.Book
+﻿namespace Boovey.Services.AutoMapperProfiles.Country
 {
     using AutoMapper;
     using Data.Entities;
@@ -7,7 +7,7 @@
     {
         public CountryMappingProfile()
         {
-            this.CreateMap<string, Country>();
+            CreateMap<string, Country>();
         }
     }
 }

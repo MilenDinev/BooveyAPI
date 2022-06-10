@@ -1,9 +1,9 @@
-﻿namespace Boovey.Services
+﻿namespace Boovey.Services.MainServices
 {
     using System.Threading.Tasks;
     using AutoMapper;
     using Base;
-    using Interfaces.IEntities;
+    using Interfaces;
     using Data;
     using Data.Entities;
     using Models.Requests.PublisherModels;
@@ -12,14 +12,14 @@
     {
         private readonly IMapper mapper;
 
-        public PublisherService(BooveyDbContext dbContext, IMapper mapper) : base (dbContext)
+        public PublisherService(BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
         {
             this.mapper = mapper;
         }
 
         public async Task<Publisher> CreateAsync(CreatePublisherModel model, int creatorId)
         {
-            var publisher = this.mapper.Map<Publisher>(model);
+            var publisher = mapper.Map<Publisher>(model);
             await CreateEntityAsync(publisher, creatorId);
             return publisher;
         }

@@ -1,12 +1,9 @@
-﻿namespace Boovey.Services
+﻿namespace Boovey.Services.MainServices
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Interfaces.IEntities;
     using Base;
-    using Constants;
-    using Exceptions;
+    using Interfaces;
     using Data;
     using Data.Entities;
     using Models.Requests.GenreModels;
@@ -16,14 +13,14 @@
 
         private readonly IMapper mapper;
 
-        public GenreService(BooveyDbContext dbContext, IMapper mapper) : base (dbContext)
+        public GenreService(BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
         {
             this.mapper = mapper;
         }
 
         public async Task<Genre> CreateAsync(CreateGenreModel model, int creatorId)
         {
-            var genre = this.mapper.Map<Genre>(model);
+            var genre = mapper.Map<Genre>(model);
             await CreateEntityAsync(genre, creatorId);
             return genre;
         }

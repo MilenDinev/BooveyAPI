@@ -1,7 +1,7 @@
 ﻿namespace Boovey.Services.Managers
 {
     using System.Threading.Tasks;
-    using Interfaces.IManagers;
+    using Interfaces;
     using Data.Entities;
 
     public class FavoritesManager : IFavoritesManager

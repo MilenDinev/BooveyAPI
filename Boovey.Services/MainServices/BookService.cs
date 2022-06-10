@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services
+﻿namespace Boovey.Services.MainServices
 {
     using System;
     using System.Linq;
@@ -8,7 +8,7 @@
     using Base;
     using Constants;
     using Exceptions;
-    using Interfaces.IEntities;
+    using Interfaces;
     using Data;
     using Data.Entities;
     using Models.Requests.BookModels;
@@ -17,7 +17,7 @@
     {
         private readonly IMapper mapper;
 
-        public BookService(BooveyDbContext dbContext, IMapper mapper) 
+        public BookService(BooveyDbContext dbContext, IMapper mapper)
             : base(dbContext)
         {
             this.mapper = mapper;
@@ -41,7 +41,7 @@
                 throw new ArgumentException(ErrorMessages.InvalidPublicationDate);
             book.PublicationDate = publicationDate;
 
-            book.CountryId= model.CountryId; 
+            book.CountryId = model.CountryId;
             book.Description = model.Description;
             book.Pages = model.Pages;
             book.Publisher.Id = model.PublisherId;

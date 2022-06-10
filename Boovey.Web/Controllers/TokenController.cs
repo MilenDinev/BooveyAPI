@@ -5,7 +5,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Extensions.Authentication;
     using Base;
-    using Services.Interfaces.IEntities;
+    using Services.MainServices.Interfaces;
     using Models.Requests;
     using Models.Responses;
 

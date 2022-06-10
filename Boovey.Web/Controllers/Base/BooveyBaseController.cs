@@ -5,7 +5,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Constants;
     using Data.Entities;
-    using Services.Interfaces.IEntities;
+    using Services.MainServices.Interfaces;
 
     public class BooveyBaseController : ControllerBase
     {

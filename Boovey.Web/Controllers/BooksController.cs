@@ -7,9 +7,9 @@
     using Microsoft.AspNetCore.Authorization;
     using AutoMapper;
     using Base;
-    using Services.Interfaces.IHandlers;
-    using Services.Interfaces.IEntities;
-    using Services.Interfaces.IManagers;
+    using Services.Handlers.Interfaces;
+    using Services.Managers.Interfaces;
+    using Services.MainServices.Interfaces;
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;

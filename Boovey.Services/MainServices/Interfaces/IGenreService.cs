@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services.Interfaces.IEntities
+﻿namespace Boovey.Services.MainServices.Interfaces
 {
     using Data.Entities;
     using Models.Requests.GenreModels;

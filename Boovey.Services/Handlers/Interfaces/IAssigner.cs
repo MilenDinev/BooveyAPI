@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services.Interfaces.IHandlers
+﻿namespace Boovey.Services.Handlers.Interfaces
 {
     using System.Threading.Tasks;
     using Data.Entities;
