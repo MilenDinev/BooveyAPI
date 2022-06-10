@@ -9,6 +9,8 @@
     public interface IEntityChecker
     {
         Task<bool> DuplicationCheck<T>(string searchFlag, ICollection<T> collection) where T : class, IEntity;
+        Task<bool> DuplicationCheck<T>(int searchFlag, ICollection<T> collection) where T : class, IEntity;
+
         Task NullableCheck<T>(T entity, string searchFlag) where T : class, IEntity;
         Task DeletedCheck<T>(T entity) where T : class, IEntity;
 
