@@ -1,9 +1,9 @@
-﻿namespace Boovey.Services
+﻿namespace Boovey.Services.MainServices
 {
     using System.Threading.Tasks;
     using AutoMapper;
     using Base;
-    using Interfaces.IEntities;
+    using Interfaces;
     using Data;
     using Data.Entities;
     using Models.Requests.ReviewModels;
@@ -30,7 +30,7 @@
             review.Comment = reviewModel.Comment;
             review.Rating = reviewModel.Rating;
             review.BookId = reviewModel.BookId;
-            
+
             await SaveModificationAsync(review, currentUserId);
         }
 

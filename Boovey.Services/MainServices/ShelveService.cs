@@ -1,9 +1,9 @@
-﻿namespace Boovey.Services
+﻿namespace Boovey.Services.MainServices
 {
     using System.Threading.Tasks;
     using AutoMapper;
     using Base;
-    using Interfaces.IEntities;
+    using Interfaces;
     using Data;
     using Data.Entities;
     using Models.Requests.ShelveModels;
@@ -19,7 +19,7 @@
 
         public async Task<Shelve> CreateAsync(CreateShelveModel model, int creatorId)
         {
-            var shelve = this.mapper.Map<Shelve>(model);
+            var shelve = mapper.Map<Shelve>(model);
 
             await CreateEntityAsync(shelve, creatorId);
 

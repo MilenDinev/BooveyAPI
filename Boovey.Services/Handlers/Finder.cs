@@ -4,7 +4,7 @@
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
-    using Interfaces.IHandlers;
+    using Interfaces;
     using Data;
     using Data.Entities.Interfaces.IEntities;
 

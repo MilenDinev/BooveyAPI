@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services.AutoMapperProfiles
+﻿namespace Boovey.Services.AutoMapperProfiles.Publisher
 {
     using System;
     using AutoMapper;
@@ -10,13 +10,13 @@
     {
         public PublisherMappingProfile()
         {
-            this.CreateMap<CreatePublisherModel, Publisher>()
+            CreateMap<CreatePublisherModel, Publisher>()
             .ForMember(e => e.CreatedOn, m => m.MapFrom(d => DateTime.Now))
             .ForMember(e => e.LastModifiedOn, m => m.MapFrom(d => DateTime.Now));
-            this.CreateMap<Publisher, CreatedPublisherModel>();
-            this.CreateMap<Publisher, EditedPublisherModel>();
-            this.CreateMap<Publisher, DeletedPublisherModel>();
-            this.CreateMap<Publisher, PublisherListingModel>();
+            CreateMap<Publisher, CreatedPublisherModel>();
+            CreateMap<Publisher, EditedPublisherModel>();
+            CreateMap<Publisher, DeletedPublisherModel>();
+            CreateMap<Publisher, PublisherListingModel>();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services
+﻿namespace Boovey.Services.MainServices
 {
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@
     using Base;
     using Constants;
     using Exceptions;
-    using Interfaces.IEntities;
+    using Interfaces;
     using Data;
     using Data.Entities;
     using Models.Requests.QuoteModels;
@@ -16,14 +16,14 @@
 
         private readonly IMapper mapper;
 
-        public QuoteService(BooveyDbContext dbContext, IMapper mapper) : base (dbContext)
+        public QuoteService(BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
         {
             this.mapper = mapper;
         }
 
         public async Task<Quote> CreateAsync(CreateQuoteModel model, int creatorId)
         {
-            var quote = await this.dbContext.Quotes.FirstOrDefaultAsync(q => q.Content == model.Content);
+            var quote = await dbContext.Quotes.FirstOrDefaultAsync(q => q.Content == model.Content);
             if (quote != null)
                 throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(Quote), model.Content));
 
@@ -33,7 +33,7 @@
 
             return quote;
         }
-     
+
         public async Task EditAsync(Quote quote, EditQuoteModel model, int currentUserId)
         {
             quote.Content = model.Content;

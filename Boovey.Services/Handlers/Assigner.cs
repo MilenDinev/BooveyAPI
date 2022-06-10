@@ -1,7 +1,7 @@
 ﻿namespace Boovey.Services.Handlers
 {
     using System.Threading.Tasks;
-    using Interfaces.IHandlers;
+    using Interfaces;
     using Data.Entities;
     using Data.Entities.Interfaces.IAssignables;
 

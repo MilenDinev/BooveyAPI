@@ -1,4 +1,4 @@
-﻿namespace Boovey.Services
+﻿namespace Boovey.Services.MainServices
 {
     using System.Linq;
     using System.Threading.Tasks;
@@ -6,7 +6,7 @@
     using Base;
     using Constants;
     using Exceptions;
-    using Interfaces.IEntities;
+    using Interfaces;
     using Data;
     using Data.Entities;
     using Models.Requests.AuthorModels;
