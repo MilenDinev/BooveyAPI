@@ -11,8 +11,6 @@
         Task EditAsync(Shelve shelve, EditShelveModel model, int modifierId);
         Task DeleteAsync(Shelve shelve, int modifierId);
 
-        Task<AddedFavoriteShelveModel> AddFavoriteAsync(Shelve shelve, User currentUser);
-        Task<RemovedFavoriteShelveModel> RemoveFavoriteAsync(Shelve shelve, User currentUser);
         Task SaveModificationAsync(Shelve shelve, int modifierId);
     }
 }

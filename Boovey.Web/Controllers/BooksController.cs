@@ -9,6 +9,7 @@
     using Base;
     using Services.Interfaces.IHandlers;
     using Services.Interfaces.IEntities;
+    using Services.Interfaces.IManagers;
     using Models.Requests.BookModels;
     using Models.Responses.BookModels;
     using Models.Responses.SharedModels;
@@ -21,14 +22,16 @@
     {
         private readonly IBookService bookService;
         private readonly IAssigner assigner;
+        private readonly IFavoritesManager favoritesManager;
         private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public BooksController(IBookService bookService,
 
-            IFinder finder,
             IAssigner assigner,
+            IFavoritesManager favoritesManager,
+            IFinder finder,
             IValidator validator,
             IMapper mapper,
             IUserService userService)
@@ -36,6 +39,7 @@
         {
             this.bookService = bookService;
             this.assigner = assigner;
+            this.favoritesManager = favoritesManager;
             this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
@@ -149,9 +153,14 @@
             await AssignCurrentUserAsync();
 
             var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
+            
             await this.validator.ValidateEntityAsync(book, bookId.ToString());
+            await this.validator.ValidateAddingFavorite(bookId, this.CurrentUser.FavoriteBooks);
 
-            await this.bookService.AddFavoriteAsync(book, CurrentUser);
+            await this.favoritesManager.AddFavoriteBook(book, this.CurrentUser);
+
+            await this.bookService.SaveModificationAsync(book, CurrentUser.Id);
+
             return mapper.Map<AddedFavoriteBookModel>(book);
         }
 
@@ -161,9 +170,13 @@
             await AssignCurrentUserAsync();
 
             var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
-            await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
-            await this.bookService.RemoveFavoriteAsync(book, CurrentUser);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
+            await this.validator.ValidateRemovingFavorite(bookId, this.CurrentUser.FavoriteBooks);
+
+            await this.favoritesManager.RemoveFavoriteBook(book, this.CurrentUser);
+            await this.bookService.SaveModificationAsync(book, CurrentUser.Id);
+
             var removedFavoriteBook = mapper.Map<RemovedFavoriteBookModel>(book);
             removedFavoriteBook.UserId = CurrentUser.Id;
             return removedFavoriteBook;

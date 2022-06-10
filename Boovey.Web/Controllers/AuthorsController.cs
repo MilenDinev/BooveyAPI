@@ -8,6 +8,7 @@
     using Base;
     using Services.Interfaces.IEntities;
     using Services.Interfaces.IHandlers;
+    using Services.Interfaces.IManagers;
     using Data.Entities;
     using Models.Requests.AuthorModels;
     using Models.Responses.SharedModels;
@@ -19,12 +20,14 @@
     {
         private readonly IAuthorService authorService;
         private readonly IAssigner assigner;
+        private readonly IFavoritesManager favoritesManager;
         private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public AuthorsController(IAuthorService authorService, 
             IAssigner assigner,
+            IFavoritesManager favoritesManager,
             IFinder finder,
             IValidator validator,
             IMapper mapper, 
@@ -33,6 +36,7 @@
         {
             this.authorService = authorService;
             this.assigner = assigner;
+            this.favoritesManager = favoritesManager;
             this.finder = finder;
             this.validator = validator;
             this.mapper = mapper;
@@ -129,9 +133,14 @@
             await AssignCurrentUserAsync();
 
             var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
-            await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
-            await this.authorService.AddFavoriteAuthorAsync(author, CurrentUser);
+            await this.validator.ValidateEntityAsync(author, authorId.ToString());
+            await this.validator.ValidateAddingFavorite(authorId, this.CurrentUser.FavoriteAuthors);
+
+            await this.favoritesManager.AddFavoriteAuthor(author, this.CurrentUser);
+
+            await this.authorService.SaveModificationAsync(author, CurrentUser.Id);
+
             return mapper.Map<AddedFavoriteAuthorModel>(author);
         }
 
@@ -143,7 +152,11 @@
             var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
-            await this.authorService.RemoveFavoriteAuthorAsync(author, CurrentUser);
+            await this.validator.ValidateRemovingFavorite(authorId, this.CurrentUser.FavoriteAuthors);
+
+            await this.favoritesManager.RemoveFavoriteAuthor(author, this.CurrentUser);
+            await this.authorService.SaveModificationAsync(author, CurrentUser.Id);
+
             var removedFavoriteAuthor = mapper.Map<RemovedFavoriteAuthorModel>(author);
             removedFavoriteAuthor.UserId = CurrentUser.Id;
             return removedFavoriteAuthor;
