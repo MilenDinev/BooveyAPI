@@ -1,14 +1,21 @@
 ﻿namespace Boovey.Services.Interfaces.IManagers
 {
     using System.Threading.Tasks;
-    using Data.Entities.Interfaces.IEntities;
+    using Data.Entities;
 
     public interface IFavoritesManager
     {
-        Task<T> AddFavoriteBook<T>(int id) where T : class, IEntity;
-        Task<T> AddFavoriteAuthor<T>(int id) where T : class, IEntity;
-        Task<T> AddFavoriteGenre<T>(int id) where T : class, IEntity;
-        Task<T> AddFavoriteQuote<T>(int id) where T : class, IEntity;
-        Task<T> AddFavoriteShelve<T>(int id) where T : class, IEntity;
+        Task AddFavoriteBook(Book book, User user);
+        Task AddFavoriteAuthor(Author author, User user);
+        Task AddFavoriteGenre(Genre genre, User user);
+        Task AddFavoriteQuote(Quote quote, User user);
+        Task AddFavoriteShelve(Shelve shelve, User user);
+
+        Task RemoveFavoriteBook(Book book, User user);
+        Task RemoveFavoriteAuthor(Author author, User user);
+        Task RemoveFavoriteGenre(Genre genre, User user);
+        Task RemoveFavoriteQuote(Quote quote, User user);
+        Task RemoveFavoriteShelve(Shelve shelve, User user);
+
     }
 }
