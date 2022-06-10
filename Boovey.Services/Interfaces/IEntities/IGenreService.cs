@@ -10,8 +10,6 @@
         Task EditAsync(Genre genre, EditGenreModel model, int modifierId);
         Task DeleteAsync(Genre genre, int modifierId);
 
-        Task AddFavoriteAsync(Genre genre, User currentUser);
-        Task RemoveFavoriteAsync(Genre genre, User currentUser);
         Task SaveModificationAsync(Genre genre, int modifierId);
     }
 }

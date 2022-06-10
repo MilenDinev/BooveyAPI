@@ -10,8 +10,6 @@
         Task<Quote> CreateAsync(CreateQuoteModel model, int creatorId);
         Task EditAsync(Quote quote, EditQuoteModel model, int modifierId);
         Task DeleteAsync(Quote quote, int modifierId);
-        Task<AddedFavoriteQuoteModel> AddFavoriteAsync(Quote quote, User user);
-        Task<RemovedFavoriteQuoteModel> RemoveFavoriteAsync(Quote quote, User user);
         Task SaveModificationAsync(Quote quote, int modifierId);
     }
 }
