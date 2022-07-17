@@ -24,12 +24,13 @@
         public async Task ValidateEntityAsync<T>(T entity, string flag) where T : class, IEntity
         {
             var isNullable = await this.entityChecker.NullableCheck<T>(entity, flag);
-            if (!isNullable)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityDoesNotExist, nameof(T)));
+            if (isNullable)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityDoesNotExist));
             var isDeleted =  await this.entityChecker.DeletedCheck<T>(entity);
             if (isDeleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, nameof(T)));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted));
         }
+
         public async Task ValidateUniqueEntityAsync<T>(T entity) where T : class, IEntity
         {
             if (await Task.Run(() => entity != null))

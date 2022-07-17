@@ -1,11 +1,11 @@
 ﻿namespace Boovey.Services.AutoMapperProfiles.Author
 {
-    using System;
     using System.Linq;
     using AutoMapper;
     using Data.Entities;
     using Models.Requests.AuthorModels;
     using Models.Responses.AuthorModels;
+    using Models.Responses.SharedModels;
 
     public class AuthorMappingProfile : Profile
     {
@@ -25,6 +25,9 @@
                 .ForMember(m => m.UserId, e => e.Ignore());
             this.CreateMap<Author, AuthorListingModel>()
                 .ForMember(m => m.Nationality, e => e.MapFrom(a => a.Country.Name));
+            this.CreateMap<Author, AssignedAuthorGenreModel>()
+                .ForMember(m => m.AuthorId, e => e.MapFrom(a => a.Id))
+                .ForMember(m => m.GenreId, e => e.MapFrom(a => a.Genres.Select(g => g.Id).LastOrDefault()));
         }
     }
 }

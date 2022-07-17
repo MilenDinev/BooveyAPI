@@ -4,15 +4,18 @@
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Data.Entities;
-    using Models.Requests;
+    using Models.Requests.UserModels;
     using Models.Responses.UserModels;
 
     public interface IUserService
     {
-        Task<RegisteredUserModel> CreateAsync(RegistrationModel userRequestModel);
+        Task<User> CreateAsync(CreateUserModel userRequestModel);
+        Task EditAsync(User user, EditUserModel userModel, int modifierId);
+        Task DeleteAsync(User user, int modifierId);
+
         Task<FollowerModel> Follow(User follower, int followedId);
         Task<User> GetCurrentUserAsync(ClaimsPrincipal principal);
-        Task<UsersListingModel> ListUserByIdAsync(int userId);
-        Task<ICollection<UsersListingModel>> GetAllUsersAsync();
+        Task<UserListingModel> ListUserByIdAsync(int userId);
+        Task<ICollection<UserListingModel>> GetAllUsersAsync();
     }
 }

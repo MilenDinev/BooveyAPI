@@ -1,8 +1,8 @@
-﻿namespace Boovey.Models.Requests
+﻿namespace Boovey.Models.Requests.UserModels
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class RegistrationModel
+    public class CreateUserModel
     {
         public string UserName { get; set; }
         public string FirstName { get; set; }

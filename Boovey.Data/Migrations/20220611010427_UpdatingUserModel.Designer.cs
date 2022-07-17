@@ -4,14 +4,16 @@ using Boovey.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Boovey.Data.Migrations
 {
     [DbContext(typeof(BooveyDbContext))]
-    partial class BooveyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220611010427_UpdatingUserModel")]
+    partial class UpdatingUserModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

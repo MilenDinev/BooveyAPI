@@ -1,11 +1,8 @@
 ﻿namespace Boovey.Services.MainServices
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
     using Base;
-    using Constants;
-    using Exceptions;
     using Interfaces;
     using Data;
     using Data.Entities;
@@ -26,11 +23,12 @@
             await CreateEntityAsync(author, creatorId);
             return author;
         }
+
         public async Task EditAsync(Author author, EditAuthorModel authorModel, int modifierId)
         {
             author.CountryId = authorModel.CountryId;
             author.Fullname = authorModel.Fullname;
-            author.NormalizedName = author.Fullname;
+            author.NormalizedName = author.Fullname.ToUpper(); ;
             author.Summary = authorModel.Summary;
 
             await SaveModificationAsync(author, modifierId);
@@ -38,25 +36,6 @@
         public async Task DeleteAsync(Author author, int modifierId)
         {
             await DeleteEntityAsync(author, modifierId);
-        }
-
-        public async Task AddFavoriteAuthorAsync(Author author, User currentUser)
-        {
-            var isFavorite = currentUser.FavoriteAuthors.Any(a => a.Id == author.Id);
-            if (isFavorite)
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), author.Id));
-
-            currentUser.FavoriteAuthors.Add(author);
-            await SaveModificationAsync(author, currentUser.Id);
-        }
-        public async Task RemoveFavoriteAuthorAsync(Author author, User currentUser)
-        {
-            var isFavorite = currentUser.FavoriteAuthors.Any(a => a.Id == author.Id);
-            if (!isFavorite)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, nameof(Author), author.Id));
-
-            currentUser.FavoriteAuthors.Remove(author);
-            await SaveModificationAsync(author, currentUser.Id);
         }
     }
 }

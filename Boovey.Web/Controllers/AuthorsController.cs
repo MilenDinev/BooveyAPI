@@ -45,8 +45,8 @@
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<AuthorListingModel>>> Get()
         {
-            var allGenres = await this.finder.GetAllActiveAsync<Author>();
-            return mapper.Map<ICollection<AuthorListingModel>>(allGenres).ToList();
+            var allAuthors = await this.finder.GetAllActiveAsync<Author>();
+            return mapper.Map<ICollection<AuthorListingModel>>(allAuthors).ToList();
         }
 
         [HttpGet("Get/Author/{authorId}")]

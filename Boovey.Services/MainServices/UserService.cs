@@ -1,47 +1,31 @@
 ﻿namespace Boovey.Services.MainServices
-{ 
+{
     using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Security.Claims;
     using System.Collections.Generic;
     using Interfaces;
+    using Base;
     using AutoMapper;
-    using Exceptions;
     using Constants;
+    using Exceptions;
     using Managers.Interfaces;
     using Data;
     using Data.Entities;
     using Models.Requests;
     using Models.Responses.UserModels;
+    using Models.Requests.UserModels;
 
-    public class UserService : IUserService
+    public class UserService : BaseService<User>, IUserService
     {
         private readonly IUserManager userManager;
-        private readonly BooveyDbContext dbContext;
         private readonly IMapper mapper;
 
-        public UserService(IUserManager userManager, BooveyDbContext dbContext, IMapper mapper)
+        public UserService(IUserManager userManager, BooveyDbContext dbContext, IMapper mapper) : base(dbContext)
         {
             this.userManager = userManager;
-            this.dbContext = dbContext;
             this.mapper = mapper;
-        }
-
-        public async Task<RegisteredUserModel> CreateAsync(RegistrationModel userInput)
-        {
-            if (await userManager.FindByNameAsync(userInput.UserName) != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(User), userInput.UserName));
-
-            if (await userManager.FindByEmailAsync(userInput.Email) != null)
-                throw new ArgumentException(string.Format(ErrorMessages.EntityAlreadyExists, nameof(userInput.Email), userInput.Email));
-
-            var user = mapper.Map<User>(userInput);
-
-            await userManager.CreateAsync(user, userInput.Password);
-            await userManager.AddToRoleAsync(user, "regular");
-
-            return mapper.Map<RegisteredUserModel>(user);
         }
 
         public async Task<User> GetCurrentUserAsync(ClaimsPrincipal principal)
@@ -49,12 +33,39 @@
             return await userManager.GetUserAsync(principal);
         }
 
-        public async Task<ICollection<UsersListingModel>> GetAllUsersAsync()
+        public async Task<ICollection<UserListingModel>> GetAllUsersAsync()
         {
             var users = await userManager.GetAllAsync();
-            var usersResponceDto = mapper.Map<ICollection<UsersListingModel>>(users);
+            var usersResponceDto = mapper.Map<ICollection<UserListingModel>>(users);
             return usersResponceDto.ToList();
         }
+
+        public async Task<User> CreateAsync(CreateUserModel userInput)
+        {
+
+            var user = mapper.Map<User>(userInput);
+            await userManager.CreateAsync(user, userInput.Password);
+            await userManager.AddToRoleAsync(user, "regular");
+
+            return user;
+        }
+
+        public async Task EditAsync(User user, EditUserModel userModel, int modifierId)
+        {
+            user.UserName = userModel.UserName;
+            user.FirstName = userModel.FirstName;
+            user.LastName = userModel.LastName;
+            user.Email = userModel.Email;
+
+            user.NormalizedUserName = user.UserName.ToUpper();
+            await SaveModificationAsync(user, modifierId);
+        }
+
+        public async Task DeleteAsync(User user, int modifierId)
+        {
+            await DeleteEntityAsync(user, modifierId);
+        }
+
 
         public async Task<FollowerModel> Follow(User follower, int followedId)
         {
@@ -71,9 +82,9 @@
             return mapper.Map<FollowerModel>(follower);
         }
 
-        public async Task<UsersListingModel> ListUserByIdAsync(int userId)
+        public async Task<UserListingModel> ListUserByIdAsync(int userId)
         {
-            return mapper.Map<UsersListingModel>(await GetUserByIdAsync(userId));
+            return mapper.Map<UserListingModel>(await GetUserByIdAsync(userId));
         }
 
         private async Task<User> GetUserByIdAsync(int userId)

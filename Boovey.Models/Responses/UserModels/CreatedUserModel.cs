@@ -1,6 +1,6 @@
 ﻿namespace Boovey.Models.Responses.UserModels
 {
-    public class RegisteredUserModel
+    public class CreatedUserModel
     {
         public int Id { get; set; }
         public string Username { get; set; }
