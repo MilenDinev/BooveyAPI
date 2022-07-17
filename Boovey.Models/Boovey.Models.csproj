@@ -4,10 +4,4 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Requests\UserModels\**" />
-    <EmbeddedResource Remove="Requests\UserModels\**" />
-    <None Remove="Requests\UserModels\**" />
-  </ItemGroup>
-
 </Project>
