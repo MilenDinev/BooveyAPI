@@ -6,16 +6,15 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
     using Base;
+    using AutoMapper;
     using Services.Exceptions;
     using Services.Constants;
     using Services.Handlers.Interfaces;
     using Services.Managers.Interfaces;
     using Services.MainServices.Interfaces;
     using Data.Entities;
-    using Models.Requests;
     using Models.Responses.UserModels;
-    using AutoMapper;
-    using Boovey.Models.Requests.UserModels;
+    using Models.Requests.UserModels;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -42,8 +41,8 @@
         [HttpGet("List/")]
         public async Task<ActionResult<IEnumerable<UserListingModel>>> Get()
         {
-            var allUsers = await this.userService.GetAllUsersAsync();
-            return allUsers.ToList();
+            var allUsers = await this.finder.GetAllActiveAsync<User>();
+            return mapper.Map<ICollection<UserListingModel>>(allUsers).ToList();
         }
 
 
