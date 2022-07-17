@@ -104,7 +104,7 @@
             var author = await this.finder.FindByIdOrDefaultAsync<Author>(authorId);
             await this.validator.ValidateEntityAsync(author, authorId.ToString());
 
-            await this.assigner.AssignAuthorAsync(genre, author);
+            await this.validator.ValidateAssigningAuthor(genre,author);
             await this.assigner.AssignAuthorAsync(genre, author);
             await this.genreService.SaveModificationAsync(genre, CurrentUser.Id);
 
