@@ -1,5 +1,6 @@
 ﻿namespace Boovey.Web.Controllers
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -21,12 +22,14 @@
     public class UsersController : BooveyBaseController
     {
         private readonly IUserManager userManager;
+        private readonly IFollowersManager followersManager;
         private readonly IFinder finder;
         private readonly IValidator validator;
         private readonly IMapper mapper;
 
         public UsersController(IUserManager userManager,
             IFinder finder,
+            IFollowersManager followersManager,
             IValidator validator,
             IMapper mapper,
             IUserService userService)
@@ -34,6 +37,7 @@
         {
             this.userManager = userManager;
             this.finder = finder;
+            this.followersManager = followersManager;
             this.validator = validator;
             this.mapper = mapper;
         }
@@ -88,11 +92,39 @@
 
 
         [HttpPut("Follow/User/{followedId}")]
-        public async Task<ActionResult<FollowerModel>> Follow(int followedId)
+        public async Task<FollowerModel> Follow(int followedId)
         {
             await AssignCurrentUserAsync();
-            var followerFollowed = await this.userService.Follow(CurrentUser, followedId);
-            return followerFollowed;
+            if (CurrentUser.Id == followedId)
+                throw new ArgumentException(ErrorMessages.FollowingItSelf);
+
+            var followed = await this.finder.FindByIdOrDefaultAsync<User>(followedId);
+
+            await this.validator.ValidateEntityAsync(followed, followedId.ToString());
+            await this.validator.ValidateFollowing(followedId, this.CurrentUser.Following);
+
+            await this.followersManager.Follow(this.CurrentUser, followed);
+
+            await this.userService.SaveModificationAsync(CurrentUser, CurrentUser.Id);
+
+            return mapper.Map<FollowerModel>(CurrentUser);
+        }
+
+        [HttpPut("Unfollow/User/{followedId}")]
+        public async Task<FollowerModel> Unfollow(int followedId)
+        {
+            await AssignCurrentUserAsync();
+
+            var followed = await this.finder.FindByIdOrDefaultAsync<User>(followedId);
+
+            await this.validator.ValidateEntityAsync(followed, followedId.ToString());
+            await this.validator.ValidateRemovingFollowed(followedId, this.CurrentUser.Following);
+
+            await this.followersManager.Unfollow(this.CurrentUser, followed);
+
+            await this.userService.SaveModificationAsync(CurrentUser, CurrentUser.Id);
+
+            return mapper.Map<FollowerModel>(CurrentUser);
         }
 
         [HttpDelete("Delete/User/{userId}")]
