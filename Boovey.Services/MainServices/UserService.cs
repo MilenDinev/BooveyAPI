@@ -1,6 +1,5 @@
 ﻿namespace Boovey.Services.MainServices
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Security.Claims;
@@ -13,7 +12,6 @@
     using Managers.Interfaces;
     using Data;
     using Data.Entities;
-    using Models.Requests;
     using Models.Responses.UserModels;
     using Models.Requests.UserModels;
 
@@ -53,9 +51,11 @@
         public async Task EditAsync(User user, EditUserModel userModel, int modifierId)
         {
             user.UserName = userModel.UserName;
+            user.NormalizedName = userModel.UserName.ToUpper();
             user.FirstName = userModel.FirstName;
             user.LastName = userModel.LastName;
             user.Email = userModel.Email;
+            user.NormalizedEmail = userModel.Email.ToUpper();
 
             user.NormalizedUserName = user.UserName.ToUpper();
             await SaveModificationAsync(user, modifierId);
@@ -64,22 +64,6 @@
         public async Task DeleteAsync(User user, int modifierId)
         {
             await DeleteEntityAsync(user, modifierId);
-        }
-
-
-        public async Task<FollowerModel> Follow(User follower, int followedId)
-        {
-            if (follower.Id == followedId)
-                throw new ArgumentException(ErrorMessages.FollowingItSelf);
-
-            var followed = await GetUserByIdAsync(followedId);
-            if (follower.Following.Contains(followed))
-                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFollowing, nameof(User), followed.UserName));
-
-            follower.Following.Add(followed);
-
-            await dbContext.SaveChangesAsync();
-            return mapper.Map<FollowerModel>(follower);
         }
 
         public async Task<UserListingModel> ListUserByIdAsync(int userId)

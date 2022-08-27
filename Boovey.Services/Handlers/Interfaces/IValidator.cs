@@ -16,6 +16,8 @@
         Task ValidateAssigningPublisher<T>(T entity, Publisher publisher) where T : class, IPublisherAssignable;
         Task ValidateAddingFavorite<T>(int entityId, ICollection<T> collection) where T : class, IEntity;
         Task ValidateRemovingFavorite<T>(int entityId, ICollection<T> collection) where T : class, IEntity;
+        Task ValidateFollowing<T>(int followedId, ICollection<T> collection) where T : class, IEntity;
+        Task ValidateRemovingFollowed<T>(int entityId, ICollection<T> collection) where T : class, IEntity;
 
     }
 }
