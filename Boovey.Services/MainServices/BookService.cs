@@ -54,6 +54,7 @@
         {
             book.Deleted = true;
             await SaveModificationAsync(book, modifierId);
+            // check if DeleteAsync method in UserService is more appropriate
         }
 
         private async Task SetTitleAsync(string title, Book book)
