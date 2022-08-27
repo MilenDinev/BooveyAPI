@@ -188,6 +188,7 @@
             await AssignCurrentUserAsync();
 
             var book = await this.finder.FindByIdOrDefaultAsync<Book>(bookId);
+            await this.validator.ValidateEntityAsync(book, bookId.ToString());
 
             await this.bookService.DeleteAsync(book, CurrentUser.Id);
             return mapper.Map<DeletedBookModel>(book);
