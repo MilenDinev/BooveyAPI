@@ -29,6 +29,7 @@
             services.AddTransient<IEntityChecker, EntityChecker>();
             services.AddTransient<IValidator, Validator>();
             services.AddTransient<IFavoritesManager, FavoritesManager>();
+            services.AddTransient<IFollowersManager, FollowersManager>();
             services.AddHttpContextAccessor();
         }
     }
