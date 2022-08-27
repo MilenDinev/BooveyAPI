@@ -85,5 +85,20 @@
             if (!isAlreadyFavorite)
                 throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFavoriteId, entityType, entityId));
         }
+
+        public async Task ValidateFollowing<T>(int followedId, ICollection<T> collection) where T : class, IEntity
+        {
+            var entityType = typeof(T).ToString().Substring(typeof(T).ToString().LastIndexOf('.') + 1);
+            var isAlreadyFollowed = await Task.Run(() => collection.Any(x => x.Id == followedId));
+            if (isAlreadyFollowed)
+                throw new ResourceAlreadyExistsException(string.Format(ErrorMessages.AlreadyFollowing, entityType, followedId));
+        }
+        public async Task ValidateRemovingFollowed<T>(int entityId, ICollection<T> collection) where T : class, IEntity
+        {
+            var entityType = typeof(T).ToString().Substring(typeof(T).ToString().LastIndexOf('.') + 1);
+            var isAlreadyFollowed = await Task.Run(() => collection.Any(x => x.Id == entityId));
+            if (!isAlreadyFollowed)
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.NotFollowing, entityType, entityId));
+        }
     }
 }
