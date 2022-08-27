@@ -29,7 +29,7 @@
                 throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityDoesNotExist, entityType));
             var isDeleted =  await this.entityChecker.DeletedCheck<T>(entity);
             if (isDeleted)
-                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted));
+                throw new ResourceNotFoundException(string.Format(ErrorMessages.EntityHasBeenDeleted, entityType));
         }
 
         public async Task ValidateUniqueEntityAsync<T>(T entity) where T : class, IEntity
