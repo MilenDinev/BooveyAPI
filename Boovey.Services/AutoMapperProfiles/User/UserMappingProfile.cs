@@ -19,7 +19,12 @@
                 .ForMember(m => m.FollowerId, e => e.MapFrom(u => u.Id))
                 .ForMember(m => m.FollowedId, e => e.MapFrom(u => u.Following.Select(u => u.Id).LastOrDefault()));
             this.CreateMap<User, UserListingModel>()
-                .ForMember(m => m.Email, e => e.MapFrom(u => u.Email ?? "none"));
+                .ForMember(m => m.Email, e => e.MapFrom(u => u.Email ?? "none"))
+                .ForMember(m => m.FavoriteAuthors, e => e.MapFrom(u => u.FavoriteAuthors.Select(u => u.Fullname).ToList()))
+                .ForMember(m => m.FavoriteBooks, e => e.MapFrom(u => u.FavoriteBooks.Select(u => u.Title).ToList()))
+                .ForMember(m => m.FavoriteGenres, e => e.MapFrom(u => u.FavoriteGenres.Select(u => u.Title).ToList()))
+                .ForMember(m => m.Followers, e => e.MapFrom(u => u.Followers.Select(u => u.FirstName + " " + u.LastName).ToList()))
+                .ForMember(m => m.Following, e => e.MapFrom(u => u.Following.Select(u => u.FirstName + " " + u.LastName).ToList()));
         }
     }
 }
